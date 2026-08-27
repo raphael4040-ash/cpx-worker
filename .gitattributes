@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+# 대시보드에 그대로 붙여넣는 파일. BOM + CRLF 를 유지해야 하므로
+# git 의 줄바꿈 정규화 대상에서 제외한다.
+worker-복사용.txt -text

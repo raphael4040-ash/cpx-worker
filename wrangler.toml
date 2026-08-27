@@ -1,0 +1,10 @@
+name = "cpx-upload"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+# 아래 두 값을 본인 Firebase 프로젝트 값으로 교체하세요.
+# 둘 다 비밀값이 아닙니다 (웹앱에도 그대로 노출되는 공개 식별자).
+# 실제 접근 통제는 firestore.rules 와 유저별 페어링 토큰이 담당합니다.
+[vars]
+FIREBASE_PROJECT_ID = "cpx-tracker"
+FIREBASE_API_KEY = "AIzaSyD1rN6_CvmmjvV40kRGD37f7TZ2ZwNZpqA"
