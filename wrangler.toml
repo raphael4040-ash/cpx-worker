@@ -1,6 +1,6 @@
 name = "cpx-upload"
 main = "src/worker.js"
-compatibility_date = "2025-01-01"
+compatibility_date = "2026-08-27"  # 배포된 워커의 값. 되돌리면 런타임 동작이 과거로 바뀐다.
 
 # 아래 두 값을 본인 Firebase 프로젝트 값으로 교체하세요.
 # 둘 다 비밀값이 아닙니다 (웹앱에도 그대로 노출되는 공개 식별자).

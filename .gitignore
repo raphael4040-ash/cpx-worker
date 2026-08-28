@@ -4,3 +4,7 @@ dist/
 *.log
 .dev.vars
 .env
+
+# 토큰은 저장소 밖(~/.cloudflare-token)에 둔다. 실수로 들어오는 것도 막는다.
+*.token
+.cloudflare-token
