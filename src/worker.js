@@ -24,7 +24,7 @@ const DEFAULT_OWNER_UID = "S4b2Zqzff2XHNznL1Wcq6RiZVGv1";
 
 // 배포된 워커가 최신인지 밖에서 확인하기 위한 버전 문자열.
 // 이 파일을 고칠 때마다 함께 올린다 — 그래야 `curl .../health` 로 붙었는지 판별된다.
-const WORKER_VERSION = "2026-08-29.1";
+const WORKER_VERSION = "2026-09-03.1";
 
 const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여유
 const CORS = {
@@ -268,14 +268,23 @@ function parseRecordBlock(text) {
  *   - 서브에이전트(sidechain) 대화
  *   - 마지막 채점 메시지 — evaluationChunks 로 따로 저장돼 "채점 결과" 탭에 뜬다
  *   - 면담을 끝내려고 친 `평가` 신호 (면담 내용이 아니라 조작 명령이다)
+ *   - 채점이 끝난 뒤 같은 채팅에서 이어간 대화 (아래 참조)
  *
- * `/cpx:` 명령을 만나면 그때까지 모은 줄을 버린다. 한 세션에서 여러 케이스를
- * 돌렸을 때 마지막 케이스의 면담만 남기기 위한 것이다.
+ * 면담은 구간으로 끊어 읽는다. `/cpx:` 명령이 구간을 열고, `평가` 신호나 채점
+ * 메시지가 그 구간을 닫는다. 닫힌 뒤부터 다음 `/cpx:` 명령까지의 줄은 면담이
+ * 아니므로 아예 모으지 않는다 — 학생이 채점 결과를 두고 이어서 묻는 대화가
+ * 그것이다. 업로드는 채점 턴에서만 일어나는데, 재채점이나 두 번째 케이스로
+ * 같은 세션에서 업로드가 또 일어나면 그 뒤풀이 대화까지 통째로 전사에 실렸다.
+ *
+ * 결과로 남기는 것은 닫힌 구간 하나다. 아직 채점 전이면(=닫힌 구간이 없으면)
+ * 모으는 중인 구간을 그대로 쓴다.
  *
  * 형식이 바뀌어도 죽지 않도록 모든 단계를 방어적으로 처리한다.
  */
 function renderTranscript(jsonl) {
-  let out = [];
+  let cur = [];       // 모으는 중인 면담
+  let done = null;    // 채점으로 닫힌 면담
+  let closed = false; // 채점 뒤 — 다음 `/cpx:` 명령까지는 아무것도 모으지 않는다
   for (const line of jsonl.split("\n")) {
     const trimmed = line.trim();
     if (!trimmed || trimmed[0] !== "{") continue;
@@ -299,21 +308,35 @@ function renderTranscript(jsonl) {
 
     const raw = extractText(msg.content);
     // 슬래시 명령 줄은 새 케이스의 시작점으로만 쓰고 본문에는 넣지 않는다.
+    // 앞 케이스에서 닫아둔 구간도 여기서 버린다 — 이제 이번 케이스가 기록된다.
     if (/<command-name>\s*\/cpx:/.test(raw)) {
-      out = [];
+      cur = [];
+      done = null;
+      closed = false;
       continue;
     }
 
     const text = cleanText(raw);
     if (!text) continue;
-    // 채점 결과는 "채점 결과" 탭에 이미 통째로 있으므로 전사에서는 뺀다.
-    if (text.includes("```cpx-record")) continue;
-    // 면담을 끝내는 조작 신호. 면담 내용이 아니므로 전사에 남기지 않는다.
-    if (msg.role === "user" && END_SIGNAL.test(text)) continue;
+    // 면담이 끝나는 두 지점. 채점 결과는 "채점 결과" 탭에 이미 통째로 있고,
+    // `평가` 는 면담을 끊는 조작 신호라 둘 다 전사 본문에는 넣지 않는다.
+    if (
+      text.includes("```cpx-record") ||
+      (msg.role === "user" && END_SIGNAL.test(text))
+    ) {
+      if (!closed) {
+        done = cur;
+        cur = [];
+        closed = true;
+      }
+      continue;
+    }
+    // 채점 뒤에 이어진 대화(오답 질문·잡담)는 면담이 아니다.
+    if (closed) continue;
 
-    out.push(`${msg.role === "user" ? "의사" : "환자"}: ${text}`);
+    cur.push(`${msg.role === "user" ? "의사" : "환자"}: ${text}`);
   }
-  return out.join("\n\n");
+  return (done || cur).join("\n\n");
 }
 
 function extractText(content) {

@@ -48,7 +48,9 @@ function cleanText(s) {
 }
 
 function renderTranscript(jsonl) {
-  let out = [];
+  let cur = [];
+  let done = null;
+  let closed = false;
   for (const line of jsonl.split("\n")) {
     const trimmed = line.trim();
     if (!trimmed || trimmed[0] !== "{") continue;
@@ -68,18 +70,30 @@ function renderTranscript(jsonl) {
 
     const raw = extractText(msg.content);
     if (/<command-name>\s*\/cpx:/.test(raw)) {
-      out = [];
+      cur = [];
+      done = null;
+      closed = false;
       continue;
     }
 
     const text = cleanText(raw);
     if (!text) continue;
-    if (text.includes("```cpx-record")) continue;
-    if (msg.role === "user" && END_SIGNAL.test(text)) continue;
+    if (
+      text.includes("```cpx-record") ||
+      (msg.role === "user" && END_SIGNAL.test(text))
+    ) {
+      if (!closed) {
+        done = cur;
+        cur = [];
+        closed = true;
+      }
+      continue;
+    }
+    if (closed) continue;
 
-    out.push(`${msg.role === "user" ? "의사" : "환자"}: ${text}`);
+    cur.push(`${msg.role === "user" ? "의사" : "환자"}: ${text}`);
   }
-  return out.join("\n\n");
+  return (done || cur).join("\n\n");
 }
 
 function decodePairingToken(token) {
@@ -225,6 +239,46 @@ test("한 세션에서 두 케이스를 돌리면 마지막 케이스만 남는�
   const rendered = renderTranscript(jsonl);
   assert.ok(!rendered.includes("첫 번째"));
   assert.ok(rendered.startsWith("환자: 두 번째 케이스 환자입니다."));
+});
+
+test("채점 뒤에 이어간 대화는 전사에 들어가지 않는다", () => {
+  const jsonl = [
+    cmd("/cpx:start", "어지럼"),
+    say("assistant", "어지러워서 왔어요."),
+    say("user", "언제부터 그러셨어요?"),
+    say("assistant", "사흘 됐어요."),
+    say("user", "평가"),
+    say(
+      "assistant",
+      '## I. 병력청취 — 20 / 60\n...\n```cpx-record\n{"topic":"어지럼","total":30}\n```'
+    ),
+    say("user", "ICE는 왜 감점이야?"),
+    say("assistant", "환자의 걱정을 묻지 않으셨습니다."),
+    say("user", "다음엔 뭘 먼저 물어야 해?"),
+  ].join("\n");
+  const rendered = renderTranscript(jsonl);
+  assert.ok(!rendered.includes("감점"), "채점 뒤 대화는 면담이 아니다");
+  assert.equal(
+    rendered,
+    "환자: 어지러워서 왔어요.\n\n의사: 언제부터 그러셨어요?\n\n환자: 사흘 됐어요."
+  );
+});
+
+test("같은 세션에서 기록이 또 올라가도 면담만 남는다", () => {
+  // 채점 뒤 대화 끝에 기록 블록이 한 번 더 나오면 업로드가 또 일어난다.
+  // 그때 올라가는 전사도 면담이어야지 채점 뒤 대화여서는 안 된다.
+  const jsonl = [
+    cmd("/cpx:start"),
+    say("assistant", "배가 아파요."),
+    say("user", "언제부터 그러셨어요?"),
+    say("user", "평가"),
+    say("assistant", '채점...\n```cpx-record\n{"topic":"복통","total":40}\n```'),
+    say("user", "이 항목은 인정해주고 다시 매겨줘"),
+    say("assistant", '다시 채점...\n```cpx-record\n{"topic":"복통","total":45}\n```'),
+  ].join("\n");
+  const rendered = renderTranscript(jsonl);
+  assert.ok(!rendered.includes("인정해주고"));
+  assert.equal(rendered, "환자: 배가 아파요.\n\n의사: 언제부터 그러셨어요?");
 });
 
 test("system-reminder 와 클라이언트 안내 줄을 걷어낸다", () => {

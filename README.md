@@ -9,7 +9,7 @@ Cloudflare Workers 무료 플랜(하루 10만 요청)에서 돕니다.
 
 1. 페어링 토큰 → Firebase ID token 교환 (`securetoken.googleapis.com`)
 2. 평가 메시지에서 ` ```cpx-record ` 블록 파싱
-3. 전사 `.jsonl` → 사람이 읽는 텍스트 (실제 면담 턴만 남기고 슬래시 명령·SKILL.md 주입·도구 호출·채점 메시지는 버림)
+3. 전사 `.jsonl` → 사람이 읽는 텍스트 (`/cpx:start` 부터 채점까지의 면담만 남기고 슬래시 명령·SKILL.md 주입·도구 호출·채점 메시지·채점 뒤 대화는 버림)
 4. Firestore REST의 타입 지정 형식(`{"stringValue": ...}`)으로 조립
 
 이걸 로컬 스크립트에서 하려면 Node나 jq가 필요한데, 유저 PC에 있으리라는 보장이 없습니다.
