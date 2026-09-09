@@ -10,8 +10,12 @@ FIREBASE_PROJECT_ID = "cpx-tracker"
 FIREBASE_API_KEY = "AIzaSyD1rN6_CvmmjvV40kRGD37f7TZ2ZwNZpqA"
 # 학생마다 자기 키를 실어 보내므로 여기 비밀값은 없다. 모델만 지정한다.
 # "gemini-2.5-flash" 처럼 특정 버전을 박아두면 몇 달 뒤 그 버전이 없어져 조용히 실패한다
-# (실제로 한 번 그랬다). "-latest" 별칭은 항상 그 계열의 현재 안정 버전을 가리킨다.
-GEMINI_MODEL = "gemini-flash-latest"
+# (실제로 한 번 그랬다). gemini-flash-latest(풀 Flash)는 다들 기본값으로 몰려서
+# 무료 티어에서 503(고부하) 이 잦았다 — 환자 연기·채점 정도는 lite 모델로 충분해서
+# 상대적으로 여유 있는 Flash-Lite 로 바꿨다. 이것도 결국 언젠가 후속 버전에 밀려날 수
+# 있으니, 배포 실패나 404 가 나면 https://ai.google.dev/gemini-api/docs/models 에서
+# 현재 stable 로 표시된 flash-lite 모델명으로 갈아끼울 것.
+GEMINI_MODEL = "gemini-3.5-flash-lite"
 
 # 예전엔 여기 [[kv_namespaces]] 로 면담 세션을 저장했다. Cloudflare Worker 에서
 # generativelanguage.googleapis.com 으로 나가는 요청이 구글 쪽 지역 차단
