@@ -1,9 +1,15 @@
 /**
- * 웹 면담(Gemini BYOK) 라우트.
+ * 웹 면담용 케이스 조합 라우트.
  *
- * 학생이 자기 무료 Gemini API 키를 브라우저에 저장해두고 매 요청마다 실어 보낸다.
- * 이 Worker 는 그 키를 저장하지 않고 그 요청 처리에만 쓰고 버린다 — 케이스 정답
- * (dx·PE 소견)은 서버(KV)에만 있고 학생 브라우저에는 절대 내려가지 않는다.
+ * Cloudflare Worker에서 Gemini API로 나가는 요청이 구글 쪽 지역 차단
+ * ("User location is not supported for the API use")에 걸리는 게 확인돼서,
+ * 실제 Gemini 호출은 브라우저가 직접 한다 (Worker → Google 경로가 막혀도
+ * 학생 브라우저 → Google 경로는 막히지 않는다). 이 Worker는 케이스를 뽑고
+ * 시스템 프롬프트를 만들어 돌려주는 역할만 한다.
+ *
+ * 케이스 정답(dx·PE 소견)이 브라우저에 내려간다는 뜻이다. 다만 이 저장소
+ * (cpx-worker) 자체가 이미 공개 GitHub 레포라 케이스 JSON은 어차피 공개돼
+ * 있었다 — UI에 안 보이게 하는 것 이상의 은닉은 애초에 없었다.
  */
 import { buildCase, caseToPrompt } from "./sampleCase.js";
 import { buildSystemPrompt } from "./interviewPrompt.js";
@@ -11,13 +17,11 @@ import indexData from "./cases/index.json";
 import personas from "./cases/personas.json";
 import { CASES } from "./cases/manifest.js";
 
-const SESSION_TTL = 60 * 60 * 2; // 2시간 — 면담 하나가 이보다 오래 걸리면 새로 시작
-const MAX_TURNS = 60; // 학생 메시지 기준. 폭주(무한루프 등)로 본인 무료 할당량이 새는 것을 막는 안전장치
 const DEFAULT_MODEL = "gemini-flash-latest";
 
 // 물질오남용·자살·성폭력·가정폭력 같은 카드는 임상 실습 목적의 정상적인 대화인데도
-// 기본 안전 임계값에 걸려 응답이 통째로 비게(empty_response) 되는 경우가 있었다.
-// 명백히 고위험(HIGH)인 것만 막고 나머지는 통과시킨다.
+// 기본 안전 임계값에 걸려 응답이 통째로 비는 경우가 있었다. 명백히 고위험(HIGH)인
+// 것만 막는다. 브라우저가 Gemini 를 직접 호출하므로 이 설정도 함께 내려준다.
 const SAFETY_SETTINGS = [
   "HARM_CATEGORY_HARASSMENT",
   "HARM_CATEGORY_HATE_SPEECH",
@@ -26,9 +30,6 @@ const SAFETY_SETTINGS = [
 ].map((category) => ({ category, threshold: "BLOCK_ONLY_HIGH" }));
 
 export async function handleInterviewStart(request, env, cors) {
-  const apiKey = bearerToken(request);
-  if (!apiKey) return json({ error: "missing_api_key" }, 401, cors);
-
   let body = {};
   try {
     body = await request.json();
@@ -62,111 +63,19 @@ export async function handleInterviewStart(request, env, cors) {
     procedure: !!resolved._procedureCase,
   });
 
-  const sessionId = newId();
-  const session = {
-    systemPrompt,
-    topic: resolvedCase.topic,
-    dx: resolvedCase.dx,
-    // 학생이 먼저 말을 걸어야 환자가 답한다 (시스템 프롬프트 지시와 맞춤).
-    // 여기서 미리 opening 을 넣어 첫 턴을 만들어버리면 환자가 먼저 말하게 된다.
-    history: [],
-    turns: 0,
-  };
-  await env.INTERVIEW_SESSIONS.put(sessionId, JSON.stringify(session), {
-    expirationTtl: SESSION_TTL,
-  });
-
-  // topic 은 기록 저장용으로만 클라이언트에 전달한다. 화면에 띄우지 않아야
-  // 무작위로 뽑힌 케이스가 뭔지 미리 드러나지 않는다.
-  return json({ sessionId, topic: resolvedCase.topic }, 200, cors);
-}
-
-export async function handleInterviewMessage(request, env, cors) {
-  const apiKey = bearerToken(request);
-  if (!apiKey) return json({ error: "missing_api_key" }, 401, cors);
-
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return json({ error: "bad_request" }, 400, cors);
-  }
-  const { sessionId, message } = body || {};
-  if (!sessionId || typeof message !== "string" || !message.trim()) {
-    return json({ error: "bad_request" }, 400, cors);
-  }
-
-  const raw = await env.INTERVIEW_SESSIONS.get(sessionId);
-  if (!raw) return json({ error: "session_expired" }, 410, cors);
-  const session = JSON.parse(raw);
-
-  if (session.turns >= MAX_TURNS) {
-    return json({ error: "too_many_turns", hint: "이 면담은 길이 제한에 도달했습니다. 새로 시작해주세요." }, 429, cors);
-  }
-
-  session.history.push({ role: "user", parts: [{ text: message.slice(0, 4000) }] });
-
-  const model = env.GEMINI_MODEL || DEFAULT_MODEL;
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
-  let reply;
-  try {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: session.systemPrompt }] },
-        contents: session.history,
-        safetySettings: SAFETY_SETTINGS,
-        generationConfig: { temperature: 0.8 },
-      }),
-    });
-    if (!res.ok) {
-      const detail = await res.text();
-      const status = res.status === 429 ? 429 : 502;
-      console.log("gemini_error", res.status, detail.slice(0, 500));
-      return json({ error: "gemini_error", status: res.status, detail: detail.slice(0, 500) }, status, cors);
-    }
-    const data = await res.json();
-    reply = data?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
-    if (!reply) {
-      const blockReason = data?.promptFeedback?.blockReason || data?.candidates?.[0]?.finishReason || null;
-      console.log("empty_response", JSON.stringify(data).slice(0, 500));
-      return json({ error: "empty_response", blockReason }, 502, cors);
-    }
-  } catch (err) {
-    return json({ error: "network_error", detail: String(err && err.message || err) }, 502, cors);
-  }
-
-  session.history.push({ role: "model", parts: [{ text: reply }] });
-  session.turns += 1;
-
-  const isEvaluation = /```cpx-record\s*\{/.test(reply);
-  if (isEvaluation) {
-    // 채점이 끝났다. 이후 대화는 새 세션으로 유도한다 — 여기서 만료시켜 KV 를 정리한다.
-    await env.INTERVIEW_SESSIONS.delete(sessionId);
-  } else {
-    await env.INTERVIEW_SESSIONS.put(sessionId, JSON.stringify(session), {
-      expirationTtl: SESSION_TTL,
-    });
-  }
-
-  return json({ reply, topic: session.topic, done: isEvaluation }, 200, cors);
+  return json(
+    {
+      topic: resolvedCase.topic,
+      systemPrompt,
+      model: env.GEMINI_MODEL || DEFAULT_MODEL,
+      safetySettings: SAFETY_SETTINGS,
+    },
+    200,
+    cors
+  );
 }
 
 // ---------------------------------------------------------------- helpers
-
-function bearerToken(request) {
-  const auth = request.headers.get("Authorization") || "";
-  return auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
-}
-
-function newId() {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const bytes = crypto.getRandomValues(new Uint8Array(24));
-  let out = "";
-  for (const b of bytes) out += alphabet[b % alphabet.length];
-  return out;
-}
 
 /** topic 이 비어 있으면 무작위, 있으면 index.json 의 aliases 를 거쳐 찾는다. */
 function resolveTopic(input) {

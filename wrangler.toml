@@ -13,7 +13,8 @@ FIREBASE_API_KEY = "AIzaSyD1rN6_CvmmjvV40kRGD37f7TZ2ZwNZpqA"
 # (실제로 한 번 그랬다). "-latest" 별칭은 항상 그 계열의 현재 안정 버전을 가리킨다.
 GEMINI_MODEL = "gemini-flash-latest"
 
-# 웹 면담 세션 저장소. Cloudflare 대시보드 > Workers KV 에서 만든 네임스페이스.
-[[kv_namespaces]]
-binding = "INTERVIEW_SESSIONS"
-id = "f1d9024ee97a4598a079e63b65788845"
+# 예전엔 여기 [[kv_namespaces]] 로 면담 세션을 저장했다. Cloudflare Worker 에서
+# generativelanguage.googleapis.com 으로 나가는 요청이 구글 쪽 지역 차단
+# ("User location is not supported")에 걸려서, Gemini 호출을 브라우저가 직접
+# 하는 구조로 바꿨다 — 이제 이 Worker 는 세션을 들고 있지 않는다.
+# KV 네임스페이스 자체는 Cloudflare 대시보드에 남아 있으니 안 쓰면 지워도 된다.
