@@ -25,7 +25,7 @@ const DEFAULT_OWNER_UID = "S4b2Zqzff2XHNznL1Wcq6RiZVGv1";
 
 // 배포된 워커가 최신인지 밖에서 확인하기 위한 버전 문자열.
 // 이 파일을 고칠 때마다 함께 올린다 — 그래야 `curl .../health` 로 붙었는지 판별된다.
-const WORKER_VERSION = "2026-09-03.1";
+const WORKER_VERSION = "2026-09-09.1";
 
 const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여유
 const CORS = {
@@ -33,6 +33,33 @@ const CORS = {
   "Access-Control-Allow-Headers": "Authorization, Content-Type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
+
+// /interview/start 는 로그인·페어링 토큰이 필요 없다 — 학생 브라우저가 세션을
+// 시작하기 전부터 부르는 경로라서다. 그만큼 인증 없이 열려 있어, 외부에서 스크립트로
+// 반복 호출하면 Cloudflare 무료 한도(하루 10만 요청)를 실제 학생 몫까지 갉아먹을 수 있다.
+// env.RATE_LIMIT_KV 가 설정돼 있을 때만 IP 당 창 하나에 요청 수를 센다 — KV 바인딩을
+// 아직 안 만든 배포(로컬 dev 등)에서는 그냥 통과시킨다(가용성을 우선한다).
+const RATE_LIMIT_WINDOW_SEC = 600; // 10분
+const RATE_LIMIT_MAX = 20; // 창 하나당 IP 당 허용 요청 수 — 정상적인 면담 시작 재시도는 넉넉히 통과한다
+
+async function checkRateLimit(kv, ip) {
+  if (!kv || !ip) return true;
+  const key = `iv:${ip}`;
+  let count = 0;
+  try {
+    const raw = await kv.get(key);
+    count = raw ? parseInt(raw, 10) || 0 : 0;
+  } catch {
+    return true; // KV 읽기 실패로 정상 사용자를 막지 않는다
+  }
+  if (count >= RATE_LIMIT_MAX) return false;
+  try {
+    await kv.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW_SEC });
+  } catch {
+    /* 카운트 저장에 실패해도 이번 요청은 이미 허용됐다 */
+  }
+  return true;
+}
 
 export default {
   async fetch(request, env) {
@@ -46,7 +73,14 @@ export default {
       if (url.pathname === "/upload") return await handleUpload(request, env);
       // 웹 면담 — 케이스 조합·프롬프트 생성만 여기서 하고, 실제 Gemini 호출은 브라우저가
       // 직접 한다(Worker→Google 경로가 구글 지역 차단에 걸려서). 별도 파일(interviewRoutes.js).
-      if (url.pathname === "/interview/start") return await handleInterviewStart(request, env, CORS);
+      if (url.pathname === "/interview/start") {
+        const ip = request.headers.get("CF-Connecting-IP") || "";
+        const allowed = await checkRateLimit(env.RATE_LIMIT_KV, ip);
+        if (!allowed) {
+          return json({ error: "rate_limited", hint: "요청이 너무 잦습니다. 잠시 후 다시 시도해주세요." }, 429);
+        }
+        return await handleInterviewStart(request, env, CORS);
+      }
       return json({ error: "not_found" }, 404);
     } catch (err) {
       // 훅은 non-2xx 를 non-blocking error 로 취급하므로 세션을 막지 않는다.

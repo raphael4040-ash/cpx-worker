@@ -96,6 +96,41 @@ function renderTranscript(jsonl) {
   return (done || cur).join("\n\n");
 }
 
+const RATE_LIMIT_WINDOW_SEC = 600;
+const RATE_LIMIT_MAX = 20;
+
+async function checkRateLimit(kv, ip) {
+  if (!kv || !ip) return true;
+  const key = `iv:${ip}`;
+  let count = 0;
+  try {
+    const raw = await kv.get(key);
+    count = raw ? parseInt(raw, 10) || 0 : 0;
+  } catch {
+    return true;
+  }
+  if (count >= RATE_LIMIT_MAX) return false;
+  try {
+    await kv.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW_SEC });
+  } catch {
+    /* 카운트 저장에 실패해도 이번 요청은 이미 허용됐다 */
+  }
+  return true;
+}
+
+// 실제 KV 를 흉내내는 인메모리 가짜.
+function fakeKv(initial = {}) {
+  const store = new Map(Object.entries(initial));
+  return {
+    async get(key) {
+      return store.has(key) ? store.get(key) : null;
+    },
+    async put(key, value) {
+      store.set(key, value);
+    },
+  };
+}
+
 function decodePairingToken(token) {
   const norm = token.replace(/-/g, "+").replace(/_/g, "/");
   const parsed = JSON.parse(Buffer.from(norm, "base64").toString("utf8"));
@@ -312,4 +347,30 @@ test("페어링 토큰 왕복", () => {
 
 test("잘못된 토큰은 예외를 던진다", () => {
   assert.throws(() => decodePairingToken("not-a-token"));
+});
+
+test("KV 바인딩이 없으면 레이트리밋 없이 통과한다", async () => {
+  assert.equal(await checkRateLimit(null, "1.2.3.4"), true);
+});
+
+test("IP 를 못 얻으면 통과한다 (막는 것보다 여는 쪽이 안전)", async () => {
+  assert.equal(await checkRateLimit(fakeKv(), ""), true);
+});
+
+test("한도 안에서는 통과하고 카운트가 쌓인다", async () => {
+  const kv = fakeKv();
+  for (let i = 0; i < RATE_LIMIT_MAX; i++) {
+    assert.equal(await checkRateLimit(kv, "9.9.9.9"), true);
+  }
+  assert.equal(await kv.get("iv:9.9.9.9"), String(RATE_LIMIT_MAX));
+});
+
+test("한도를 넘으면 막는다", async () => {
+  const kv = fakeKv({ "iv:5.5.5.5": String(RATE_LIMIT_MAX) });
+  assert.equal(await checkRateLimit(kv, "5.5.5.5"), false);
+});
+
+test("IP 가 다르면 서로 카운트에 영향 없다", async () => {
+  const kv = fakeKv({ "iv:1.1.1.1": String(RATE_LIMIT_MAX) });
+  assert.equal(await checkRateLimit(kv, "2.2.2.2"), true);
 });

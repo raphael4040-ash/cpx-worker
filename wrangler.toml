@@ -20,5 +20,17 @@ GEMINI_MODEL = "gemini-3.5-flash-lite"
 # 예전엔 여기 [[kv_namespaces]] 로 면담 세션을 저장했다. Cloudflare Worker 에서
 # generativelanguage.googleapis.com 으로 나가는 요청이 구글 쪽 지역 차단
 # ("User location is not supported")에 걸려서, Gemini 호출을 브라우저가 직접
-# 하는 구조로 바꿨다 — 이제 이 Worker 는 세션을 들고 있지 않는다.
-# KV 네임스페이스 자체는 Cloudflare 대시보드에 남아 있으니 안 쓰면 지워도 된다.
+# 하는 구조로 바꿨다 — 이제 이 Worker 는 면담 세션을 들고 있지 않는다.
+#
+# 아래 KV 는 그것과 다른 용도다 — /interview/start 는 로그인이 필요 없어 인증으로
+# 막을 수 없으므로, IP 당 요청 수를 세는 레이트리밋 용도로만 쓴다(src/worker.js 의
+# checkRateLimit 참고). 바인딩을 안 채우면 레이트리밋 없이 그냥 통과한다(가용성 우선).
+#
+# 네임스페이스 만들기: `npx wrangler kv namespace create RATE_LIMIT_KV` 로 만들거나
+# Cloudflare 대시보드 > Workers & Pages > KV 에서 만든 뒤, 나온 id 를 채우고 주석을 풀 것.
+# deploy_multi.py 와 wrangler 둘 다 이 섹션을 그대로 읽어 바인딩으로 올린다.
+# 주석 처리된 채로 두면(기본값) checkRateLimit 이 env.RATE_LIMIT_KV 를 못 받아 레이트리밋
+# 없이 그냥 통과한다 — 존재하지 않는 id 로 배포를 깨뜨리지 않기 위한 안전한 기본값이다.
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "REPLACE_ME_KV_NAMESPACE_ID"

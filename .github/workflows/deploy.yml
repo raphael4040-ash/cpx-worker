@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - "src/**"
+      - "test/**"
       - "wrangler.toml"
       - "package.json"
       - "package-lock.json"
@@ -17,6 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # worker.js 를 고치고 test/parse.test.mjs 의 동일 구현을 안 고치면(README 에도 적힌
+      # 흔한 실수) 여기서 잡는다. 예전엔 이 테스트가 로컬에서 사람이 돌려야만 의미가 있었다 —
+      # 배포 자체는 이 결과와 무관하게 진행됐다.
+      - name: 파싱 로직 테스트 (기록 블록·전사 렌더링·페어링 토큰)
+        run: node --test
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3

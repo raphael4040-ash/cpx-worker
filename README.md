@@ -27,34 +27,55 @@ refresh token으로 그 유저 본인의 ID token을 받아, **유저 자격으�
 
 ---
 
-## 배포 — `./deploy.sh` (2026-08-29 설정 완료, 권장)
+## 배포 — `python scripts/deploy_multi.py` (권장)
 
 저장소 최상단에서:
 
 ```bash
-./deploy.sh
+python scripts/deploy_multi.py
 ```
 
 wrangler 없이 Cloudflare REST API 로 바로 올립니다. `wrangler.toml` 을 읽어
 워커 이름·진입 파일·호환 날짜·`[vars]` 를 그대로 쓰므로 설정 출처는 한 곳뿐입니다.
-올린 뒤 `/health` 의 `version` 과 소스의 `WORKER_VERSION` 을 견줘 실제로 붙었는지까지 확인합니다.
+지금 `worker.js` 는 `interviewRoutes.js`·`sampleCase.js`·`interviewPrompt.js`·케이스 JSON
+58개를 import 하는 **다중 모듈** 구조라, `src/` 아래 모든 `.js`/`.json` 을 훑어 각 모듈을
+이름별로 함께 업로드하는 이 스크립트가 필요합니다. Python 표준 라이브러리(`tomllib`)와
+`requests` 패키지만 있으면 됩니다(`pip install requests`).
 
 **토큰**은 `~/.cloudflare-token` 에 한 줄로 두거나 `CLOUDFLARE_API_TOKEN` 환경변수로 줍니다.
 Cloudflare 대시보드 → **My Profile → API Tokens → Create Token** → `Edit Cloudflare Workers`
 템플릿으로 만듭니다. **이 저장소는 공개이니 토큰을 안에 두지 마세요.**
 토큰을 만들고 쓰는 것 자체는 무료입니다 — 과금은 Workers 사용량(무료 10만 요청/일)에만 걸립니다.
 
-### 왜 wrangler 를 안 쓰나
+### `deploy.sh` 는 더 이상 쓰지 마세요
+
+`deploy.sh` 는 `worker.js` 하나만 단일 파일로 업로드합니다. 웹 면담 기능이 들어오면서
+`worker.js` 가 다른 파일을 import 하는 다중 모듈 구조로 바뀌었는데(`c2e9159`), `deploy.sh`
+는 그 이전 구조를 전제로 만들어진 스크립트라 지금은 배포를 시도하면 Cloudflare 가 모듈
+해석 실패로 거부합니다. 저장소에는 참고용으로 남아 있지만 **위 `deploy_multi.py` 를 쓰세요.**
+(단일 파일 워커로 되돌리는 일이 있다면 그때는 다시 유효합니다.)
+
+### 왜 wrangler 를 기본으로 안 쓰나
 
 작업 PC 의 node 가 한컴 번들 32비트(`ia32`)뿐인데, wrangler 는 시작하자마자 `workerd` 를
 `require` 하고 `workerd` 는 64비트 바이너리만 배포합니다. `--version` 조차 돌지 않습니다
-(`Unsupported platform: win32 ia32 LE`). `curl` 은 64비트로 이미 있어 API 경로가 설치 없이 됩니다.
+(`Unsupported platform: win32 ia32 LE`). `curl`/`python` 은 64비트로 이미 있어 API 경로가
+설치 없이 됩니다.
 
 64비트 Node 를 깔면 `wrangler deploy` 로 갈아타도 됩니다 — `wrangler.toml` 을 그대로 씁니다.
+GitHub Actions(`.github/workflows/deploy.yml`)의 자동 배포는 러너가 64비트라 이미 wrangler
+로 정상 동작합니다 — `main` 에 푸시하면 이 문제와 무관하게 항상 다중 모듈이 올바르게 번들됩니다.
 
 ---
 
-## 배포 A — 대시보드 (수동 대안)
+## 배포 A — 대시보드 (수동 대안, 현재 코드베이스에선 지원 안 됨)
+
+> ⚠️ **다중 모듈 구조가 된 뒤로 이 방법은 쓸 수 없습니다.** 대시보드의 기본 코드 편집기는
+> 파일 하나만 받습니다. `worker.js` 를 그대로 붙여넣으면 `import "./interviewRoutes.js"` 가
+> 해석되지 않아 워커가 뜨지 않거나(웹 면담 라우트가 500 을 내거나) 배포 자체가 거부됩니다.
+> 대시보드로 꼭 배포해야 한다면 편집기의 **다중 파일** 기능으로 `src/` 아래 모든 파일을
+> 각각의 상대 경로 이름으로 올리세요. 아래 절차는 워커가 `worker.js` 하나뿐이던
+> 시절의 기록이라 지금은 참고용입니다 — **위 `deploy_multi.py` 를 쓰세요.**
 
 1. https://dash.cloudflare.com → **Workers & Pages** → **Create** → **Workers** →
    **Create Worker**. 이름을 `cpx-upload` 로 하면 주소가 `cpx-upload.<계정>.workers.dev` 가 됩니다.
@@ -116,7 +137,21 @@ node --test
 Node 없이 검증하려면 실제 연습을 한 번 돌려보고 기록판에 행이 생기는지 확인하는 수밖에 없습니다.
 그때 워커 로그는 대시보드의 워커 페이지 → **Logs → Begin log stream** 에서 실시간으로 볼 수 있습니다.
 
-`worker.js` 를 고치면 `test/parse.test.mjs` 의 동일 구현도 함께 고쳐야 합니다.
+`worker.js` 를 고치면 `test/parse.test.mjs` 의 동일 구현도 함께 고쳐야 합니다. `main` 에
+푸시하면 `.github/workflows/deploy.yml` 이 배포 전에 이 테스트를 먼저 돌립니다 — 로컬에
+Node 가 없어도 테스트가 실패하는 채로 배포되는 일은 이제 없습니다.
+
+## 레이트리밋 (선택)
+
+`/interview/start` 는 로그인·페어링 토큰이 필요 없습니다 — 학생 브라우저가 세션을 시작하기
+전부터 부르는 경로라서요. 그만큼 열려 있어서, 외부에서 스크립트로 반복 호출하면 Cloudflare
+무료 한도(하루 10만 요청)를 실제 학생 몫까지 갉아먹을 수 있습니다.
+
+`wrangler.toml` 의 `[[kv_namespaces]]` 블록 주석을 풀고 KV 네임스페이스를 만들어 `id` 를
+채우면(`npx wrangler kv namespace create RATE_LIMIT_KV`), IP 당 10분에 20회로 제한됩니다.
+**주석 처리된 채로 두면(기본값) 레이트리밋 없이 그냥 통과합니다** — 존재하지 않는 네임스페이스
+id 로 배포를 깨뜨리지 않기 위한 안전한 기본값입니다. `deploy_multi.py`·`wrangler` 둘 다
+이 섹션을 자동으로 바인딩에 반영하므로, `id` 를 채우고 주석만 풀면 됩니다.
 
 ## 엔드포인트
 
