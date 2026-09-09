@@ -13,7 +13,17 @@ import { CASES } from "./cases/manifest.js";
 
 const SESSION_TTL = 60 * 60 * 2; // 2시간 — 면담 하나가 이보다 오래 걸리면 새로 시작
 const MAX_TURNS = 60; // 학생 메시지 기준. 폭주(무한루프 등)로 본인 무료 할당량이 새는 것을 막는 안전장치
-const DEFAULT_MODEL = "gemini-2.5-flash";
+const DEFAULT_MODEL = "gemini-flash-latest";
+
+// 물질오남용·자살·성폭력·가정폭력 같은 카드는 임상 실습 목적의 정상적인 대화인데도
+// 기본 안전 임계값에 걸려 응답이 통째로 비게(empty_response) 되는 경우가 있었다.
+// 명백히 고위험(HIGH)인 것만 막고 나머지는 통과시킨다.
+const SAFETY_SETTINGS = [
+  "HARM_CATEGORY_HARASSMENT",
+  "HARM_CATEGORY_HATE_SPEECH",
+  "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+  "HARM_CATEGORY_DANGEROUS_CONTENT",
+].map((category) => ({ category, threshold: "BLOCK_ONLY_HIGH" }));
 
 export async function handleInterviewStart(request, env, cors) {
   const apiKey = bearerToken(request);
@@ -103,19 +113,22 @@ export async function handleInterviewMessage(request, env, cors) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: session.systemPrompt }] },
         contents: session.history,
+        safetySettings: SAFETY_SETTINGS,
         generationConfig: { temperature: 0.8 },
       }),
     });
     if (!res.ok) {
       const detail = await res.text();
       const status = res.status === 429 ? 429 : 502;
+      console.log("gemini_error", res.status, detail.slice(0, 500));
       return json({ error: "gemini_error", status: res.status, detail: detail.slice(0, 500) }, status, cors);
     }
     const data = await res.json();
     reply = data?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
     if (!reply) {
-      const blockReason = data?.promptFeedback?.blockReason;
-      return json({ error: "empty_response", blockReason: blockReason || null }, 502, cors);
+      const blockReason = data?.promptFeedback?.blockReason || data?.candidates?.[0]?.finishReason || null;
+      console.log("empty_response", JSON.stringify(data).slice(0, 500));
+      return json({ error: "empty_response", blockReason }, 502, cors);
     }
   } catch (err) {
     return json({ error: "network_error", detail: String(err && err.message || err) }, 502, cors);
