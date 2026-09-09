@@ -6,7 +6,7 @@
  * (dx·PE 소견)은 서버(KV)에만 있고 학생 브라우저에는 절대 내려가지 않는다.
  */
 import { buildCase, caseToPrompt } from "./sampleCase.js";
-import { buildSystemPrompt, pickOpening } from "./interviewPrompt.js";
+import { buildSystemPrompt } from "./interviewPrompt.js";
 import indexData from "./cases/index.json";
 import personas from "./cases/personas.json";
 import { CASES } from "./cases/manifest.js";
@@ -61,21 +61,24 @@ export async function handleInterviewStart(request, env, cors) {
     noPE: !!resolved._noPhysicalExam,
     procedure: !!resolved._procedureCase,
   });
-  const opening = pickOpening(resolvedCase) || "안녕하세요...";
 
   const sessionId = newId();
   const session = {
     systemPrompt,
     topic: resolvedCase.topic,
     dx: resolvedCase.dx,
-    history: [{ role: "model", parts: [{ text: opening }] }],
+    // 학생이 먼저 말을 걸어야 환자가 답한다 (시스템 프롬프트 지시와 맞춤).
+    // 여기서 미리 opening 을 넣어 첫 턴을 만들어버리면 환자가 먼저 말하게 된다.
+    history: [],
     turns: 0,
   };
   await env.INTERVIEW_SESSIONS.put(sessionId, JSON.stringify(session), {
     expirationTtl: SESSION_TTL,
   });
 
-  return json({ sessionId, topic: resolvedCase.topic, opening }, 200, cors);
+  // topic 은 기록 저장용으로만 클라이언트에 전달한다. 화면에 띄우지 않아야
+  // 무작위로 뽑힌 케이스가 뭔지 미리 드러나지 않는다.
+  return json({ sessionId, topic: resolvedCase.topic }, 200, cors);
 }
 
 export async function handleInterviewMessage(request, env, cors) {
