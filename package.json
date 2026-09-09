@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "sync-cases": "node scripts/sync-cases.mjs",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },

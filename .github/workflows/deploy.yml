@@ -1,0 +1,24 @@
+name: Deploy Worker
+
+# 로컬에 Node 가 없어서 배포를 여기서 대신 한다.
+# main 에 푸시되면 GitHub 러너(Node 있음)에서 wrangler deploy 를 실행한다.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "wrangler.toml"
+      - "package.json"
+      - "package-lock.json"
+  workflow_dispatch: {} # 필요하면 Actions 탭에서 수동으로도 실행 가능
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

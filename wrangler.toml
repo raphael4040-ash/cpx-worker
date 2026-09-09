@@ -8,3 +8,11 @@ compatibility_date = "2026-08-27"  # 배포된 워커의 값. 되돌리면 런�
 [vars]
 FIREBASE_PROJECT_ID = "cpx-tracker"
 FIREBASE_API_KEY = "AIzaSyD1rN6_CvmmjvV40kRGD37f7TZ2ZwNZpqA"
+# 학생마다 자기 키를 실어 보내므로 여기 비밀값은 없다. 모델만 지정한다.
+# aistudio.google.com 에서 키를 발급한 계정 기준으로 실제 쓸 수 있는 모델명을 확인할 것.
+GEMINI_MODEL = "gemini-2.5-flash"
+
+# 웹 면담 세션 저장소. Cloudflare 대시보드 > Workers KV 에서 만든 네임스페이스.
+[[kv_namespaces]]
+binding = "INTERVIEW_SESSIONS"
+id = "f1d9024ee97a4598a079e63b65788845"

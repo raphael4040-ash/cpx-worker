@@ -11,6 +11,7 @@
  *   3. (동의한 경우) 전사 JSONL 에서 면담 부분만 골라 평문으로 변환
  *   4. Firestore REST 로 records 문서 생성
  */
+import { handleInterviewStart, handleInterviewMessage } from "./interviewRoutes.js";
 
 // Cloudflare 대시보드에서 환경변수(FIREBASE_PROJECT_ID / FIREBASE_API_KEY)를 넣으면
 // 그 값이 우선하고, 안 넣으면 아래 기본값을 쓴다. 둘 다 웹앱에 그대로 노출되는
@@ -39,11 +40,14 @@ export default {
 
     const url = new URL(request.url);
     if (url.pathname === "/health") return json({ ok: true, version: WORKER_VERSION });
-    if (url.pathname !== "/upload") return json({ error: "not_found" }, 404);
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
     try {
-      return await handleUpload(request, env);
+      if (url.pathname === "/upload") return await handleUpload(request, env);
+      // 웹 면담(Gemini BYOK) — 학생 키를 저장 없이 그 요청에만 쓴다. 별도 파일(interviewRoutes.js).
+      if (url.pathname === "/interview/start") return await handleInterviewStart(request, env, CORS);
+      if (url.pathname === "/interview/message") return await handleInterviewMessage(request, env, CORS);
+      return json({ error: "not_found" }, 404);
     } catch (err) {
       // 훅은 non-2xx 를 non-blocking error 로 취급하므로 세션을 막지 않는다.
       return json({ error: "internal", detail: String(err && err.message || err) }, 500);

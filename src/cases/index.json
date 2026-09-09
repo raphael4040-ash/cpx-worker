@@ -1,0 +1,385 @@
+{
+  "_note": "주호소 이름으로 카드 파일을 찾는 색인. 사용자가 부르는 말은 aliases 로 먼저 옮긴 뒤 topics 에서 찾는다.",
+  "aliases": {
+    "abdominal pain": "복통",
+    "back pain": "목통증/허리통증",
+    "breaking bad news": "나쁜 소식 전하기",
+    "chest pain": "가슴통증",
+    "constipation": "배변 이상(변비)",
+    "cough": "기침",
+    "diarrhea": "배변 이상(설사)",
+    "dizziness": "어지럼",
+    "dyspnea": "호흡곤란",
+    "fever": "발열",
+    "headache": "두통",
+    "syncope": "실신",
+    "가슴 통증": "가슴통증",
+    "감각이상": "근력/감각 이상",
+    "관절이 아픔": "관절통증/부기",
+    "관절통": "관절통증/부기",
+    "근력저하": "근력/감각 이상",
+    "기본진료술기 — 상처 관리": "상처 관리",
+    "기본진료술기 — 응급처치(심정지)": "응급처치 (심정지)",
+    "기본진료술기 — 채혈 및 혈관 확보": "채혈 및 혈관 확보",
+    "기절": "실신",
+    "나쁜소식": "나쁜 소식 전하기",
+    "냉": "질 분비물/질 출혈",
+    "다뇨": "소변량변화(다뇨증)",
+    "다뇨증": "소변량변화(다뇨증)",
+    "떨림": "떨림/운동이상",
+    "마비": "근력/감각 이상",
+    "머리아픔": "두통",
+    "멍": "쉽게 멍이 듦",
+    "목통증": "목통증/허리통증",
+    "배가 아파요": "복통",
+    "배아픔": "복통",
+    "변비": "배변 이상(변비)",
+    "봉합": "상처 관리",
+    "비만": "체중 증가/비만",
+    "비염": "콧물/코막힘",
+    "살 빠짐": "체중 감소",
+    "상처": "상처 관리",
+    "설사": "배변 이상(설사)",
+    "소변량 감소": "소변량변화(핍뇨)",
+    "수전증": "떨림/운동이상",
+    "숨이 참": "호흡곤란",
+    "숨참": "호흡곤란",
+    "심정지": "응급처치 (심정지)",
+    "심폐소생술": "응급처치 (심정지)",
+    "어지러움": "어지럼",
+    "열": "발열",
+    "요통": "목통증/허리통증",
+    "응급처치": "응급처치 (심정지)",
+    "정맥주사": "채혈 및 혈관 확보",
+    "질분비물": "질 분비물/질 출혈",
+    "채혈": "채혈 및 혈관 확보",
+    "체중감소": "체중 감소",
+    "체중증가": "체중 증가/비만",
+    "출혈경향": "쉽게 멍이 듦",
+    "코막힘": "콧물/코막힘",
+    "콧물": "콧물/코막힘",
+    "핍뇨": "소변량변화(핍뇨)",
+    "허리통증": "목통증/허리통증",
+    "현기증": "어지럼",
+    "혈뇨": "붉은색 소변",
+    "흉통": "가슴통증"
+  },
+  "topics": {
+    "가슴통증": {
+      "file": "01-chest-pain.json",
+      "topicId": "1",
+      "scenarios": 6
+    },
+    "가정폭력": {
+      "file": "02-1-domestic-violence.json",
+      "topicId": "2-1",
+      "scenarios": 4
+    },
+    "성폭력": {
+      "file": "02-2-sexual-violence.json",
+      "topicId": "2-2",
+      "requiredSkill": "산부인과진찰 (질 분비물 검사)",
+      "scenarios": 3
+    },
+    "객혈": {
+      "file": "03-hemoptysis.json",
+      "topicId": "3",
+      "requiredSkill": "안전수혈술기",
+      "scenarios": 5
+    },
+    "경련": {
+      "file": "04-seizure.json",
+      "topicId": "4",
+      "scenarios": 5
+    },
+    "고혈압": {
+      "file": "05-hypertension.json",
+      "topicId": "5",
+      "requiredSkill": "혈압 측정",
+      "scenarios": 5
+    },
+    "관절통증/부기": {
+      "file": "06-joint-pain.json",
+      "topicId": "6",
+      "scenarios": 5
+    },
+    "구토": {
+      "file": "07-vomiting.json",
+      "topicId": "7",
+      "requiredSkill": "정맥주사",
+      "scenarios": 5
+    },
+    "근력/감각 이상": {
+      "file": "08-weakness-sensory.json",
+      "topicId": "8",
+      "scenarios": 5
+    },
+    "기분 변화": {
+      "file": "09-mood-change.json",
+      "topicId": "9",
+      "scenarios": 5
+    },
+    "기억력 저하": {
+      "file": "10-memory-loss.json",
+      "topicId": "10",
+      "scenarios": 5
+    },
+    "기침": {
+      "file": "11-cough.json",
+      "topicId": "11",
+      "requiredSkill": "동맥혈채혈",
+      "scenarios": 5
+    },
+    "나쁜 소식 전하기": {
+      "file": "12-breaking-bad-news.json",
+      "topicId": "12",
+      "_noPhysicalExam": true,
+      "scenarios": 5
+    },
+    "두근거림": {
+      "file": "13-palpitation.json",
+      "topicId": "13",
+      "scenarios": 5
+    },
+    "두통": {
+      "file": "14-headache.json",
+      "topicId": "14",
+      "requiredSkill": "안저검사",
+      "scenarios": 5
+    },
+    "떨림/운동이상": {
+      "file": "15-tremor.json",
+      "topicId": "15",
+      "scenarios": 5
+    },
+    "목통증/허리통증": {
+      "file": "16-back-pain.json",
+      "topicId": "16",
+      "scenarios": 5
+    },
+    "물질오남용": {
+      "file": "17-substance-abuse.json",
+      "topicId": "17",
+      "scenarios": 5
+    },
+    "발열": {
+      "file": "18-fever.json",
+      "topicId": "18",
+      "requiredSkill": "혈액배양을 위한 채혈",
+      "scenarios": 4
+    },
+    "배뇨 이상": {
+      "file": "19-urinary-symptoms.json",
+      "topicId": "19",
+      "scenarios": 5
+    },
+    "배변 이상(변비)": {
+      "file": "20-1-constipation.json",
+      "topicId": "20-1",
+      "requiredSkill": "항문직장 진찰",
+      "scenarios": 5
+    },
+    "배변 이상(설사)": {
+      "file": "20-2-diarrhea.json",
+      "topicId": "20-2",
+      "requiredSkill": "정맥주사",
+      "scenarios": 4
+    },
+    "복통": {
+      "file": "21-abdominal-pain.json",
+      "topicId": "21",
+      "scenarios": 5
+    },
+    "불안": {
+      "file": "22-anxiety.json",
+      "topicId": "22",
+      "scenarios": 5
+    },
+    "붉은색 소변": {
+      "file": "23-hematuria.json",
+      "topicId": "23",
+      "scenarios": 5
+    },
+    "산전 진찰": {
+      "file": "24-prenatal-care.json",
+      "topicId": "24",
+      "requiredSkill": "산부인과 진찰(분만 진행 단계, 자궁경부펴바름 검사, 질 분비물 검사)",
+      "scenarios": 5
+    },
+    "성장 지연": {
+      "file": "25-1-growth-delay.json",
+      "topicId": "25-1",
+      "scenarios": 5
+    },
+    "발달 지연": {
+      "file": "25-2-developmental-delay.json",
+      "topicId": "25-2",
+      "scenarios": 5
+    },
+    "소변량변화(다뇨증)": {
+      "file": "26-1-polyuria.json",
+      "topicId": "26-1",
+      "scenarios": 5
+    },
+    "소변량변화(핍뇨)": {
+      "file": "26-2-oliguria.json",
+      "topicId": "26-2",
+      "scenarios": 4
+    },
+    "소화불량": {
+      "file": "27-dyspepsia.json",
+      "topicId": "27",
+      "scenarios": 5
+    },
+    "수면장애": {
+      "file": "28-sleep-disorder.json",
+      "topicId": "28",
+      "scenarios": 5
+    },
+    "쉽게 멍이 듦": {
+      "file": "29-easy-bruising.json",
+      "topicId": "29",
+      "requiredSkill": "안전수혈술기",
+      "scenarios": 5
+    },
+    "실신": {
+      "file": "30-syncope.json",
+      "topicId": "30",
+      "requiredSkill": "혈압 측정",
+      "scenarios": 5
+    },
+    "어지럼": {
+      "file": "31-dizziness.json",
+      "topicId": "31",
+      "requiredSkill": "이경검사, 혈압측정, 안저검사",
+      "scenarios": 5
+    },
+    "예방접종": {
+      "file": "32-immunization.json",
+      "topicId": "32",
+      "scenarios": 5
+    },
+    "월경이상": {
+      "file": "33-1-menstrual-abnormality.json",
+      "topicId": "33-1",
+      "requiredSkill": "산부인과 진찰(자궁경부펴바름 검사, 질 분비물 검사)",
+      "scenarios": 5
+    },
+    "월경통": {
+      "file": "33-2-dysmenorrhea.json",
+      "topicId": "33-2",
+      "requiredSkill": "산부인과 진찰(자궁경부펴바름 검사, 질 분비물 검사)",
+      "scenarios": 5
+    },
+    "유방통": {
+      "file": "34-1-breast-pain.json",
+      "topicId": "34-1",
+      "scenarios": 5
+    },
+    "유방덩이": {
+      "file": "34-2-breast-mass.json",
+      "topicId": "34-2",
+      "scenarios": 5
+    },
+    "음주 상담": {
+      "file": "35-1-alcohol-counseling.json",
+      "topicId": "35-1",
+      "scenarios": 4
+    },
+    "금연 상담": {
+      "file": "35-2-smoking-cessation.json",
+      "topicId": "35-2",
+      "scenarios": 4
+    },
+    "의식장애": {
+      "file": "36-altered-consciousness.json",
+      "topicId": "36",
+      "requiredSkill": "안저검사",
+      "scenarios": 5
+    },
+    "이상지질혈증": {
+      "file": "37-dyslipidemia.json",
+      "topicId": "37",
+      "scenarios": 5
+    },
+    "자살": {
+      "file": "38-suicide.json",
+      "topicId": "38",
+      "scenarios": 5
+    },
+    "질 분비물/질 출혈": {
+      "file": "39-vaginal-discharge.json",
+      "topicId": "39",
+      "requiredSkill": "산부인과 진찰(자궁경부펴바름 검사, 질 분비물 검사)",
+      "scenarios": 5
+    },
+    "체중 감소": {
+      "file": "40-weight-loss.json",
+      "topicId": "40",
+      "requiredSkill": "항문직장진찰",
+      "scenarios": 5
+    },
+    "체중 증가/비만": {
+      "file": "41-obesity.json",
+      "topicId": "41",
+      "scenarios": 5
+    },
+    "콧물/코막힘": {
+      "file": "42-rhinorrhea.json",
+      "topicId": "42",
+      "requiredSkill": "이경검사",
+      "scenarios": 5
+    },
+    "토혈": {
+      "file": "43-hematemesis.json",
+      "topicId": "43",
+      "requiredSkill": "혈압측정, 정맥주사, 안전수혈술기",
+      "scenarios": 4
+    },
+    "피로": {
+      "file": "44-fatigue.json",
+      "topicId": "44",
+      "scenarios": 5
+    },
+    "피부 발진": {
+      "file": "45-skin-rash.json",
+      "topicId": "45",
+      "scenarios": 5
+    },
+    "혈변": {
+      "file": "46-hematochezia.json",
+      "topicId": "46",
+      "requiredSkill": "항문 직장 진찰, 혈압측정, 정맥주사, 안전수혈술기",
+      "scenarios": 5
+    },
+    "호흡곤란": {
+      "file": "47-dyspnea.json",
+      "topicId": "47",
+      "requiredSkill": "동맥혈 채혈",
+      "scenarios": 5
+    },
+    "황달": {
+      "file": "48-jaundice.json",
+      "topicId": "48",
+      "scenarios": 5
+    },
+    "응급처치 (심정지)": {
+      "file": "49-1-emergency-care.json",
+      "topicId": "49-1",
+      "_procedureCase": true,
+      "scenarios": 3
+    },
+    "상처 관리": {
+      "file": "49-2-wound-care.json",
+      "topicId": "49-2",
+      "_procedureCase": true,
+      "scenarios": 3
+    },
+    "채혈 및 혈관 확보": {
+      "file": "49-3-blood-draw.json",
+      "topicId": "49-3",
+      "_procedureCase": true,
+      "scenarios": 3
+    }
+  }
+}
