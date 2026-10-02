@@ -57,6 +57,22 @@ export function extractReply(result) {
     .trim();
 }
 
+const isCue = (m, word) => m.role === "user" && new RegExp(`^\\s*${word}\\s*$`).test(m.text);
+// 괄호 안 진찰 동사 — "진찰" 입력 없이도 진찰 모드로 바뀌는 규칙(프롬프트 "신체진찰 모드")과 맞춘다.
+// "(웃으며)" 같은 감정 지문은 걸리지 않는다.
+const PAREN_EXAM = /\([^)]*(촉진|청진|타진|시진|혈압|진찰|눌러|두드려|두드리|들어보|재보|측정)[^)]*\)/;
+
+/**
+ * 이번 턴에 보낼 프롬프트 단계. 한 번 진찰에 들어가면 이후로도 진찰 단계로 본다.
+ *   마지막 학생 말이 "평가" → eval / 그 전에 "진찰" 또는 괄호 진찰 동사가 있었으면 → pe / 아니면 history
+ */
+export function phaseFor(messages) {
+  const last = messages[messages.length - 1];
+  if (last && isCue(last, "평가")) return "eval";
+  const examStarted = messages.some((m) => isCue(m, "진찰") || (m.role === "user" && PAREN_EXAM.test(m.text)));
+  return examStarted ? "pe" : "history";
+}
+
 /**
  * 문진 중에는 마지막 학생 메시지 앞에 짧은 연기 규칙을 붙여 보낸다 (서버에서만, 기록엔 안 남음).
  * 긴 시스템 프롬프트의 "물어야 나오는 것" 규칙을 소형 모델이 대화 중반부터 잊고 정보를 흘렸다
@@ -64,8 +80,7 @@ export function extractReply(result) {
  * 진찰·평가 단계에 들어가면 붙이지 않는다.
  */
 export function withTurnReminder(messages, systemPrompt) {
-  const cue = (m) => m.role === "user" && /^\s*(진찰|평가)\s*$/.test(m.text);
-  if (messages.some(cue)) return messages;
+  if (phaseFor(messages) !== "history") return messages;
   const m = /반드시 물어야 나오는 것\(onlyIfAsked\): ([^\n]*)/.exec(systemPrompt || "");
   const secrets = m && m[1].trim() ? ` 특히 아직 직접 묻지 않은 것은 말하지 않는다: ${m[1].trim()}.` : "";
   const reminder =

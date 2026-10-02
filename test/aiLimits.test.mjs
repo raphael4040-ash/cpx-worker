@@ -61,3 +61,16 @@ test("문진 중에만 마지막 학생 말 앞에 규칙 리마인더를 붙인
   const pe = [...msgs, { role: "assistant", text: "아뇨" }, { role: "user", text: "진찰" }];
   assert.deepEqual(withTurnReminder(pe, sp), pe);
 });
+
+test("대화 단계를 고른다 — 문진 / 진찰(신호어·괄호 진찰 동사) / 평가", async () => {
+  const { phaseFor } = await import("../src/aiLimits.js");
+  const u = (text) => ({ role: "user", text });
+  const a = (text) => ({ role: "assistant", text });
+  assert.equal(phaseFor([u("안녕하세요")]), "history");
+  assert.equal(phaseFor([u("(웃으며) 안녕하세요")]), "history");
+  assert.equal(phaseFor([u("어디가 불편하세요?"), a("배요"), u("진찰")]), "pe");
+  assert.equal(phaseFor([u("진찰"), a("(혈압 120/80)"), u("배를 눌러볼게요")]), "pe");
+  assert.equal(phaseFor([u("잠시만요 (복부를 촉진한다)")]), "pe");
+  assert.equal(phaseFor([u("진찰"), a("…"), u("평가")]), "eval");
+  assert.equal(phaseFor([u("평가")]), "eval");
+});

@@ -18,8 +18,8 @@
  * 상한을 10,000 이 아니라 9,000 으로 잡았다. 무료 플랜 계정이면 10,000 을 넘는 순간
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
-import { handleInterviewStart } from "./interviewRoutes.js";
-import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder } from "./aiLimits.js";
+import { prepareInterview } from "./interviewRoutes.js";
+import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -56,15 +56,22 @@ export async function handleAiStart(request, env, cfg, cors) {
     return json({ error: "user_daily_limit", limit: limits.perUser, resetsAt: nextResetIso() }, 429, cors);
   }
 
-  // 케이스 조합은 기존 /interview/start 그대로 재사용한다 (같은 바디 형식).
-  const startRes = await handleInterviewStart(request, env, cors);
-  if (!startRes.ok) return startRes;
-  const data = await startRes.json();
+  // 케이스 조합은 /interview/start 와 같은 함수를 쓴다 (같은 바디 형식).
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    /* 빈 바디 허용 — 무작위 케이스 */
+  }
+  const prepared = prepareInterview(body);
+  if (prepared.error) return json(prepared.error, prepared.status, cors);
+  // 단계별 프롬프트를 미리 만들어 둔다 — 매 턴 그 단계에 필요한 만큼만 보낸다 (phaseFor 참고).
+  const prompts = { history: prepared.prompt("history"), pe: prepared.prompt("pe"), eval: prepared.prompt("eval") };
 
   const sessionId = crypto.randomUUID();
   await kv.put(
     `ai:session:${sessionId}`,
-    JSON.stringify({ uid: user.uid, systemPrompt: data.systemPrompt, topic: data.topic }),
+    JSON.stringify({ uid: user.uid, prompts, topic: prepared.topic }),
     { expirationTtl: SESSION_TTL_SEC }
   );
   await kv.put(userKey, String(userSessions + 1), { expirationTtl: 2 * 86400 });
@@ -72,7 +79,7 @@ export async function handleAiStart(request, env, cfg, cors) {
   return json(
     {
       sessionId,
-      topic: data.topic,
+      topic: prepared.topic,
       model: env.AI_MODEL || DEFAULT_AI_MODEL,
       // 채점이 끝난 뒤 카드에 케이스 이름을 보여줄 때만 쓴다. 시스템 프롬프트는 내려주지 않는다.
       remainingToday: Math.max(0, limits.perUser - userSessions - 1),
@@ -101,6 +108,8 @@ export async function handleAiChat(request, env, cfg, cors) {
 
   const session = await kv.get(`ai:session:${String(body.sessionId || "")}`, "json");
   if (!session || session.uid !== user.uid) return json({ error: "session_expired" }, 404, cors);
+  // 배포 직후 남아 있던 예전 세션(통짜 systemPrompt)도 그대로 돌게 한다.
+  const systemPrompt = session.prompts ? session.prompts[phaseFor(messages)] : session.systemPrompt;
 
   const limits = readLimits(env);
   const day = utcDay();
@@ -115,8 +124,8 @@ export async function handleAiChat(request, env, cfg, cors) {
   try {
     result = await env.AI.run(model, {
       messages: [
-        { role: "system", content: session.systemPrompt },
-        ...withTurnReminder(messages, session.systemPrompt).map((m) => ({ role: m.role, content: m.text })),
+        { role: "system", content: systemPrompt },
+        ...withTurnReminder(messages, systemPrompt).map((m) => ({ role: m.role, content: m.text })),
       ],
       max_completion_tokens: MAX_OUTPUT_TOKENS,
       temperature: 0.8,
@@ -135,7 +144,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   }
 
   const reply = extractReply(result);
-  const spent = neuronsFor(model, result?.usage, session.systemPrompt, messages, reply);
+  const spent = neuronsFor(model, result?.usage, systemPrompt, messages, reply);
   await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
 
   if (!reply) return json({ error: "empty_response" }, 502, cors);

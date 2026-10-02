@@ -37,42 +37,53 @@ export async function handleInterviewStart(request, env, cors) {
     /* 빈 바디 허용 — 무작위 케이스 */
   }
 
-  const resolved = resolveTopic(body.topic);
-  if (!resolved) {
-    return json({ error: "unknown_topic", hint: "topics.js 의 표기와 일치해야 합니다" }, 400, cors);
-  }
-  if (resolved._procedureCase || resolved._noPhysicalExam) {
-    // 술기 카드(situation·expectedSequence·distractors)와 "나쁜 소식 전하기"
-    // (awareness·news·reactionStages)는 일반 hpi/redFlags/pe 스키마와 전혀 달라서
-    // 이 프롬프트 빌더가 아직 다루지 않는다. 지금은 Claude Code 플러그인 전용으로
-    // 남겨두고, 웹 면담에서는 명시적으로 막는다.
-    return json({ error: "topic_not_supported", hint: "이 케이스는 아직 웹 면담에서 지원하지 않습니다" }, 400, cors);
-  }
-
-  const fileKey = resolved.file.replace(/\.json$/, "");
-  const data = CASES[fileKey];
-  if (!data) return json({ error: "case_not_bundled", file: resolved.file }, 500, cors);
-
-  const kase = buildCase(fileKey, data, personas);
-  if (kase.problems && kase.problems.length) {
-    console.log("case build problems:", resolved.topicName, kase.problems);
-  }
-  const resolvedCase = caseToPrompt(kase);
-  const systemPrompt = buildSystemPrompt(resolvedCase, {
-    noPE: !!resolved._noPhysicalExam,
-    procedure: !!resolved._procedureCase,
-  });
+  const prepared = prepareInterview(body);
+  if (prepared.error) return json(prepared.error, prepared.status, cors);
 
   return json(
     {
-      topic: resolvedCase.topic,
-      systemPrompt,
+      topic: prepared.topic,
+      systemPrompt: prepared.prompt("all"),
       model: env.GEMINI_MODEL || DEFAULT_MODEL,
       safetySettings: SAFETY_SETTINGS,
     },
     200,
     cors
   );
+}
+
+/**
+ * 케이스를 뽑고(또는 지정 주제로 찾고) 조합해서, 단계별 시스템 프롬프트를 만드는 함수를 돌려준다.
+ * /interview/start(전체 프롬프트를 브라우저에 줌)와 /interview/ai/start(단계별로 KV 에 저장)가 같이 쓴다.
+ * 실패면 { error: {...}, status }.
+ */
+export function prepareInterview(body) {
+  const resolved = resolveTopic(body && body.topic);
+  if (!resolved) {
+    return { error: { error: "unknown_topic", hint: "topics.js 의 표기와 일치해야 합니다" }, status: 400 };
+  }
+  if (resolved._procedureCase || resolved._noPhysicalExam) {
+    // 술기 카드(situation·expectedSequence·distractors)와 "나쁜 소식 전하기"
+    // (awareness·news·reactionStages)는 일반 hpi/redFlags/pe 스키마와 전혀 달라서
+    // 이 프롬프트 빌더가 아직 다루지 않는다. 지금은 Claude Code 플러그인 전용으로
+    // 남겨두고, 웹 면담에서는 명시적으로 막는다.
+    return { error: { error: "topic_not_supported", hint: "이 케이스는 아직 웹 면담에서 지원하지 않습니다" }, status: 400 };
+  }
+
+  const fileKey = resolved.file.replace(/\.json$/, "");
+  const data = CASES[fileKey];
+  if (!data) return { error: { error: "case_not_bundled", file: resolved.file }, status: 500 };
+
+  const kase = buildCase(fileKey, data, personas);
+  if (kase.problems && kase.problems.length) {
+    console.log("case build problems:", resolved.topicName, kase.problems);
+  }
+  const resolvedCase = caseToPrompt(kase);
+  const flags = { noPE: !!resolved._noPhysicalExam, procedure: !!resolved._procedureCase };
+  return {
+    topic: resolvedCase.topic,
+    prompt: (phase) => buildSystemPrompt(resolvedCase, { ...flags, phase }),
+  };
 }
 
 // ---------------------------------------------------------------- helpers
