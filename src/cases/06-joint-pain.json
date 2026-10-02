@@ -144,7 +144,7 @@
       "constraints": { "ageRange": [30, 60], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "market", "care", "teacher"],
       "iceHint": ["internet", "family", "test"],
-      "opening": ["손가락 마디가 여러 군데 아프고 부어요.", "아침에 손이 뻣뻣해서 주먹이 안 쥐어져요."],
+      "opening": ["손가락 마디가 여러 군데 아프고 부어요.", "손이 아프고 부어서 주먹이 잘 안 쥐어져요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 서서히",
         "character": "묵직하게 쑤시고 마디가 물렁하게 부어 있음",
@@ -269,7 +269,7 @@
       "constraints": { "ageRange": [20, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["soldier", "delivery", "student", "construct", "office"],
       "iceHint": ["work", "test", "internet"],
-      "opening": ["운동하다 무릎을 삐끗한 뒤로 계속 아파요.", "무릎을 접질렸는데 붓고 잘 안 펴져요."],
+      "opening": ["운동하다 무릎을 삐끗한 뒤로 계속 아파요.", "무릎을 접질렸는데 계속 아파요."],
       "hpi": {
         "onset": "{{onsetDays}}일 전 {{activity}} 하다가 무릎이 뒤틀리면서",
         "character": "속에서 결리듯 아프고 뻐근함",

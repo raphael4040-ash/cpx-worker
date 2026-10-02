@@ -33,6 +33,20 @@ function choice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+/**
+ * 시나리오 카드의 ice {ideas, concerns, expectations} 에서 하나씩 뽑아 한 줄로 만든다.
+ * 셋 중 하나라도 비어 있으면 null — 그 시나리오는 인물 성향 ICE 를 그대로 쓴다.
+ * sample_case.py 의 scenario_ice() 와 같은 형식이어야 한다.
+ */
+function scenarioIce(scenario) {
+  const ice = scenario && scenario.ice;
+  if (!ice) return null;
+  const pick = (k) => (Array.isArray(ice[k]) && ice[k].length ? choice(ice[k]) : null);
+  const idea = pick("ideas"), concern = pick("concerns"), expectation = pick("expectations");
+  if (!idea || !concern || !expectation) return null;
+  return { id: "scenario", idea: `생각(원인): ${idea} / 걱정: ${concern} / 기대: ${expectation}` };
+}
+
 function sample(arr, k) {
   const pool = arr.slice();
   const out = [];
@@ -652,6 +666,12 @@ export function buildCase(topicFile, data, personas, scenarioId) {
   const problems = [];
   validate(person, scenario, personas, problems);
 
+  // 시나리오에 ICE(생각·걱정·기대)가 따로 있으면 인물 성향의 한 줄 ICE 대신 그것을 쓴다.
+  // 성향 ICE 는 케이스와 무관한 한 문장이라 "가장 걱정되는 게?"에 어느 케이스든 같은 답이 나왔다.
+  // 검증(validate)은 성향 ICE 로 끝낸 뒤에 바꾼다 — 상충 조합 규칙이 성향 id 를 보기 때문.
+  const sIce = scenarioIce(scenario);
+  if (sIce) person.ice = sIce;
+
   const { findings, rolled } = resolveFindings(scenario, slots);
   return {
     topic: data.topic, topicFile,
@@ -667,7 +687,7 @@ export function buildCase(topicFile, data, personas, scenarioId) {
 /** 스킬(시스템 프롬프트)이 그대로 읽을 수 있는 형태로 조합 결과를 펼친다. */
 export function caseToPrompt(kase) {
   const s = kase.scenario, p = kase.person, slots = kase.slots;
-  const { pe: _pe, variations: _v, constraints: _c, occupationBias: _o, iceHint: _i, ...rest } = s;
+  const { pe: _pe, variations: _v, constraints: _c, occupationBias: _o, iceHint: _i, ice: _ice, ...rest } = s;
   const filled = fillDeep(rest, slots);
 
   const person = {

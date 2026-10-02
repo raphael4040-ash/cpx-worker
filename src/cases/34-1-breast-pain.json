@@ -15,7 +15,7 @@
       "constraints": { "ageRange": [25, 45], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "teacher", "nurse", "housewife", "selfemp"],
       "iceHint": ["cancer", "internet", "family"],
-      "opening": ["가슴이 아파서 왔어요.", "생리 전마다 가슴이 너무 아파서요."],
+      "opening": ["가슴이 아파서 왔어요.", "가슴이 자꾸 아파서요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 반복됨. 생리 시작 {{preDays}}일쯤 전부터 아프기 시작",
         "character": "묵직하고 뻐근하게 붓는 느낌. 심할 때는 스치기만 해도 아픔",
@@ -40,7 +40,8 @@
         "가족 중에 유방암이나 난소암": "{{fhx}}",
         "체중이 줄거나 열이 나나": "없어요.",
         "출산과 수유 경험": "{{parity}}",
-        "호르몬제나 피임약을 먹나": "그런 약은 안 먹어요."
+        "호르몬제나 피임약을 먹나": "그런 약은 안 먹어요.",
+        "가슴을 부딪히거나 다친 적이 있나": "없어요."
       },
       "pmh": "특이 병력 없음. 유방 검사는 받아본 적 없음",
       "meds": "없음. 생리통에 가끔 진통제",
@@ -82,7 +83,7 @@
       "constraints": { "ageRange": [21, 42], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "student", "nurse", "selfemp", "teacher"],
       "iceHint": ["medicine", "internet", "denial"],
-      "opening": ["요즘 가슴이 계속 붓고 아파요.", "몇 달 전부터 가슴이 아픈데 생리랑 상관없이 계속 그래요."],
+      "opening": ["요즘 가슴이 계속 붓고 아파요.", "몇 달 전부터 가슴이 아파요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터. {{drug}}을(를) 먹기 시작한 뒤로 생김",
         "character": "양쪽이 팽팽하게 불어난 느낌이고 만지면 아픔",
@@ -107,7 +108,9 @@
         "지금 먹는 약이 있나": "{{drug}}을(를) {{onsetMonths}}개월째 먹고 있어요.",
         "가족 중 유방암": "{{fhx}}",
         "체중감소나 열": "없어요.",
-        "마지막 월경일과 임신 가능성": "생리는 규칙적이고, 임신 가능성은 없어요."
+        "마지막 월경일과 임신 가능성": "생리는 규칙적이고, 임신 가능성은 없어요.",
+        "가슴을 부딪히거나 다친 적이 있나": "없어요.",
+        "지금 임신이나 수유 중인가": "아니요, 수유 중이 아니에요."
       },
       "pmh": "특이 병력 없음",
       "meds": "{{drug}} 복용 중",
@@ -148,7 +151,7 @@
       "constraints": { "ageRange": [24, 38], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "smoking": "notCurrent", "alcohol": "never" },
       "occupationBias": ["housewife", "office", "teacher", "nurse", "selfemp"],
       "iceHint": ["medicine", "work", "family"],
-      "opening": ["젖 먹이는 중인데 한쪽 가슴이 붓고 아파요.", "가슴이 딱딱하게 뭉치고 열이 나요."],
+      "opening": ["젖 먹이는 중인데 한쪽 가슴이 붓고 아파요.", "가슴이 딱딱하게 뭉치고 아파요."],
       "hpi": {
         "onset": "출산 {{postpartumWeeks}}주째. {{onsetDays}}일 전부터 시작해 점점 심해짐",
         "character": "화끈거리고 욱신욱신 쑤심. 만지면 몹시 아픔",
@@ -214,7 +217,7 @@
       "constraints": { "ageRange": [30, 62], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["market", "care", "housewife", "cook", "office"],
       "iceHint": ["cancer", "internet", "repeat"],
-      "opening": ["{{side}}쪽 가슴이 아파서 왔어요.", "가슴 한쪽이 콕콕 쑤셔서 혹시 유방암인가 싶어서요."],
+      "opening": ["{{side}}쪽 가슴이 아파서 왔어요.", "가슴 한쪽이 콕콕 쑤셔요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전부터. {{trigger}} 뒤로 시작",
         "character": "콕콕 쑤시고 누르면 딱 그 자리가 아픔",
@@ -239,7 +242,8 @@
         "숨이 차거나 식은땀이 나나": "그런 건 없어요.",
         "가족 중 유방암": "{{fhx}}",
         "체중감소나 열": "없어요.",
-        "유방촬영을 받아본 적 있나": "{{mammo}}"
+        "유방촬영을 받아본 적 있나": "{{mammo}}",
+        "가슴을 부딪히거나 다친 적이 있나": "가슴을 부딪힌 적은 없고 {{trigger}} 뒤로 아팠어요."
       },
       "pmh": "특이 병력 없음",
       "meds": "없음",
@@ -309,7 +313,8 @@
         "가족 중 유방암이나 난소암": "{{fhx}}",
         "체중감소·식은땀·뼈 통증": "몸무게가 두어 달 사이 3kg 정도 빠졌어요.",
         "폐경 시기와 출산·수유력": "{{reproHx}}",
-        "유방촬영을 마지막으로 받은 때": "{{mammo}}"
+        "유방촬영을 마지막으로 받은 때": "{{mammo}}",
+        "가슴을 부딪히거나 다친 적이 있나": "없어요."
       },
       "pmh": "특이 병력 없음. 정기적인 유방검진은 받지 않았음",
       "meds": "없음",

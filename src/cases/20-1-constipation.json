@@ -107,7 +107,8 @@
         "가족 중 대장암이 있나": "없어요.",
         "구토하거나 가스가 아예 안 나오나": "그런 적은 없어요. 가스는 잘 나와요.",
         "식사와 물은 어떻게 드시나": "{{trigger}} 뒤로 채소는 거의 안 먹고 물도 잘 안 마셔요.",
-        "운동은 하시나": "따로 운동하는 건 거의 없어요. 몸을 움직일 시간이 없어요."
+        "운동은 하시나": "따로 운동하는 건 거의 없어요. 몸을 움직일 시간이 없어요.",
+        "임신 가능성이 있나": "{{pregSay}}"
       },
       "pmh": "특이 병력 없음",
       "meds": "약국 변비약과 유산균을 가끔 복용",
@@ -134,7 +135,8 @@
       },
       "variations": {
         "onsetMonths": [3, 6, 12], "severity": [2, 3, 4], "interval": [3, 4],
-        "trigger": ["다이어트를 시작한", "일이 몰려 바빠진", "이사 와서 생활이 바뀐"]
+        "trigger": ["다이어트를 시작한", "일이 몰려 바빠진", "이사 와서 생활이 바뀐"],
+        "pregSay": [{"text": "마지막 생리는 2주 전이고 임신 가능성은 없어요.", "sexOnly": "female", "maxAge": 52}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
       "disclosure": {
         "spontaneous": ["변비가 심하다는 것"],
@@ -148,7 +150,7 @@
       "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "jobless"],
       "iceHint": ["medicine", "family", "denial"],
-      "opening": ["약 먹고부터 변을 통 못 봐요.", "일주일 넘게 변을 못 봤어요."],
+      "opening": ["요즘 변을 통 못 봐요.", "일주일 넘게 변을 못 봤어요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전 {{drug}} 진통제를 먹기 시작하면서부터",
         "character": "변이 돌처럼 딱딱하고 나오다 만 느낌",

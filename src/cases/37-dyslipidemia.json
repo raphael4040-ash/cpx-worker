@@ -99,7 +99,7 @@
       "constraints": { "ageRange": [26, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병", "갑상선기능저하증"], "smoking": "never", "alcohol": "never" },
       "occupationBias": ["office", "teacher", "nurse", "selfemp", "student"],
       "iceHint": ["family", "internet", "test"],
-      "opening": ["콜레스테롤이 너무 높게 나왔다고 해서요.", "아버지가 일찍 심장으로 돌아가셔서 걱정돼 왔어요."],
+      "opening": ["콜레스테롤이 너무 높게 나왔다고 해서요.", "콜레스테롤 때문에 상담받으러 왔어요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전 검진에서 LDL 이 매우 높게 나옴",
         "character": "증상은 없음",
@@ -176,7 +176,7 @@
       "constraints": { "ageRange": [38, 66], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "이상지질혈증"] },
       "occupationBias": ["housewife", "office", "teacher", "market", "care"],
       "iceHint": ["internet", "medicine", "denial"],
-      "opening": ["콜레스테롤이 갑자기 확 올랐다고 해서요.", "작년엔 정상이었는데 올해 많이 높아졌대요."],
+      "opening": ["콜레스테롤이 높다고 해서 왔어요.", "검진에서 콜레스테롤 수치가 높대요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전 검진에서 이전보다 크게 오른 수치를 받음",
         "character": "지질 수치 자체로 인한 증상은 없으나 다른 증상들이 있음",
@@ -328,7 +328,7 @@
       "constraints": { "ageRange": [58, 78], "sex": "any", "requiredRisk": ["고혈압", "당뇨병", "흡연"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "market", "farmer", "driver", "housewife"],
       "iceHint": ["medicine", "denial", "family"],
-      "opening": ["약 먹고 다리가 아파서 끊었어요.", "콜레스테롤약을 안 먹은 지 좀 됐는데 괜찮을까요."],
+      "opening": ["콜레스테롤약 때문에 여쭤보려고 왔어요.", "콜레스테롤약을 안 먹은 지 좀 됐는데 괜찮을까요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전 스타틴 복용 중단",
         "character": "허벅지와 종아리가 뻐근하고 무거웠음. 약을 끊고 나서는 나아짐",

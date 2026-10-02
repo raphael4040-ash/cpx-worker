@@ -17,6 +17,10 @@ function personBlock(resolved) {
     `성격(${p.personality}): ${p.personalityVoice}`,
     `건강정보 수준(${p.healthLiteracy}): ${p.healthLiteracyVoice}`,
     `ICE(생각·걱정·기대, 물어야 나옴, 소유자: ${p.iceOwner}): ${p.ice}`,
+    // 시나리오별 ICE 는 "생각(원인): … / 걱정: … / 기대: …" 세 칸이다 (sampleCase.js scenarioIce).
+    p.ice.includes("생각(원인):")
+      ? "  ICE 세 칸은 따로 답한다 — 원인을 물으면 생각만, 걱정을 물으면 걱정만, 바라는 것을 물으면 기대만. 묻지 않은 칸은 말하지 않는다."
+      : "",
     `배경질환: ${p.backgroundIllness}${p.forcedRisk.length ? ` (필수 위험인자: ${p.forcedRisk.join(", ")})` : ""}`,
   ];
   if (p.guardian) {
@@ -94,7 +98,7 @@ function peBlock(resolved) {
 const CHECKLIST = `## I. 병력청취 (History taking) — 60점
 1. 도입 (5점): 자기소개·신분확인(2) / 환자 확인(1) / 개방형 질문으로 시작(2)
 2. 주호소&현병력 (20점): 명확화(2) 발병시기(2) 경과양상(2) 위치·방사(2, 해당없으면 만점) 악화완화(3) 강도(2) 동반증상(4) 과거유사증상(3)
-3. ICE (6점): Ideas(2) Concerns(2) Expectations(2)
+3. ICE (6점) — 환자 본인의 관점을 물었는가: Ideas 환자가 생각하는 원인("혹시 짚이는 원인이 있으세요?")(2) Concerns 가장 걱정되는 점("가장 걱정되시는 게 뭐예요?")(2) Expectations 오늘 진료에서 바라는 것("오늘 어떤 도움을 받고 싶으세요?")(2). 학생이 그 질문을 했고 환자의 답을 들었을 때 인정한다 — 환자가 스스로 말한 것은 학생이 물은 것이 아니다.
 4. Red Flag/감별진단 (10점): 케이스별 필수 위험증상 질문(6) 전신증상(체중감소/발열/야간발한)(4)
 5. 과거력·약물력·가족력·사회력 (12점): 과거병력·수술력(3) 약물·알레르기(3) 가족력(2) 사회력(3) 산과력/월경력(1, 해당없으면 만점)
 6. Safety Netting (7점): 악화시 대처(3) 재방문 기준(2) 다음단계 안내(2)
@@ -115,7 +119,7 @@ O(만점)/△(절반)/X(0점)로 매긴다. \`진찰\` 없이 \`평가\`가 오�
 // (점수 계산은 기록판이 한다 — AI 가 적은 합계는 자주 틀렸다).
 const MARK_KEYS = ["intro", "hpi", "ice", "redflag", "pmh", "safety", "consent", "vitals", "pe1", "pe2", "rapport", "order", "empathy", "summary", "language", "closing"];
 const MARK_GUIDE =
-  "intro=도입, hpi=주호소&현병력, ice=ICE, redflag=Red Flag/감별진단, pmh=과거력·약물력·가족력·사회력, safety=Safety Netting, " +
+  "intro=도입, hpi=주호소&현병력, ice=ICE(환자의 생각·걱정·기대), redflag=Red Flag/감별진단, pmh=과거력·약물력·가족력·사회력, safety=Safety Netting, " +
   "consent=진찰 전 설명·동의, vitals=활력징후 확인, pe1=핵심 진찰 수기 1, pe2=핵심 진찰 수기 2, " +
   "rapport=라포 형성, order=질문 순서, empathy=경청·공감, summary=요약·확인, language=언어사용, closing=마무리 인사";
 

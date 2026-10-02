@@ -16,7 +16,7 @@
       "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "market", "selfemp", "housewife"],
       "iceHint": ["cancer", "family", "denial"],
-      "opening": ["변에 피가 섞여 나와요.", "몇 달 전부터 변볼 때 피가 나오고 변이 가늘어졌어요."],
+      "opening": ["변에 피가 섞여 나와요.", "몇 달 전부터 변볼 때 피가 나와요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 서서히",
         "character": "변에 검붉은 피와 점액이 섞여 나오고 변이 가늘어짐",
@@ -40,7 +40,9 @@
         "가족 중 대장암이 있나": "{{fhx}}",
         "대장내시경을 받아본 적이 있나": "{{scopeHx}}",
         "열이 나거나 밤에 땀이 나나": "그런 건 없어요.",
-        "항문이 아프거나 덩어리가 만져지나": "아프지는 않아요."
+        "항문이 아프거나 덩어리가 만져지나": "아프지는 않아요.",
+        "검은 변이 나오거나 피를 토한 적이 있나": "없어요.",
+        "멍이 잘 들거나 코피·잇몸 출혈이 있나": "그런 건 없어요."
       },
       "pmh": "{{scopeHx}}",
       "meds": "변비약을 가끔 복용",
@@ -84,7 +86,7 @@
       "constraints": { "ageRange": [62, 84], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "jobless", "market"],
       "iceHint": ["family", "test", "denial"],
-      "opening": ["갑자기 피가 왈칵 쏟아지듯 나왔어요.", "아프지도 않은데 변기가 빨갛게 될 만큼 피가 나왔어요."],
+      "opening": ["갑자기 피가 왈칵 쏟아지듯 나왔어요.", "변기가 빨갛게 될 만큼 피가 나왔어요."],
       "hpi": {
         "onset": "{{onsetHours}}시간 전 갑자기, 아무 전조 없이",
         "character": "선홍색에 가까운 붉은 피가 변과 함께 왈칵 쏟아짐. 배는 아프지 않음",
@@ -151,7 +153,7 @@
       "constraints": { "ageRange": [50, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["construct", "farmer", "driver", "selfemp", "retired"],
       "iceHint": ["denial", "medicine", "test"],
-      "opening": ["변이 짜장처럼 검게 나오고 어지러워요.", "새벽에 검붉은 변을 여러 번 봤어요."],
+      "opening": ["변이 짜장처럼 검게 나와요.", "새벽에 검붉은 변을 여러 번 봤어요."],
       "hpi": {
         "onset": "{{onsetHours}}시간 전부터",
         "character": "짜장처럼 검고 끈적한 변에 검붉은 피가 섞여 나옴. 냄새가 아주 고약함",
@@ -245,7 +247,9 @@
         "가족 중 대장암이 있나": "{{fhx}}",
         "열이 나나": "없어요.",
         "항문이 아프거나 덩어리가 만져지나": "볼일 볼 때 뭐가 나왔다 들어가요.",
-        "대장내시경을 받아본 적이 있나": "받아본 적 없어요."
+        "대장내시경을 받아본 적이 있나": "받아본 적 없어요.",
+        "검은 변이 나오거나 피를 토한 적이 있나": "없어요.",
+        "멍이 잘 들거나 코피·잇몸 출혈이 있나": "그런 건 없어요."
       },
       "pmh": "만성 변비",
       "meds": "변비약과 치질 연고를 가끔 사용",
@@ -287,7 +291,7 @@
       "constraints": { "ageRange": [18, 38], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "office", "soldier", "highschool", "parttime"],
       "iceHint": ["cancer", "internet", "test"],
-      "opening": ["몇 달째 배가 아프고 변에 피가 섞여요.", "설사에 피가 나오고 살이 빠져요."],
+      "opening": ["몇 달째 배가 아프고 변에 피가 섞여요.", "설사에 피가 섞여 나와요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 서서히",
         "character": "무른 변에 피가 조금씩 섞이고 오른쪽 아랫배가 쥐어짜듯 아픔",
@@ -311,7 +315,9 @@
         "항문 쪽에 상처나 고름이 있나": "{{perianal}}",
         "관절이 아프거나 눈이 충혈된 적이 있나": "{{extra}}",
         "가족 중 장 질환이 있나": "{{fhx}}",
-        "최근에 항생제를 먹었거나 여행을 갔나": "그런 건 없어요."
+        "최근에 항생제를 먹었거나 여행을 갔나": "그런 건 없어요.",
+        "검은 변이 나오거나 피를 토한 적이 있나": "없어요.",
+        "멍이 잘 들거나 코피·잇몸 출혈이 있나": "그런 건 없어요."
       },
       "pmh": "특이 병력 없음",
       "meds": "지사제를 가끔 복용",

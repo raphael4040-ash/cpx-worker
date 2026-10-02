@@ -29,7 +29,7 @@
         "timing": "아침에 일어날 때 가장 심하고 낮에는 덜함"
       },
       "assoc": {
-        "positive": ["재채기를 한 번에 여러 번 함", "눈이 가렵고 충혈됨", "목 안쪽이 간지러움", "코가 막혀 입으로 숨을 쉼", "잘 때 코를 곪"],
+        "positive": ["재채기를 한 번에 여러 번 함", "눈이 가렵고 충혈됨", "목 안쪽이 간지러움", "코가 막혀 입으로 숨을 쉼", "잘 때 코를 곯"],
         "negative": ["발열 없음", "누런 고름 콧물 없음", "얼굴이나 이가 아프지 않음", "코피 없음", "냄새를 못 맡는 정도는 아님", "한쪽만 막히는 것은 아님"]
       },
       "redFlags": {
@@ -153,7 +153,7 @@
       "constraints": { "ageRange": [22, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "teacher", "market", "driver", "selfemp"],
       "iceHint": ["repeat", "medicine", "test"],
-      "opening": ["코가 계속 막히고 누런 콧물이 나와요.", "감기가 오래가는데 얼굴까지 아파요."],
+      "opening": ["코가 계속 막히고 누런 콧물이 나와요.", "감기가 오래가요. 코가 계속 막혀요."],
       "hpi": {
         "onset": "{{onsetDays}}일 전 감기로 시작",
         "character": "누렇고 진한 콧물이 계속 나오고 코가 꽉 막힘",
@@ -220,7 +220,7 @@
       "constraints": { "ageRange": [45, 76], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["construct", "welder", "farmer", "driver", "market"],
       "iceHint": ["denial", "cancer", "repeat"],
-      "opening": ["한쪽 코가 몇 달째 막혀 있어요.", "코가 한쪽만 막히고 피 섞인 콧물이 나와요."],
+      "opening": ["한쪽 코가 몇 달째 막혀 있어요.", "코가 한쪽만 계속 막혀요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 서서히",
         "character": "{{side}}쪽 코만 계속 막혀 있고 코를 풀면 피가 섞여 나옴",
@@ -244,7 +244,8 @@
         "체중이 줄었나": "{{weightLoss}}kg 정도 빠졌어요.",
         "귀가 먹먹하거나 안 들리나": "{{side}}쪽 귀가 물 들어간 것처럼 먹먹해요.",
         "얼굴이 저리거나 물체가 겹쳐 보이나": "저린 건 없고 겹쳐 보이지도 않아요.",
-        "담배는 얼마나 피우나": "하루 한 갑씩 삼십 년 넘게 피웠어요."
+        "담배는 얼마나 피우나": "하루 한 갑씩 삼십 년 넘게 피웠어요.",
+        "코를 다치거나 수술한 적, 코에 뭔가 들어간 적이 있나": "그런 건 없어요."
       },
       "pmh": "특이 병력 없음. 이비인후과에서 비염 약만 몇 번 받아 먹었으나 효과 없었음",
       "meds": "약국 코 스프레이",
@@ -287,7 +288,7 @@
       "constraints": { "ageRange": [35, 70], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["market", "cook", "driver", "housewife", "retired"],
       "iceHint": ["repeat", "medicine", "denial"],
-      "opening": ["찬 바람만 쐬면 콧물이 줄줄 나요.", "코가 막히고 콧물이 나는데 사철 내내 그래요."],
+      "opening": ["콧물이 줄줄 나요.", "코가 막히고 콧물이 나요."],
       "hpi": {
         "onset": "{{onsetYears}}년 전부터 서서히, 계절과 관계없이 사철 내내",
         "character": "맑은 콧물이 갑자기 쏟아지고 코가 막힘. 가려움이나 연달아 나오는 재채기는 없음",
@@ -311,7 +312,8 @@
         "냄새를 못 맡나": "잘 맡아요.",
         "눈이나 코가 가려운가": "가렵지는 않아요. 그냥 콧물만 나요.",
         "목에 멍울이 만져지거나 체중이 줄었나": "그런 건 없어요.",
-        "코 스프레이를 얼마나 오래 쓰나": "{{spray}}"
+        "코 스프레이를 얼마나 오래 쓰나": "{{spray}}",
+        "코를 다치거나 수술한 적이 있나": "없어요."
       },
       "pmh": "특이 병력 없음. 알레르기 검사를 받았는데 별 이상이 없다고 들음",
       "meds": "{{meds}}",

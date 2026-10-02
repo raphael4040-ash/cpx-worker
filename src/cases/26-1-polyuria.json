@@ -88,7 +88,7 @@
       "constraints": { "ageRange": [22, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병"] },
       "occupationBias": ["office", "student", "delivery", "construct", "soldier", "nurse"],
       "iceHint": ["internet", "test", "cancer"],
-      "opening": ["물을 계속 마시고 소변을 하루 종일 봐요.", "밤에도 물 마시러 몇 번씩 일어나요."],
+      "opening": ["물을 계속 마시고 소변을 하루 종일 봐요.", "물을 너무 많이 마셔서 왔어요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전부터 비교적 갑자기 시작 — 어느 날부터인지 날짜를 기억할 정도",
         "character": "소변이 물처럼 맑고 양이 아주 많음. 갈증이 참기 힘들 정도",
@@ -248,7 +248,8 @@
         "손이 떨리거나 어지럽나": "손이 좀 떨리고 가끔 어지러워요.",
         "약 농도 검사를 정기적으로 받나": "{{monitoring}}",
         "체중이 줄었나": "몸무게 변화는 별로 없어요.",
-        "머리를 다치거나 뇌 수술 받은 적": "그런 적 없어요."
+        "머리를 다치거나 뇌 수술 받은 적": "그런 적 없어요.",
+        "당뇨라는 얘기를 들은 적": "혈당은 괜찮다고 했어요."
       },
       "pmh": "양극성장애로 정신건강의학과 추적 중, 리튬 {{lithiumYears}}년 복용",
       "meds": "리튬(기분안정제)을 수년째 복용 중. {{monitoring}}",
@@ -293,7 +294,7 @@
       "constraints": { "ageRange": [55, 78], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "selfemp", "driver"],
       "iceHint": ["medicine", "family", "denial"],
-      "opening": ["소변을 자꾸 봐서 외출을 못 하겠어요.", "약 바꾸고 나서 화장실을 계속 가요."],
+      "opening": ["소변을 자꾸 봐서 외출을 못 하겠어요.", "화장실을 너무 자주 가요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전 혈압약을 바꾼 뒤부터",
         "character": "소변량이 늘고 특히 약 먹은 뒤 몇 시간 동안 자주 감",

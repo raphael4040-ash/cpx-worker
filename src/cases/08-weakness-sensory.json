@@ -40,7 +40,7 @@
         "암 치료를 받은 적 있나": "{{cancerHx}}",
         "열이 나나": "열은 없어요."
       },
-      "pmh": "{{cancerHx}}",
+      "pmh": "{{cancerHx}} 척추 수술이나 경추 외상, 디스크 진단은 없음",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -80,7 +80,7 @@
       "constraints": { "ageRange": [20, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "student", "teacher", "delivery", "cook", "selfemp"],
       "iceHint": ["internet", "work", "test"],
-      "opening": ["며칠 전부터 다리에 힘이 빠지고 저려요.", "발끝부터 저리더니 이제 계단을 못 올라가요."],
+      "opening": ["며칠 전부터 다리에 힘이 빠지고 저려요.", "며칠 사이에 다리에 힘이 없어서 계단을 못 올라가요."],
       "hpi": {
         "onset": "{{onsetDays}}일 전 양쪽 발끝이 저린 것으로 시작",
         "character": "저리고 남의 살 같으면서 힘이 빠짐",
@@ -105,7 +105,7 @@
         "한쪽만 그런가": "양쪽이 똑같아요.",
         "열이 나나": "지금은 열 없어요."
       },
-      "pmh": "특이 병력 없음",
+      "pmh": "특이 병력 없음. 척추 수술이나 경추 외상 병력도 없음",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -145,7 +145,7 @@
       "constraints": { "ageRange": [55, 85], "sex": "any", "requiredRisk": ["고혈압", "당뇨병"], "requiredRiskMin": 2, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "market", "driver", "housewife"],
       "iceHint": ["family", "denial", "test"],
-      "opening": ["오늘 아침에 갑자기 한쪽 팔다리에 힘이 빠졌어요.", "갑자기 팔다리에 힘이 빠지고 말이 어눌해졌어요."],
+      "opening": ["오늘 아침에 갑자기 한쪽 팔다리에 힘이 빠졌어요.", "갑자기 팔다리에 힘이 빠졌어요."],
       "hpi": {
         "onset": "{{onsetHours}}시간 전 갑자기. 시작한 시각을 비교적 정확히 기억함",
         "character": "{{side}}쪽 팔다리에 힘이 빠지고 감각도 둔함",
@@ -212,7 +212,7 @@
       "constraints": { "ageRange": [20, 45], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "nurse", "student", "teacher", "selfemp", "parttime"],
       "iceHint": ["internet", "work", "test"],
-      "opening": ["저녁만 되면 눈꺼풀이 처지고 물건이 둘로 보여요.", "오후가 되면 팔에 힘이 없고 눈이 자꾸 감겨요."],
+      "opening": ["눈꺼풀이 자꾸 처져요.", "팔에 힘이 없고 눈이 자꾸 감겨요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 서서히",
         "character": "쓰면 쓸수록 힘이 빠지고 쉬면 다시 돌아옴",
@@ -298,7 +298,7 @@
         "술을 얼마나 마시나": "가끔 마시는 정도예요.",
         "등이나 허리가 아픈가": "허리는 괜찮아요."
       },
-      "pmh": "당뇨병으로 여러 해 약을 복용 중이며 혈당 조절이 잘 되지 않음",
+      "pmh": "당뇨병으로 여러 해 약을 복용 중이며 혈당 조절이 잘 되지 않음. 척추 수술이나 경추 외상 병력은 없음",
       "meds": "당뇨약",
       "allergy": "없음",
       "fh": "특이사항 없음",

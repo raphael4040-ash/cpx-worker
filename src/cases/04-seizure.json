@@ -44,7 +44,8 @@
         "잠은 얼마나 자나": "요즘 {{sleepHours}}시간밖에 못 잤어요.",
         "술이나 약물": "전날 술을 좀 마셨어요. 다른 약은 안 해요.",
         "당뇨약을 먹나": "당뇨는 없어요.",
-        "가족 중에 경련하는 사람": "{{fhx}}"
+        "가족 중에 경련하는 사람": "{{fhx}}",
+        "마지막 월경일이나 임신 가능성": "{{lmpAnswer}}"
       },
       "pmh": "{{childhoodFebrile}} {{headTrauma}}",
       "meds": "없음",
@@ -85,7 +86,8 @@
         "headTrauma": ["머리 다친 적은 없어요.", "몇 년 전에 오토바이 사고로 머리를 부딪친 적은 있어요."],
         "childhoodFebrile": ["어릴 때도 그런 적은 없대요.", "어릴 때 열나면서 경기를 한 적이 있다고 들었어요."],
         "fhx": ["가족 중엔 없어요.", "사촌 중에 간질약을 먹는 사람이 있다고 들었어요."],
-        "headFinding": ["특별한 외상 흔적이 없다", "뒤통수에 작은 멍이 있고 열상은 없다"]
+        "headFinding": ["특별한 외상 흔적이 없다", "뒤통수에 작은 멍이 있고 열상은 없다"],
+        "lmpAnswer": [{"text": "마지막 생리는 2주 전이고 임신 가능성은 없어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
       "disclosure": {
         "spontaneous": ["쓰러졌다는 것", "본인은 기억이 없다는 것"],
@@ -99,7 +101,7 @@
       "constraints": { "ageRange": [19, 40], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "soldier", "office", "nurse", "teacher"],
       "iceHint": ["internet", "family", "denial"],
-      "opening": ["어제 쓰러지면서 팔다리를 떨었다고 해서 왔어요.", "서 있다가 눈앞이 캄캄해지면서 쓰러졌는데 경련을 했대요."],
+      "opening": ["어제 쓰러지면서 팔다리를 떨었다고 해서 왔어요.", "쓰러졌는데 옆에서 경련을 했다고 해서 왔어요."],
       "hpi": {
         "onset": "{{onsetHours}}시간 전, {{trigger}} 발생",
         "character": "쓰러진 뒤 팔다리가 {{jerkSeconds}}초쯤 툭툭 튀듯 움직였다고 함. 규칙적으로 오래 떤 것은 아니라고 함",
@@ -129,7 +131,8 @@
         "가족 중에 젊어서 갑자기 사망한 사람": "없어요.",
         "열이 나거나 목이 뻣뻣한가": "없어요.",
         "당뇨약이나 먹는 약": "당뇨약은 안 먹어요.",
-        "전에도 이런 적 있나": "{{pastCount}}번쯤 아찔했던 적은 있는데 이번처럼 완전히 쓰러진 건 처음이에요."
+        "전에도 이런 적 있나": "{{pastCount}}번쯤 아찔했던 적은 있는데 이번처럼 완전히 쓰러진 건 처음이에요.",
+        "마지막 월경일이나 임신 가능성": "{{lmpAnswer}}"
       },
       "pmh": "특이 병력 없음",
       "meds": "없음",
@@ -165,7 +168,8 @@
       },
       "variations": {
         "onsetHours": [12, 20, 26], "jerkSeconds": [5, 10, 15], "severity": [3, 4], "pastCount": [1, 2, 3],
-        "trigger": ["아침을 굶고 만원 지하철에 서 있다가", "채혈을 받다가 피를 보고", "더운 강당에서 오래 서 있다가", "화장실에서 볼일을 보고 일어서다가"]
+        "trigger": ["아침을 굶고 만원 지하철에 서 있다가", "채혈을 받다가 피를 보고", "더운 강당에서 오래 서 있다가", "화장실에서 볼일을 보고 일어서다가"],
+        "lmpAnswer": [{"text": "생리는 규칙적이고 임신 가능성은 없어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
       "disclosure": {
         "spontaneous": ["쓰러졌다는 것", "떨었다는 말을 들은 것"],
@@ -179,7 +183,7 @@
       "constraints": { "ageRange": [55, 82], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "housewife", "market", "driver"],
       "iceHint": ["family", "medicine", "denial"],
-      "opening": ["아침에 갑자기 헛소리를 하다가 떨었대요.", "밥을 못 먹고 약을 먹었더니 정신을 잃고 경련을 했다고 해요."],
+      "opening": ["아침에 갑자기 헛소리를 하다가 떨었대요.", "정신을 잃고 경련을 했다고 해서 왔어요."],
       "hpi": {
         "onset": "오늘 아침 {{onsetHours}}시간 전. {{trigger}} 뒤에 발생",
         "character": "식구 말로는 식은땀을 뻘뻘 흘리며 헛소리를 하다가 팔다리를 몇 분 떨었다고 함",
@@ -260,7 +264,7 @@
       "constraints": { "ageRange": [38, 66], "sex": "any", "requiredRisk": ["과음"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["construct", "driver", "market", "cook", "selfemp"],
       "iceHint": ["denial", "work", "medicine"],
-      "opening": ["술을 끊었더니 며칠 만에 경련을 했어요.", "손이 떨리고 잠도 못 자다가 어제 쓰러져서 떨었대요."],
+      "opening": ["며칠 전에 갑자기 쓰러져서 떨었대요.", "어제 쓰러져서 온몸을 떨었다고 해서 왔어요."],
       "hpi": {
         "onset": "{{onsetHours}}시간 전. 술을 끊은 지 {{abstinenceDays}}일째 되는 날 발생",
         "character": "옆에서 본 사람 말로는 온몸이 굳었다가 팔다리를 같이 떨었다고 함",

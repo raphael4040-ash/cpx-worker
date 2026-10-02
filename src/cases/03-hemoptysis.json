@@ -90,7 +90,7 @@
       "constraints": { "ageRange": [45, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "retired", "market", "farmer", "selfemp"],
       "iceHint": ["repeat", "medicine", "work"],
-      "opening": ["가래에 피가 나와요. 예전에도 몇 번 그랬어요.", "가래가 계속 많이 나오는데 오늘은 피가 섞였어요."],
+      "opening": ["가래에 피가 나와요.", "기침하는데 오늘 가래에 피가 섞였어요."],
       "hpi": {
         "onset": "오늘 아침 기침하다 피가 섞여 나옴. 이런 일이 {{recurYears}}년 사이 {{recurCount}}번째",
         "character": "누런 가래가 한 컵 가까이 나오고 그 사이에 붉은 피가 섞여 나옴",
@@ -162,7 +162,7 @@
       "constraints": { "ageRange": [19, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "office", "teacher", "delivery", "nurse"],
       "iceHint": ["internet", "cancer", "work"],
-      "opening": ["기침하다가 가래에 피가 조금 비쳐서 놀랐어요.", "감기 끝인데 가래에 피가 나와요."],
+      "opening": ["기침하다가 가래에 피가 나와서 놀랐어요.", "가래에 피가 섞여 나와요."],
       "hpi": {
         "onset": "{{onsetDays}}일 전 기침이 심해지면서 오늘 처음 가래에 피가 비침. 감기는 {{coldDays}}일 전 시작",
         "character": "맑거나 누런 가래에 붉은 줄이 한두 번 섞여 나옴",
@@ -232,7 +232,7 @@
       "constraints": { "ageRange": [38, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "driver", "retired", "housewife", "market"],
       "iceHint": ["internet", "test", "family"],
-      "opening": ["숨이 차고 가래에 피가 나와요.", "갑자기 숨이 차면서 옆구리가 아프고 피가 섞인 가래가 나와요."],
+      "opening": ["숨이 차고 가래에 피가 나와요.", "갑자기 숨이 차면서 피 섞인 가래가 나와요."],
       "hpi": {
         "onset": "{{onsetHours}}시간 전 갑자기 숨이 차면서 시작. 잠시 뒤 피 섞인 가래가 나옴",
         "character": "가래에 선홍색 피가 섞여 나오고, {{side}}쪽 가슴이 칼로 베이듯 아픔",
@@ -311,7 +311,7 @@
       "constraints": { "ageRange": [62, 85], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market"],
       "iceHint": ["medicine", "family", "denial"],
-      "opening": ["가래에 피가 섞여 나오고 잇몸에서도 피가 나요.", "기침할 때 피가 나와서 왔어요. 요즘 멍도 잘 들어요."],
+      "opening": ["가래에 피가 섞여 나와요.", "기침할 때 피가 나와서 왔어요."],
       "hpi": {
         "onset": "{{onsetDays}}일 전부터. {{trigger}} 먹기 시작한 뒤로 생김",
         "character": "기침할 때 가래에 검붉은 피가 섞여 나옴. 양치할 때 잇몸에서도 피가 남",
