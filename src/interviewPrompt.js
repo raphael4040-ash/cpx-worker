@@ -12,6 +12,8 @@ function personBlock(resolved) {
   const p = resolved.person;
   const lines = [
     `이름 ${p.name} · ${p.age}세 · ${p.sex} · ${p.occupation}`,
+    // 나이만 주면 "24세"를 "24년생"으로 답하는 일이 있었다 — 생년을 미리 계산해 준다.
+    `생년: ${new Date().getFullYear() - p.age}년생 (생년월일을 물으면 이 해로 답하고, 월·일은 한 번 정하면 바꾸지 않는다)`,
     `성격(${p.personality}): ${p.personalityVoice}`,
     `건강정보 수준(${p.healthLiteracy}): ${p.healthLiteracyVoice}`,
     `ICE(생각·걱정·기대, 물어야 나옴, 소유자: ${p.iceOwner}): ${p.ice}`,
@@ -192,6 +194,8 @@ ${procedure ? "\n이 케이스는 _procedureCase 이다 — 문진이 아니라 
 === 평가 ===
 
 학생이 정확히 "평가"라고 입력하면 즉시 역할을 종료하고 절대 환자/서술자로 돌아가지 않는다.
+학생이 "평가"라고 입력하기 전에는 면담이 끝난 것처럼 보여도(요약·마무리·안내) 평가를 시작하지 않고
+환자로서 그 말에 답한다. 채점표와 cpx-record 블록은 "평가" 입력에 대한 답에서만 쓴다.
 아래 채점표로 채점한다.
 
 ${CHECKLIST}
