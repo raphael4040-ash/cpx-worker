@@ -19,7 +19,7 @@
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
 import { prepareInterview } from "./interviewRoutes.js";
-import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -120,18 +120,32 @@ export async function handleAiChat(request, env, cfg, cors) {
   }
 
   const model = env.AI_MODEL || DEFAULT_AI_MODEL;
-  let result;
-  try {
-    result = await env.AI.run(model, {
-      messages: [
-        { role: "system", content: systemPrompt },
-        ...withTurnReminder(messages, systemPrompt).map((m) => ({ role: m.role, content: m.text })),
-      ],
+  const phase = phaseFor(messages);
+  const run = (msgs) =>
+    env.AI.run(model, {
+      messages: [{ role: "system", content: systemPrompt }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
       max_completion_tokens: MAX_OUTPUT_TOKENS,
       temperature: 0.8,
       // 사고(reasoning) 출력은 환자 대사에 필요 없고 출력 뉴런만 늘린다.
       chat_template_kwargs: { enable_thinking: false },
     });
+
+  let spent = 0;
+  let reply = "";
+  try {
+    const turn = withTurnReminder(messages, systemPrompt);
+    let result = await run(turn);
+    reply = extractReply(result);
+    spent += neuronsFor(model, result?.usage, systemPrompt, turn, reply);
+    // "평가" 전인데 평가문을 쓴 경우 — 학생의 요약·마무리 말에서 실제로 있었다 (기록 블록 없이,
+    // 환자 말풍선 안에). 한 번은 안내를 덧붙여 다시 받고, 그래도 평가면 중립 지문으로 대신한다.
+    if (phase !== "eval" && looksLikeEvaluation(reply)) {
+      const retry = withNotYetEvalNote(turn);
+      result = await run(retry);
+      reply = extractReply(result);
+      spent += neuronsFor(model, result?.usage, systemPrompt, retry, reply);
+      if (looksLikeEvaluation(reply)) reply = "(환자가 고개를 끄덕입니다.)";
+    }
   } catch (err) {
     const msg = String((err && err.message) || err);
     // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
@@ -140,11 +154,9 @@ export async function handleAiChat(request, env, cfg, cors) {
       await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
       return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
     }
+    if (spent) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
     return json({ error: "ai_error", detail: msg.slice(0, 300) }, 502, cors);
   }
-
-  const reply = extractReply(result);
-  const spent = neuronsFor(model, result?.usage, systemPrompt, messages, reply);
   await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
 
   if (!reply) return json({ error: "empty_response" }, 502, cors);

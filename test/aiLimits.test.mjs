@@ -74,3 +74,14 @@ test("대화 단계를 고른다 — 문진 / 진찰(신호어·괄호 진찰 �
   assert.equal(phaseFor([u("진찰"), a("…"), u("평가")]), "eval");
   assert.equal(phaseFor([u("평가")]), "eval");
 });
+
+test("평가처럼 생긴 답을 가려낸다 — 환자 대사는 걸리지 않는다", async () => {
+  const { looksLikeEvaluation, withNotYetEvalNote } = await import("../src/aiLimits.js");
+  assert.equal(looksLikeEvaluation("평가를 시작하겠습니다.\n\n[CPX 채점표 기반 평가]\n2. 병력 청취"), true);
+  assert.equal(looksLikeEvaluation("잘한 점\n- …\n개선점\n- …"), true);
+  assert.equal(looksLikeEvaluation("```cpx-record\n{}\n```"), true);
+  assert.equal(looksLikeEvaluation("네, 알겠습니다. 검사 결과 나오면 꼭 알려주세요."), false);
+  assert.equal(looksLikeEvaluation("채점이요? 무슨 말씀이세요?"), false);
+  const out = withNotYetEvalNote([{ role: "user", text: "정리하면 …" }]);
+  assert.match(out[0].text, /^정리하면 …\n\n\(아직 "평가" 신호가 아닙니다/);
+});

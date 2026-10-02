@@ -57,6 +57,16 @@ export function extractReply(result) {
     .trim();
 }
 
+// 평가처럼 생긴 답인지 — "평가" 신호 전에 모델이 학생의 요약·마무리 말을 보고 즉흥 평가문을
+// 환자 말풍선에 쓰는 일이 있었다 (cpx-record 블록 없이). 환자 대사에 이런 말이 두 개 이상
+// 섞일 일은 없으므로 서로 다른 표지어 2개 이상, 또는 기록 블록이 있으면 평가로 본다.
+const EVAL_MARKERS = ["평가를 시작", "채점", "CPX", "병력청취", "병력 청취", "PPI", "잘한 점", "개선점", "총점", "Safety Netting", "신체 진찰 (", "종합 의견"];
+export function looksLikeEvaluation(text) {
+  const t = String(text || "");
+  if (/```cpx-record/.test(t)) return true;
+  return EVAL_MARKERS.filter((m) => t.includes(m)).length >= 2;
+}
+
 const isCue = (m, word) => m.role === "user" && new RegExp(`^\\s*${word}\\s*$`).test(m.text);
 // 괄호 안 진찰 동사 — "진찰" 입력 없이도 진찰 모드로 바뀌는 규칙(프롬프트 "신체진찰 모드")과 맞춘다.
 // "(웃으며)" 같은 감정 지문은 걸리지 않는다.
@@ -92,3 +102,14 @@ export function withTurnReminder(messages, systemPrompt) {
   return out;
 }
 
+
+/** "평가" 전인데 평가문이 나왔을 때 다시 받는 요청 — 마지막 학생 말 뒤에 안내를 붙인다 (기록엔 안 남음). */
+export function withNotYetEvalNote(messages) {
+  const out = messages.slice();
+  const last = out[out.length - 1];
+  out[out.length - 1] = {
+    role: last.role,
+    text: `${last.text}\n\n(아직 "평가" 신호가 아닙니다. 평가·채점·피드백을 쓰지 말고, 환자로서 이 말에 짧게 대답하세요.)`,
+  };
+  return out;
+}
