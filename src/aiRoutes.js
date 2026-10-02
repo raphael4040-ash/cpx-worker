@@ -19,7 +19,7 @@
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
 import { handleInterviewStart } from "./interviewRoutes.js";
-import { sanitizeMessages, neuronsFor, extractReply } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -116,7 +116,7 @@ export async function handleAiChat(request, env, cfg, cors) {
     result = await env.AI.run(model, {
       messages: [
         { role: "system", content: session.systemPrompt },
-        ...messages.map((m) => ({ role: m.role, content: m.text })),
+        ...withTurnReminder(messages, session.systemPrompt).map((m) => ({ role: m.role, content: m.text })),
       ],
       max_completion_tokens: MAX_OUTPUT_TOKENS,
       temperature: 0.8,

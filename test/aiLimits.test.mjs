@@ -38,3 +38,26 @@ test("응답 형식 두 가지를 모두 읽고 <think> 는 지운다", () => {
   assert.equal(extractReply({ response: "머리가 아파요" }), "머리가 아파요");
   assert.equal(extractReply({}), "");
 });
+
+test("환자 답 끝에 붙은 신호어를 지운다", () => {
+  assert.equal(extractReply({ response: "알겠습니다. 잘 지켜볼게요.\n\n평가" }), "알겠습니다. 잘 지켜볼게요.");
+  assert.equal(extractReply({ response: "평가가 좋았으면 해요" }), "평가가 좋았으면 해요");
+});
+
+test("문진 중에만 마지막 학생 말 앞에 규칙 리마인더를 붙인다", async () => {
+  const { withTurnReminder } = await import("../src/aiLimits.js");
+  const sp = "…\n반드시 물어야 나오는 것(onlyIfAsked): 진통소염제 장기 복용, 발등 부종\n…";
+  const msgs = [
+    { role: "user", text: "어디가 불편하세요?" },
+    { role: "assistant", text: "소변이 줄었어요." },
+    { role: "user", text: "열은 나세요?" },
+  ];
+  const out = withTurnReminder(msgs, sp);
+  assert.equal(out.length, 3);
+  assert.equal(out[0].text, "어디가 불편하세요?");
+  assert.match(out[2].text, /진통소염제 장기 복용, 발등 부종/);
+  assert.match(out[2].text, /학생: 열은 나세요\?$/);
+  assert.equal(msgs[2].text, "열은 나세요?"); // 원본은 건드리지 않는다
+  const pe = [...msgs, { role: "assistant", text: "아뇨" }, { role: "user", text: "진찰" }];
+  assert.deepEqual(withTurnReminder(pe, sp), pe);
+});

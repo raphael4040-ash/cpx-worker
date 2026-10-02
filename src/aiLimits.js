@@ -50,6 +50,30 @@ export function extractReply(result) {
     (typeof result?.response === "string" ? result.response : "") ??
     "";
   // 사고 끄기가 무시되는 모델이 있어도 환자 대사에 <think> 가 섞이지 않게 한다.
-  return String(raw || "").replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+  // 학생 신호어("평가"/"진찰")를 환자 답 끝에 스스로 붙이는 경우도 있어 지운다 (Gemma 4 에서 관찰).
+  return String(raw || "")
+    .replace(/<think>[\s\S]*?<\/think>/g, "")
+    .replace(/(\n\s*(평가|진찰)\s*)+$/, "")
+    .trim();
+}
+
+/**
+ * 문진 중에는 마지막 학생 메시지 앞에 짧은 연기 규칙을 붙여 보낸다 (서버에서만, 기록엔 안 남음).
+ * 긴 시스템 프롬프트의 "물어야 나오는 것" 규칙을 소형 모델이 대화 중반부터 잊고 정보를 흘렸다
+ * (Gemma 4 테스트: 열을 물었는데 두드러기, 부종을 물었는데 메스꺼움, 기저질환을 물었는데 진통제·걱정).
+ * 진찰·평가 단계에 들어가면 붙이지 않는다.
+ */
+export function withTurnReminder(messages, systemPrompt) {
+  const cue = (m) => m.role === "user" && /^\s*(진찰|평가)\s*$/.test(m.text);
+  if (messages.some(cue)) return messages;
+  const m = /반드시 물어야 나오는 것\(onlyIfAsked\): ([^\n]*)/.exec(systemPrompt || "");
+  const secrets = m && m[1].trim() ? ` 특히 아직 직접 묻지 않은 것은 말하지 않는다: ${m[1].trim()}.` : "";
+  const reminder =
+    `[연기 규칙 — 학생에게 보이지 않음] 아래 학생 말에 직접 해당하는 사실만 짧게 답하고 새 사실을 덧붙이지 않는다.${secrets}` +
+    ` 생각·걱정·기대는 물을 때만 말한다. 학생의 대사나 신호어를 쓰지 않는다.`;
+  const out = messages.slice();
+  const last = out[out.length - 1];
+  out[out.length - 1] = { role: last.role, text: `${reminder}\n\n학생: ${last.text}` };
+  return out;
 }
 
