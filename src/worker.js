@@ -12,6 +12,7 @@
  *   4. Firestore REST 로 records 문서 생성
  */
 import { handleInterviewStart } from "./interviewRoutes.js";
+import { handleAiStart, handleAiChat, handleAiStatus } from "./aiRoutes.js";
 
 // Cloudflare 대시보드에서 환경변수(FIREBASE_PROJECT_ID / FIREBASE_API_KEY)를 넣으면
 // 그 값이 우선하고, 안 넣으면 아래 기본값을 쓴다. 둘 다 웹앱에 그대로 노출되는
@@ -25,7 +26,7 @@ const DEFAULT_OWNER_UID = "S4b2Zqzff2XHNznL1Wcq6RiZVGv1";
 
 // 배포된 워커가 최신인지 밖에서 확인하기 위한 버전 문자열.
 // 이 파일을 고칠 때마다 함께 올린다 — 그래야 `curl .../health` 로 붙었는지 판별된다.
-const WORKER_VERSION = "2026-09-09.1";
+const WORKER_VERSION = "2026-10-02.1";
 
 const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여유
 const CORS = {
@@ -80,6 +81,16 @@ export default {
           return json({ error: "rate_limited", hint: "요청이 너무 잦습니다. 잠시 후 다시 시도해주세요." }, 429);
         }
         return await handleInterviewStart(request, env, CORS);
+      }
+      // "키 없이 바로" 면담 — Workers AI 무료 한도 안에서만 돈다 (aiRoutes.js 참고).
+      if (url.pathname.startsWith("/interview/ai/")) {
+        const cfg = {
+          projectId: env.FIREBASE_PROJECT_ID || DEFAULT_PROJECT_ID,
+          ownerUid: env.OWNER_UID || DEFAULT_OWNER_UID,
+        };
+        if (url.pathname === "/interview/ai/status") return await handleAiStatus(env, CORS);
+        if (url.pathname === "/interview/ai/start") return await handleAiStart(request, env, cfg, CORS);
+        if (url.pathname === "/interview/ai/chat") return await handleAiChat(request, env, cfg, CORS);
       }
       return json({ error: "not_found" }, 404);
     } catch (err) {

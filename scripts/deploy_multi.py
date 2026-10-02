@@ -4,7 +4,7 @@
 deploy.sh 와 같은 이유(이 작업 PC 의 node 는 wrangler 를 못 돌리는 32비트)로 존재하지만,
 지금 워커는 worker.js 하나가 아니라 여러 파일(+ 케이스 JSON 58개)을 import 하는
 다중 모듈 구조라 deploy.sh 의 단일 파일 업로드로는 안 된다. 이 스크립트는 wrangler.toml
-을 그대로 읽어 각 모듈을 이름별로 올리고, [vars] 와 [[kv_namespaces]] 를 bindings 로 옮긴다.
+을 그대로 읽어 각 모듈을 이름별로 올리고, [vars]·[[kv_namespaces]]·[ai] 를 bindings 로 옮긴다.
 
 토큰: ~/.cloudflare-token 파일 한 줄, 또는 CLOUDFLARE_API_TOKEN 환경변수.
 """
@@ -64,6 +64,9 @@ def main():
         bindings.append({"type": "plain_text", "name": k, "text": str(v)})
     for kv in cfg.get("kv_namespaces", []):
         bindings.append({"type": "kv_namespace", "name": kv["binding"], "namespace_id": kv["id"]})
+    if cfg.get("ai", {}).get("binding"):
+        # Workers AI 바인딩 — wrangler.toml 의 [ai] binding = "AI" 와 같은 것.
+        bindings.append({"type": "ai", "name": cfg["ai"]["binding"]})
 
     modules = collect_modules()
     if main_name not in modules:

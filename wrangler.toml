@@ -16,6 +16,10 @@ FIREBASE_API_KEY = "AIzaSyD1rN6_CvmmjvV40kRGD37f7TZ2ZwNZpqA"
 # 있으니, 배포 실패나 404 가 나면 https://ai.google.dev/gemini-api/docs/models 에서
 # 현재 stable 로 표시된 flash-lite 모델명으로 갈아끼울 것.
 GEMINI_MODEL = "gemini-3.5-flash-lite"
+AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
+AI_DAILY_NEURON_CAP = "9000"      # 무료 10,000 중 이만큼만 쓴다 (KV 동시성 오차 여유)
+AI_USER_DAILY_SESSIONS = "2"      # 1인당 하루 면담 수 (관리자는 무제한)
+AI_SESSION_RESERVE = "2000"       # 남은 양이 이보다 적으면 새 면담을 시작시키지 않는다
 
 # 예전엔 여기 [[kv_namespaces]] 로 면담 세션을 저장했다. Cloudflare Worker 에서
 # generativelanguage.googleapis.com 으로 나가는 요청이 구글 쪽 지역 차단
@@ -31,6 +35,15 @@ GEMINI_MODEL = "gemini-3.5-flash-lite"
 # deploy_multi.py 와 wrangler 둘 다 이 섹션을 그대로 읽어 바인딩으로 올린다.
 # 주석 처리된 채로 두면(기본값) checkRateLimit 이 env.RATE_LIMIT_KV 를 못 받아 레이트리밋
 # 없이 그냥 통과한다 — 존재하지 않는 id 로 배포를 깨뜨리지 않기 위한 안전한 기본값이다.
-# [[kv_namespaces]]
-# binding = "RATE_LIMIT_KV"
-# id = "REPLACE_ME_KV_NAMESPACE_ID"
+#
+# 2026-10-02: 예전 면담 세션용으로 만들어두고 비어 있던 "interview-sessions" 네임스페이스를
+# 이 바인딩으로 살렸다. 레이트리밋 외에 "키 없이" 면담(aiRoutes.js)의 하루 뉴런 사용량·
+# 1인당 면담 수·세션(시스템 프롬프트)도 여기 저장한다 — 키는 전부 "ai:" 접두사.
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "f1d9024ee97a4598a079e63b65788845"
+
+# "키 없이 바로" 면담 — Workers AI. 운영자 계정의 하루 무료 한도(10,000 뉴런)만 쓴다.
+# 한도 관리는 aiRoutes.js 상단 주석 참고. 숫자는 문자열로 넣어도 된다.
+[ai]
+binding = "AI"
