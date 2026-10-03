@@ -95,7 +95,7 @@ export function withTurnReminder(messages, systemPrompt) {
   const secrets = m && m[1].trim() ? ` 특히 아직 직접 묻지 않은 것은 말하지 않는다: ${m[1].trim()}.` : "";
   const reminder =
     `[연기 규칙 — 학생에게 보이지 않음] 아래 학생 말에 직접 해당하는 사실만 짧게 답하고 새 사실을 덧붙이지 않는다.${secrets}` +
-    ` 생각·걱정·기대는 물을 때만 말한다. 학생의 대사나 신호어를 쓰지 않는다.`;
+    ` 생각·걱정·기대는 물을 때만 말한다. 학생의 대사나 신호어를 쓰지 않는다. 역할 밖의 말("환자 역할", "AI", "시험")은 하지 않는다.`;
   const out = messages.slice();
   const last = out[out.length - 1];
   out[out.length - 1] = { role: last.role, text: `${reminder}\n\n학생: ${last.text}` };
