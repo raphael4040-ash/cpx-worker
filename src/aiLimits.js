@@ -113,3 +113,14 @@ export function withNotYetEvalNote(messages) {
   };
   return out;
 }
+
+/** 평가에 개선점이 빠졌을 때 다시 받는 요청 — "평가" 뒤에 안내를 붙인다 (기록엔 안 남음). */
+export function withMissingFeedbackNote(messages) {
+  const out = messages.slice();
+  const last = out[out.length - 1];
+  out[out.length - 1] = {
+    role: last.role,
+    text: `${last.text}\n\n(채점표 다음에 "잘한 점"과 "개선점" 2~3가지를 반드시 쓰고, 맨 끝에 cpx-record 블록을 붙이세요.)`,
+  };
+  return out;
+}

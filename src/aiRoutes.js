@@ -19,7 +19,7 @@
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
 import { prepareInterview } from "./interviewRoutes.js";
-import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, withMissingFeedbackNote } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -145,6 +145,19 @@ export async function handleAiChat(request, env, cfg, cors) {
       reply = extractReply(result);
       spent += neuronsFor(model, result?.usage, systemPrompt, retry, reply);
       if (looksLikeEvaluation(reply)) reply = "(환자가 고개를 끄덕입니다.)";
+    }
+    // 평가에 개선점이 빠지는 일이 있었다 (Gemma 4 — 채점표와 기록 블록만 내고 잘한 점·개선점을 통째로 생략).
+    // 한 번만 다시 받고, 다시 받은 것에도 없으면 처음 것을 쓴다.
+    if (phase === "eval" && !/개선점/.test(reply)) {
+      try {
+        const retry = withMissingFeedbackNote(turn);
+        const again = await run(retry);
+        const text = extractReply(again);
+        spent += neuronsFor(model, again?.usage, systemPrompt, retry, text);
+        if (/개선점/.test(text) && /```cpx-record/.test(text)) reply = text;
+      } catch {
+        /* 다시 받기가 실패해도 처음 평가는 그대로 돌려준다 */
+      }
     }
   } catch (err) {
     const msg = String((err && err.message) || err);
