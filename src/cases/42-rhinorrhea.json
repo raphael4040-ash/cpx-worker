@@ -15,6 +15,11 @@
       "dx": "알레르기 비염",
       "constraints": { "ageRange": [16, 42], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "highschool", "office", "teacher", "parttime"],
+      "ice": {
+        "ideas": ["감기가 자꾸 걸리는 것 같아요", "피곤해서 그런가 싶어요"],
+        "concerns": ["콧물 때문에 일에 집중이 안 돼요", "약을 계속 먹어도 괜찮은지 걱정돼요"],
+        "expectations": ["콧물이랑 재채기 좀 멎게 해주세요", "근본적으로 낫는 방법이 있는지 알고 싶어요"]
+      },
       "iceHint": ["medicine", "work", "internet"],
       "opening": ["맑은 콧물이 계속 나고 코가 막혀요.", "재채기가 멈추질 않고 코가 간지러워요."],
       "hpi": {
@@ -70,12 +75,13 @@
         "onsetWeeks": [2, 3],
         "severity": [4, 5, 6],
         "season": ["봄", "가을", "환절기"],
-        "trigger": ["아침에 찬 공기를 맡거나 이불을 털 때", "밖에 나가 꽃가루를 맡을 때", "청소하면서 먼지를 마실 때"],
+        "trigger": ["밖에 나가 꽃가루를 맡을 때", "밖에 나가 꽃가루를 맡을 때", "아침에 찬 공기를 맡거나 이불을 털 때"],
         "asthma": ["어릴 때 천식기가 있다는 말을 들은 적 있어요.", "그런 적은 없어요."],
-        "pmhx": ["어릴 때 아토피가 있었어요.", "특별한 병은 없어요."],
-        "allergyHx": ["봄에 꽃가루 알레르기가 있다고 들었어요.", "약 알레르기는 없어요.", "먼지 알레르기가 있는 것 같아요."],
-        "fhx": ["아버지도 비염이 심해요.", "동생이 아토피가 있어요.", "가족 중에는 없어요."]
+        "pmhx": ["어릴 때 아토피", "특이 병력 없음"],
+        "allergyHx": ["꽃가루 알레르기(봄)", "꽃가루 알레르기(가을)", "집먼지 알레르기 의심, 약 알레르기 없음"],
+        "fhx": ["아버지 비염", "동생 아토피", "특이사항 없음"]
       },
+      "pairedVariations": [["season", "trigger", "allergyHx"]],
       "disclosure": {
         "spontaneous": ["맑은 콧물과 코막힘"],
         "onlyIfAsked": ["해마다 반복되는 것", "눈 가려움", "유발 상황", "약을 먹으면 좋아지는 것", "가족 알레르기력", "천식 병력"]
@@ -87,6 +93,11 @@
       "dx": "급성 바이러스 비인두염 (감기)",
       "constraints": { "ageRange": [18, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "teacher", "student", "care", "selfemp"],
+      "ice": {
+        "ideas": ["감기에 걸린 것 같아요", "요즘 피곤해서 면역력이 떨어진 것 같아요"],
+        "concerns": ["더 심해져서 일을 못 할까 봐 걱정돼요", "다른 사람한테 옮길까 봐 신경 쓰여요"],
+        "expectations": ["감기약 좀 받고 싶어요", "빨리 나았으면 좋겠어요"]
+      },
       "iceHint": ["medicine", "work", "denial"],
       "opening": ["며칠 전부터 코가 막히고 목이 아파요.", "감기 기운이 있는 것 같아서 왔어요."],
       "hpi": {
@@ -139,7 +150,7 @@
       "variations": {
         "onsetDays": [3, 4, 5],
         "severity": [3, 4],
-        "contact": ["아이가 며칠 전에 감기에 걸렸어요.", "주변에 감기 걸린 사람이 많아요.", "주변에는 없었어요."]
+        "contact": [{"text": "아이가 며칠 전에 감기에 걸렸어요.", "minAge": 28}, "주변에 감기 걸린 사람이 많아요.", "주변에는 없었어요."]
       },
       "disclosure": {
         "spontaneous": ["코막힘과 콧물"],
@@ -152,6 +163,11 @@
       "dx": "급성 세균성 부비동염",
       "constraints": { "ageRange": [22, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "teacher", "market", "driver", "selfemp"],
+      "ice": {
+        "ideas": ["감기가 오래가는 것 같아요", "코에 염증이 생긴 건가 싶어요"],
+        "concerns": ["이러다 큰 병이 될까 봐 걱정돼요", "이러다 계속 안 나을까 봐 걱정이에요"],
+        "expectations": ["항생제를 먹어야 하는지 알고 싶어요", "코 막힌 거 좀 뚫리게 해주세요"]
+      },
       "iceHint": ["repeat", "medicine", "test"],
       "opening": ["코가 계속 막히고 누런 콧물이 나와요.", "감기가 오래가요. 코가 계속 막혀요."],
       "hpi": {
@@ -206,7 +222,7 @@
         "worseDays": [3, 4],
         "severity": [5, 6, 7],
         "side": ["오른", "왼"],
-        "pmhx": ["전에도 축농증으로 항생제 먹은 적 있어요.", "특별한 병은 없어요."]
+        "pmhx": ["이전 부비동염으로 항생제 치료", "특이 병력 없음"]
       },
       "disclosure": {
         "spontaneous": ["코막힘과 누런 콧물"],
@@ -217,8 +233,13 @@
     {
       "id": "rhi-unilateral-mass",
       "dx": "편측 비강·비인두 종양 의심",
-      "constraints": { "ageRange": [45, 76], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [45, 76], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [], "smoking": "heavy" },
       "occupationBias": ["construct", "welder", "farmer", "driver", "market"],
+      "ice": {
+        "ideas": ["비염이 오래돼서 그런 것 같아요", "코뼈가 휘어서 그런가 싶어요"],
+        "concerns": ["혹시 코에 혹 같은 게 생긴 건 아닐까 걱정돼요", "약을 써도 안 나으니 답답해요"],
+        "expectations": ["왜 한쪽만 막히는지 검사해보고 싶어요", "코가 좀 뚫렸으면 좋겠어요"]
+      },
       "iceHint": ["denial", "cancer", "repeat"],
       "opening": ["한쪽 코가 몇 달째 막혀 있어요.", "코가 한쪽만 계속 막혀요."],
       "hpi": {
@@ -244,14 +265,14 @@
         "체중이 줄었나": "{{weightLoss}}kg 정도 빠졌어요.",
         "귀가 먹먹하거나 안 들리나": "{{side}}쪽 귀가 물 들어간 것처럼 먹먹해요.",
         "얼굴이 저리거나 물체가 겹쳐 보이나": "저린 건 없고 겹쳐 보이지도 않아요.",
-        "담배는 얼마나 피우나": "하루 한 갑씩 삼십 년 넘게 피웠어요.",
+        "담배는 얼마나 피우나": "{{smokingSay}}",
         "코를 다치거나 수술한 적, 코에 뭔가 들어간 적이 있나": "그런 건 없어요."
       },
       "pmh": "특이 병력 없음. 이비인후과에서 비염 약만 몇 번 받아 먹었으나 효과 없었음",
       "meds": "약국 코 스프레이",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 흡연력을 반드시 보유. 나무 분진이나 용접 흄에 노출된 적 있음",
+      "sh": "인물 카드를 따르되 나무 분진이나 용접 흄에 노출된 적 있음",
       "pe": {
         "vitals": { "sbp": [116, 138], "dbp": [70, 86], "hr": [72, 90], "rr": [14, 18], "temp": [36.4, 37.1], "spo2": [96, 99],
                     "invariant": "발열은 없다. 활력징후는 대체로 정상 범위를 유지한다." },
@@ -287,6 +308,11 @@
       "dx": "혈관운동성 비염 (비알레르기 비염)",
       "constraints": { "ageRange": [35, 70], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["market", "cook", "driver", "housewife", "retired"],
+      "ice": {
+        "ideas": ["비염 체질인 것 같아요", "나이 들면서 코가 예민해진 것 같아요"],
+        "concerns": ["콧물 때문에 사람들 앞에서 민망해요", "평생 이렇게 살아야 할까 봐 걱정돼요"],
+        "expectations": ["콧물 좀 덜 나게 해주세요", "왜 그런지 원인을 알고 싶어요"]
+      },
       "iceHint": ["repeat", "medicine", "denial"],
       "opening": ["콧물이 줄줄 나요.", "코가 막히고 콧물이 나요."],
       "hpi": {

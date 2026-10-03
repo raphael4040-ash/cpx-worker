@@ -19,6 +19,11 @@
       "dx": "가족성 저신장 (정상 변이)",
       "constraints": { "ageRange": [7, 7], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "parttime", "market", "care", "teacher"],
+      "ice": {
+        "ideas": ["아직 클 때가 안 된 것 같아요", "밥을 덜 먹어서 그런가 싶기도 해요"],
+        "concerns": ["키 때문에 아이가 친구들 사이에서 위축될까 봐 걱정돼요", "혹시 어디 이상이 있어서 안 크는 건 아닐까 걱정돼요"],
+        "expectations": ["성장호르몬 주사를 맞아야 하는지 알고 싶어요", "앞으로 얼마나 클 수 있는지 알고 싶어요"]
+      },
       "iceHint": ["family", "internet", "test"],
       "opening": ["아이가 반에서 제일 작아서 왔어요.", "또래보다 키가 너무 안 커서 걱정돼요."],
       "informant": {
@@ -68,7 +73,7 @@
       "pmh": "재태 39주 3.0 kg 자연분만. 큰 병 앓은 적 없고 입원한 적 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "아버지 {{fatherHeight}} cm, 어머니 {{motherHeight}} cm. 아버지도 또래보다 늦게까지 작았으나 결국 지금 키가 됨. 유전질환 없음",
+      "fh": "아버지 {{fatherHeight}} cm, 어머니 {{motherHeight}} cm. 아버지도 어릴 때부터 계속 작은 편이었음. 유전질환 없음",
       "sh": "인물 카드는 보호자의 것으로 읽는다. 아이는 초등학교 잘 다니고 친구관계 원만, 하루 1시간 이상 바깥놀이",
       "pe": {
         "vitals": { "sbp": [92, 108], "dbp": [56, 68], "hr": [78, 108], "rr": [18, 24], "temp": [36.4, 37.2], "spo2": [97, 100],
@@ -97,7 +102,7 @@
       },
       "disclosure": {
         "spontaneous": ["아이 키가 또래보다 작다는 것"],
-        "onlyIfAsked": ["연간 성장 속도가 5~6 cm로 유지된다는 것", "부모의 키", "출생력과 발달 이정표", "예방접종력", "아버지도 늦게까지 작았다는 것"]
+        "onlyIfAsked": ["연간 성장 속도가 5~6 cm로 유지된다는 것", "부모의 키", "출생력과 발달 이정표", "예방접종력", "아버지도 어릴 때부터 작았다는 것"]
       }
     },
 
@@ -106,6 +111,11 @@
       "dx": "체질성 성장·사춘기 지연",
       "constraints": { "ageRange": [14, 14], "sex": "male", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "market", "care", "selfemp", "teacher"],
+      "ice": {
+        "ideas": ["학원 다니느라 잠을 못 자서 안 크는 것 같아요", "밥을 적게 먹어서 그런 것 같아요"],
+        "concerns": ["이대로 키가 멈출까 봐 걱정돼요", "아이가 키 때문에 예민해져서 마음이 쓰여요"],
+        "expectations": ["성장판이 아직 열려 있는지 검사해보고 싶어요", "주사든 뭐든 키 크는 방법이 있으면 알고 싶어요"]
+      },
       "iceHint": ["family", "internet", "test"],
       "opening": ["애가 중학교 들어가서도 키가 안 커요.", "친구들은 다 크는데 우리 애만 그대로예요."],
       "informant": {
@@ -156,7 +166,7 @@
       "pmh": "재태 40주 3.2 kg 자연분만. 큰 병력 없음. 만성질환·수술력 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "아버지 {{fatherHeight}} cm, 어머니 {{motherHeight}} cm. {{lateBloomer}} 유전질환 없음",
+      "fh": "아버지 {{fatherHeight}} cm, 어머니 {{motherHeight}} cm. {{lateChart}}. 유전질환 없음",
       "sh": "인물 카드는 보호자의 것으로 읽는다. 아이는 중학교 재학, 수면 6~7시간, 학원 때문에 늦게 잠",
       "pe": {
         "vitals": { "sbp": [100, 118], "dbp": [60, 74], "hr": [62, 92], "rr": [14, 20], "temp": [36.4, 37.1], "spo2": [97, 100],
@@ -178,11 +188,13 @@
         "negatives": ["성장 속도 급감 없음", "시야장애 없음", "갑상선 종대 없음", "만성질환 소견 없음", "후각 저하 없음"]
       },
       "variations": {
+        "lateChart": ["아버지 고등학교 때 급성장", "아버지·친할머니 늦게 큰 편"],
         "onsetYears": [1, 2], "severity": [3, 4, 5],
         "height": [149, 151, 153], "weight": [36, 38, 40],
         "fatherHeight": [170, 172, 174], "motherHeight": [156, 158, 160],
         "lateBloomer": ["아빠가 고등학교 때 갑자기 컸다고 하더라고요.", "남편이 늦게 큰 편이었대요. 시어머니도 그러셨어요."]
       },
+      "pairedVariations": [["lateBloomer", "lateChart"]],
       "disclosure": {
         "spontaneous": ["아이 키가 안 큰다는 것"],
         "onlyIfAsked": ["이차성징이 아직 없다는 것", "연간 성장 속도는 유지된다는 것", "아버지가 늦게 컸다는 것", "부모의 키", "출생력과 발달 이정표", "예방접종력"]
@@ -194,13 +206,18 @@
       "dx": "성장호르몬 결핍",
       "constraints": { "ageRange": [7, 7], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "care", "market", "parttime", "nurse"],
+      "ice": {
+        "ideas": ["편식은 안 하는데 체질적으로 늦는 건가 싶어요", "잠을 늦게 자서 그런가 싶어요"],
+        "concerns": ["다른 애들은 크는데 우리 애만 그대로라 어디 이상이 있는 건 아닐까 걱정돼요", "이대로 계속 안 클까 봐 걱정돼요"],
+        "expectations": ["왜 안 크는지 원인을 알고 싶어요", "치료가 필요하면 빨리 시작하고 싶어요"]
+      },
       "iceHint": ["internet", "test", "cancer"],
       "opening": ["키가 잘 안 커서 왔어요.", "옷을 몇 년째 그대로 입어요. 키가 안 커요."],
       "informant": {
         "relation": "어머니",
         "presence": "아이 성장기록이 적힌 수첩을 들고 왔다",
         "knows": [
-          "두세 살까지는 평균이었는데 최근 2년 사이 눈에 띄게 처졌다는 것",
+          "어릴 때는 평균이었는데 최근 몇 년 사이 눈에 띄게 처졌다는 것",
           "작년 신체검사와 올해 신체검사에서 키 차이가 3 cm도 안 된다는 것",
           "얼굴이 또래보다 어려 보이고 배가 통통하다는 것",
           "잘 먹고 아픈 데는 없다는 것"
@@ -213,7 +230,7 @@
         "milestones": "목 가누기 3개월, 걷기 13개월, 두 단어 문장 24개월 — 정상 시기",
         "immunization": "국가예방접종 모두 완료",
         "parentalHeight": "아버지 {{fatherHeight}} cm, 어머니 {{motherHeight}} cm — 부모 키는 평균 이상",
-        "growthRecord": "3세까지 50 백분위수였다가 이후 매년 백분위수가 떨어져 현재 3 백분위수 미만. 최근 1년간 성장 {{growthRate}} cm"
+        "growthRecord": "어릴 때는 50 백분위수였다가 {{onsetYears}}년 전부터 매년 백분위수가 떨어져 현재 3 백분위수 미만. 최근 1년간 성장 {{growthRate}} cm"
       },
       "hpi": {
         "onset": "{{onsetYears}}년 전부터 키 크는 속도가 눈에 띄게 느려짐",
@@ -285,6 +302,11 @@
       "dx": "터너증후군",
       "constraints": { "ageRange": [11, 11], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "market", "care", "teacher", "parttime"],
+      "ice": {
+        "ideas": ["늦게 크는 아이도 있다고 해서 기다려 봤어요", "체질적으로 작은 아이인가 싶었어요"],
+        "concerns": ["다른 애들은 다 크는데 우리 애만 그대로라 걱정돼요", "혹시 호르몬에 문제가 있는 건 아닐까 싶어요"],
+        "expectations": ["왜 안 크는지 검사해보고 싶어요", "키 크는 치료가 있으면 받게 해주고 싶어요"]
+      },
       "iceHint": ["family", "internet", "test"],
       "opening": ["딸아이가 또래보다 너무 작아요.", "또래보다 키가 너무 안 커서 걱정돼요."],
       "informant": {
@@ -375,6 +397,11 @@
       "dx": "크론병에 의한 성장 지연 (만성질환·영양결핍)",
       "constraints": { "ageRange": [14, 14], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "market", "selfemp", "care", "teacher"],
+      "ice": {
+        "ideas": ["사춘기라 입맛이 없어서 그런 것 같아요", "공부 스트레스 때문에 잘 못 먹는 것 같아요"],
+        "concerns": ["살이 자꾸 빠지니 어디 큰 병이 있는 건 아닐까 걱정돼요", "이러다 키가 아예 안 클까 봐 걱정돼요"],
+        "expectations": ["왜 살이 빠지는지 원인을 알고 싶어요", "잘 먹고 클 수 있게 해주고 싶어요"]
+      },
       "iceHint": ["internet", "test", "cancer"],
       "opening": ["애가 키도 안 크고 살도 빠져요.", "중학생인데 몇 년째 키가 그대로예요."],
       "informant": {
@@ -453,7 +480,7 @@
         "height": [139, 143, 147], "weight": [30, 33, 36], "weightLoss": [3, 4, 5],
         "fatherHeight": [172, 174, 176], "motherHeight": [159, 161, 163],
         "bloodyStool": ["한두 번 화장지에 피가 묻었다고 했어요.", "피는 못 봤대요."],
-        "fhx": ["큰아버지가 장에 염증이 있는 병으로 치료받는다고 들었어요.", "가족 중에 장 질환은 없어요."]
+        "fhx": ["큰아버지 염증성 장질환 치료 중", "장 질환 가족력 없음"]
       },
       "disclosure": {
         "spontaneous": ["키가 안 크고 살이 빠진다는 것"],

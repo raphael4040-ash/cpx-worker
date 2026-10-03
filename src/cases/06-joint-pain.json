@@ -14,6 +14,11 @@
       "dx": "패혈성 관절염 (무릎)",
       "constraints": { "ageRange": [45, 78], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["farmer", "construct", "market", "retired", "care"],
+      "ice": {
+        "ideas": ["무리해서 관절염이 도진 것 같아요", "어디 부딪혀서 그런가 싶어요"],
+        "concerns": ["이러다 아예 못 걷게 될까 봐 걱정돼요", "무릎이 계속 부으니 큰일 난 건 아닌가 싶어요"],
+        "expectations": ["붓기랑 통증부터 빨리 가라앉혀 주세요", "무릎에 물이 찼으면 빼주셨으면 해요"]
+      },
       "iceHint": ["denial", "internet", "test"],
       "opening": ["무릎이 퉁퉁 붓고 아파서 걷지를 못하겠어요.", "하루 사이에 무릎이 벌겋게 부었어요."],
       "hpi": {
@@ -78,6 +83,11 @@
       "dx": "급성 통풍성 관절염 (첫째 발허리발가락 관절)",
       "constraints": { "ageRange": [35, 70], "sex": "male", "requiredRisk": ["음주"], "requiredRiskMin": 1, "forbidden": ["통풍"], "alcohol": "heavy" },
       "occupationBias": ["office", "selfemp", "driver", "market", "construct"],
+      "ice": {
+        "ideas": ["자다가 발을 삐끗한 것 같아요", "발가락에 뭐가 곪은 건가 싶어요"],
+        "concerns": ["걷지를 못하니 일을 어떻게 하나 걱정돼요", "뼈에 금이 간 건 아닌가 싶어요"],
+        "expectations": ["진통제라도 받아서 빨리 덜 아프고 싶어요", "사진 찍어서 뼈가 괜찮은지 보고 싶어요"]
+      },
       "iceHint": ["internet", "work", "denial"],
       "opening": ["엄지발가락이 밤새 너무 아파서 왔어요.", "자다가 발가락이 아파서 깼는데 퉁퉁 부었어요."],
       "hpi": {
@@ -98,7 +108,7 @@
       "redFlags": {
         "열이 나나": "많이 나는 것 같진 않고 몸이 좀 후끈한 정도예요.",
         "전에도 이런 적 있나": "{{recur}}",
-        "술을 얼마나 마시나": "일주일에 서너 번은 마셔요.",
+        "술을 얼마나 마시나": "{{alcoholSay}}",
         "한 관절만 그런가": "발가락 하나만 이래요.",
         "다치거나 주사 맞은 적": "다친 적도 없고 주사 맞은 적도 없어요.",
         "먹는 약이 있나": "관절 때문에 챙겨 먹는 약은 없어요.",
@@ -130,7 +140,7 @@
         "onsetHours": [8, 10, 12], "severity": [8, 9, 10], "side": ["오른", "왼"],
         "trigger": ["삼겹살을", "곱창을", "치킨을", "회를"],
         "recur": ["이번이 처음이에요.", "작년에도 한 번 비슷하게 아팠는데 며칠 지나니 저절로 나았어요."],
-        "fhGout": ["아버지도 통풍으로 고생하셨어요.", "가족 중에 비슷한 사람은 없어요."]
+        "fhGout": ["아버지 통풍", "특이사항 없음"]
       },
       "disclosure": {
         "spontaneous": ["엄지발가락이 붓고 아프다는 것"],
@@ -143,6 +153,11 @@
       "dx": "류마티스 관절염",
       "constraints": { "ageRange": [30, 60], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "market", "care", "teacher"],
+      "ice": {
+        "ideas": ["손을 많이 써서 그런 것 같아요", "나이 들어서 관절염이 온 건가 싶어요"],
+        "concerns": ["손가락이 휘거나 굳어서 못 쓰게 될까 봐 걱정돼요", "살림이나 일을 못 하게 될까 봐요"],
+        "expectations": ["무슨 병인지 피검사든 뭐든 해서 알고 싶어요", "통증이랑 붓기를 줄이는 약을 받고 싶어요"]
+      },
       "iceHint": ["internet", "family", "test"],
       "opening": ["손가락 마디가 여러 군데 아프고 부어요.", "손이 아프고 부어서 주먹이 잘 안 쥐어져요."],
       "hpi": {
@@ -172,7 +187,7 @@
       "pmh": "특이 병력 없음",
       "meds": "약국에서 산 진통제를 가끔 복용",
       "allergy": "없음",
-      "fh": "{{fhRa}}",
+      "fh": "{{raChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [110, 130], "dbp": [68, 82], "hr": [72, 90], "rr": [14, 18], "temp": [37.0, 37.4], "spo2": [97, 99],
@@ -193,10 +208,12 @@
         "negatives": ["단일관절 급성 발적 없음", "고열 없음", "관절 변형은 아직 뚜렷하지 않음"]
       },
       "variations": {
+        "raChart": ["어머니 류마티스관절염", "특이사항 없음"],
         "onsetMonths": [3, 4, 6], "severity": [4, 5, 6],
         "stiffness": ["한 시간 반", "두 시간"],
         "fhRa": ["어머니가 류마티스로 오래 고생하셨어요.", "가족 중엔 없어요."]
       },
+      "pairedVariations": [["fhRa", "raChart"]],
       "disclosure": {
         "spontaneous": ["손가락 마디가 아프고 붓는다는 것"],
         "onlyIfAsked": ["아침 강직 지속 시간", "양측 대칭인 것", "피로감과 미열", "가족력", "먼쪽 마디는 멀쩡한 것"]
@@ -208,6 +225,11 @@
       "dx": "무릎 골관절염",
       "constraints": { "ageRange": [58, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "care"],
+      "ice": {
+        "ideas": ["나이 들어서 연골이 닳은 것 같아요", "젊을 때 무릎을 많이 써서 그런가 싶어요"],
+        "concerns": ["이러다 수술해야 하는 건 아닐까 걱정돼요", "나중에 아예 못 걷게 될까 봐요"],
+        "expectations": ["주사나 약으로 좀 덜 아프게 하고 싶어요", "수술 안 하고 버틸 수 있는지 알고 싶어요"]
+      },
       "iceHint": ["family", "medicine", "internet"],
       "opening": ["무릎이 아파서 계단 내려가기가 힘들어요.", "몇 년째 무릎이 시큰거리는데 요즘 더 심해요."],
       "hpi": {
@@ -268,6 +290,11 @@
       "dx": "외상성 반월상 연골 파열 (무릎)",
       "constraints": { "ageRange": [20, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["soldier", "delivery", "student", "construct", "office"],
+      "ice": {
+        "ideas": ["인대가 늘어난 것 같아요", "그냥 삔 거라 쉬면 나을 줄 알았어요"],
+        "concerns": ["운동을 다시 못 하게 될까 봐 걱정돼요", "수술해야 하는 건 아닐까 싶어요"],
+        "expectations": ["MRI 같은 걸 찍어서 어디가 다쳤는지 알고 싶어요", "언제쯤 다시 운동할 수 있는지 알고 싶어요"]
+      },
       "iceHint": ["work", "test", "internet"],
       "opening": ["운동하다 무릎을 삐끗한 뒤로 계속 아파요.", "무릎을 접질렸는데 계속 아파요."],
       "hpi": {

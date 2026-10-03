@@ -19,6 +19,11 @@
       "dx": "단순 표현언어 발달지연",
       "constraints": { "ageRange": [3, 3], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "parttime", "care", "market", "nurse"],
+      "ice": {
+        "ideas": ["원래 말이 늦게 트이는 아이인 것 같아요", "제가 말을 많이 안 걸어줘서 그런가 싶어요"],
+        "concerns": ["어린이집에서 친구들이랑 못 어울릴까 봐 걱정돼요", "혹시 발달에 큰 문제가 있는 건 아닐까 걱정돼요"],
+        "expectations": ["언어치료가 필요한지 알고 싶어요", "집에서 어떻게 도와주면 되는지 알고 싶어요"]
+      },
       "iceHint": ["internet", "family", "test"],
       "opening": ["아이가 말이 너무 늦어요.", "30개월인데 아직 단어밖에 못 해요."],
       "informant": {
@@ -68,7 +73,7 @@
       "pmh": "재태 39주 3.2 kg 자연분만. 중이염이나 큰 병을 앓은 적 없음. 입원력 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}} 유전질환·청각장애 가족력 없음",
+      "fh": "{{fhChart}}. 유전질환·청각장애 가족력 없음",
       "sh": "인물 카드는 보호자의 것으로 읽는다. 아이는 어린이집 오전반에 다니고 낮에는 조부모가 돌봄",
       "pe": {
         "vitals": { "sbp": [86, 104], "dbp": [50, 64], "hr": [90, 128], "rr": [22, 30], "temp": [36.4, 37.3], "spo2": [97, 100],
@@ -92,6 +97,7 @@
         "negatives": ["고막 삼출액 없음", "청력 이상 소견 없음", "근긴장 이상 없음", "상동행동 없음", "발달 퇴행 없음", "성장 지연 없음"]
       },
       "variations": {
+        "fhChart": ["아버지도 말이 늦었음", "언어 지연 가족력 없음"],
         "onsetMonths": [18, 20, 24], "severity": [3, 4, 5],
         "height": [94, 96, 98], "weight": [14, 15, 16], "headCirc": [49, 50, 51],
         "fhx": ["아빠도 말이 늦었다고 시어머니가 그러세요.", "가족 중에 말 늦은 사람은 없어요."],
@@ -100,6 +106,7 @@
           {"text": "시댁에서 '원래 늦되는 애들도 있다'고 해서 지켜보다 왔다는 것", "sexOnly": "female"}
         ]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": ["아이가 말이 늦다는 것"],
         "onlyIfAsked": ["알아듣는 것은 잘한다는 것", "눈맞춤과 호명반응이 좋은 것", "신생아 청력선별검사 통과 사실", "발달 이정표 도달 시기", "예방접종력", "영상 시청 시간"]
@@ -111,6 +118,11 @@
       "dx": "삼출성 중이염에 의한 청력손실·언어발달지연",
       "constraints": { "ageRange": [3, 3], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "market", "care", "parttime", "selfemp"],
+      "ice": {
+        "ideas": ["고집이 세서 대답을 안 하는 것 같아요", "말이 늦게 트이는 아이인가 싶었어요"],
+        "concerns": ["말이 계속 안 늘까 봐 걱정돼요", "혹시 자폐 같은 건 아닐까 걱정돼요"],
+        "expectations": ["왜 말이 안 느는지 검사해보고 싶어요", "치료가 필요하면 빨리 시작하고 싶어요"]
+      },
       "iceHint": ["internet", "family", "denial"],
       "opening": ["아이가 말을 거의 못 해요.", "불러도 대답을 안 해서 걱정돼요."],
       "informant": {
@@ -162,7 +174,7 @@
       "pmh": "재태 38주 3.0 kg 자연분만. 중이염으로 {{otitisCount}}번 치료. 신생아 청력선별 {{ear}}쪽 재검 후 미추적",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}} 부모 키는 평균",
+      "fh": "{{fhChart}}. 부모 키는 평균",
       "sh": "인물 카드는 보호자의 것으로 읽는다. 아이는 어린이집에 다니며 교사도 반응이 늦다고 말함",
       "pe": {
         "vitals": { "sbp": [86, 104], "dbp": [50, 64], "hr": [92, 130], "rr": [22, 30], "temp": [36.4, 37.4], "spo2": [97, 100],
@@ -187,11 +199,13 @@
         "negatives": ["고막 천공 없음", "이루 없음", "상동행동 없음", "근긴장 이상 없음", "발달 퇴행 없음", "성장 지연 없음"]
       },
       "variations": {
+        "fhChart": ["청력 손실 가족력 없음", "외가 쪽 보청기 사용자 있음"],
         "onsetMonths": [15, 18, 20], "severity": [4, 5, 6],
         "height": [94, 96, 98], "weight": [14, 15, 16], "headCirc": [49, 50, 51],
         "ear": ["오른", "왼"], "otitisCount": [3, 4, 5],
         "fhx": ["없어요.", "친정 쪽에 보청기 쓰시는 분이 계세요."]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": ["아이가 말이 늦고 불러도 대답이 없다는 것"],
         "onlyIfAsked": ["신생아 청력선별 재검을 받지 않은 것", "반복된 중이염", "TV 볼륨을 크게 하는 것", "앞에서 부르면 반응한다는 것", "발달 이정표", "예방접종력"]
@@ -203,6 +217,11 @@
       "dx": "자폐스펙트럼장애",
       "constraints": { "ageRange": [3, 3], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "teacher", "nurse", "parttime", "care"],
+      "ice": {
+        "ideas": ["좀 늦되는 아이라 그런 것 같아요", "제가 영상을 보여줘서 그런가 싶어요"],
+        "concerns": ["혹시 자폐일까 봐 무서워요", "어린이집 생활을 못 할까 봐 걱정돼요"],
+        "expectations": ["정확히 어떤 상태인지 알고 싶어요", "치료를 어디서 받아야 하는지 알고 싶어요"]
+      },
       "iceHint": ["internet", "denial", "test"],
       "opening": ["아이가 불러도 쳐다보지를 않아요.", "말도 늦고 저랑 눈을 잘 안 맞춰요."],
       "informant": {
@@ -255,7 +274,7 @@
       "pmh": "재태 40주 3.4 kg 자연분만. 큰 병력 없음. 중이염 앓은 적 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}} 지적장애·유전질환 가족력 없음",
+      "fh": "{{fhChart}}. 지적장애·유전질환 가족력 없음",
       "sh": "인물 카드는 보호자의 것으로 읽는다. 아이는 어린이집에서 혼자 노는 편이라는 말을 들음",
       "pe": {
         "vitals": { "sbp": [88, 106], "dbp": [52, 66], "hr": [88, 126], "rr": [20, 28], "temp": [36.4, 37.3], "spo2": [97, 100],
@@ -279,6 +298,7 @@
         "negatives": ["고막 삼출액 없음", "난청을 시사하는 소견 없음", "근긴장 이상 없음", "머리둘레 이탈 없음", "성장 지연 없음"]
       },
       "variations": {
+        "fhChart": ["자폐 가족력 없음", "남편 사촌의 아이가 비슷한 증상"],
         "onsetMonths": [18, 20, 24], "regressionMonths": [16, 18], "severity": [5, 6, 7],
         "height": [96, 98, 100], "weight": [14, 15, 16], "headCirc": [50, 51, 52],
         "fhx": ["없어요.", "남편 사촌 아이가 비슷하다고 들은 적 있어요."],
@@ -287,6 +307,7 @@
           {"text": "'원래 좀 늦되는 애 같다'", "sexOnly": "female"}
         ]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": ["아이가 불러도 쳐다보지 않고 말이 늦다는 것"],
         "onlyIfAsked": ["돌 이후 단어가 줄어든 것", "손 끌기와 가리키기 부재", "반복행동과 상동행동", "편식", "청력선별검사 통과 사실", "발달 이정표", "예방접종력"]
@@ -298,6 +319,11 @@
       "dx": "경직성 뇌성마비 (미숙아·뇌실내출혈 병력)",
       "constraints": { "ageRange": [1, 1], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "care", "parttime", "market", "nurse"],
+      "ice": {
+        "ideas": ["일찍 태어나서 조금 늦는 거라고 생각했어요", "제가 많이 안 세워줘서 늦나 싶었어요"],
+        "concerns": ["평생 못 걷게 될까 봐 너무 무서워요", "제가 잘못해서 이렇게 된 건 아닐까 싶어요"],
+        "expectations": ["걸을 수 있게 되는지 알고 싶어요", "지금이라도 할 수 있는 치료가 있으면 받게 하고 싶어요"]
+      },
       "iceHint": ["family", "test", "internet"],
       "opening": ["아이가 아직 혼자 서지를 못해요.", "돌이 훨씬 지났는데 못 걸어요."],
       "informant": {
@@ -387,6 +413,11 @@
       "dx": "듀센 근이영양증",
       "constraints": { "ageRange": [5, 5], "sex": "male", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "market", "care", "parttime", "teacher"],
+      "ice": {
+        "ideas": ["원래 운동신경이 좀 둔한 아이인 것 같아요", "살이 쪄서 다리에 힘이 없는 건가 싶어요"],
+        "concerns": ["다리에 무슨 병이 있는 건 아닐까 걱정돼요", "넘어지다 크게 다칠까 봐 걱정이에요"],
+        "expectations": ["왜 자꾸 넘어지는지 원인을 알고 싶어요", "운동이나 치료로 좋아질 수 있는지 알고 싶어요"]
+      },
       "iceHint": ["internet", "family", "test"],
       "opening": ["아이가 자꾸 넘어져요.", "또래보다 잘 못 뛰고 계단을 힘들어해요."],
       "informant": {
@@ -439,7 +470,7 @@
       "pmh": "재태 39주 3.3 kg 자연분만. 큰 병력 없음. 중이염 앓은 적 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}} 부모 키는 평균",
+      "fh": "{{fhChart}}. 부모 키는 평균",
       "sh": "인물 카드는 보호자의 것으로 읽는다. 아이는 유치원에 다니며 바깥놀이에서 뒤처짐",
       "pe": {
         "vitals": { "sbp": [90, 106], "dbp": [54, 68], "hr": [80, 115], "rr": [18, 26], "temp": [36.4, 37.2], "spo2": [97, 100],
@@ -465,11 +496,13 @@
         "negatives": ["감각 이상 없음", "고막 이상 없음", "청력 이상 없음", "발달 퇴행 없음", "경련 병력 없음"]
       },
       "variations": {
+        "fhChart": ["외삼촌이 어릴 때 보행 이상으로 일찍 사망", "유사 질환 가족력 없음"],
         "onsetMonths": [6, 12], "severity": [4, 5, 6],
         "walkMonths": [16, 18, 19],
         "height": [106, 107, 109], "weight": [18, 19, 20],
         "fhx": ["친정 남동생이 어릴 때 비슷하게 걷다가 일찍 세상을 떠났다고 들었어요.", "가족 중에 그런 사람은 없어요."]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": ["아이가 자주 넘어진다는 것"],
         "onlyIfAsked": ["걷기 시작이 늦었던 것", "바닥에서 일어나는 방식", "종아리가 굵은 것", "말이 조금 느린 것", "외삼촌의 병력", "발달 이정표와 예방접종력"]

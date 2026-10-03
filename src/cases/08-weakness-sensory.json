@@ -14,6 +14,11 @@
       "dx": "척수 압박 (전이성 경막외 종양, 흉수 부위)",
       "constraints": { "ageRange": [50, 80], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "construct", "driver", "market"],
+      "ice": {
+        "ideas": ["허리 디스크가 도진 것 같아요", "나이 들어서 다리 힘이 빠지는 건가 싶어요"],
+        "concerns": ["이러다 아예 못 걷게 될까 봐 무서워요", "중풍이 온 건 아닐까 걱정돼요"],
+        "expectations": ["다시 제대로 걸을 수 있게 해주세요", "MRI든 뭐든 찍어서 원인을 알고 싶어요"]
+      },
       "iceHint": ["cancer", "family", "test"],
       "opening": ["며칠 전부터 다리에 힘이 빠져서 걷기가 힘들어요.", "등이 아프더니 다리가 저리고 힘이 없어요."],
       "hpi": {
@@ -40,7 +45,7 @@
         "암 치료를 받은 적 있나": "{{cancerHx}}",
         "열이 나나": "열은 없어요."
       },
-      "pmh": "{{cancerHx}} 척추 수술이나 경추 외상, 디스크 진단은 없음",
+      "pmh": "{{cancerPmh}}척추 수술이나 경추 외상, 디스크 진단은 없음",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -66,8 +71,10 @@
       },
       "variations": {
         "onsetDays": [4, 5, 7], "severity": [5, 6, 7], "weight": [5, 6, 7],
-        "cancerHx": ["몇 년 전에 폐에 암이 있다고 해서 치료받았어요.", "암 치료를 받은 적은 없어요. 담배만 오래 피웠어요.", "건강검진에서 뭐가 보인다고 했는데 더 확인은 안 했어요."]
+        "cancerHx": ["몇 년 전에 폐에 암이 있다고 해서 치료받았어요.", "암 치료를 받은 적은 없어요. 담배만 오래 피웠어요.", "건강검진에서 뭐가 보인다고 했는데 더 확인은 안 했어요."],
+        "cancerPmh": ["몇 년 전 폐암 치료. ", "", "건강검진에서 이상 소견을 들었으나 추가 확인은 안 함. "]
       },
+      "pairedVariations": [["cancerHx", "cancerPmh"]],
       "disclosure": {
         "spontaneous": ["다리에 힘이 빠져 걷기 힘들다는 것"],
         "onlyIfAsked": ["배뇨 장애", "감각이 둔해지는 경계", "체중감소", "밤에 심해지는 등 통증", "과거 암력", "악화 속도"]
@@ -79,6 +86,11 @@
       "dx": "길랑-바레 증후군",
       "constraints": { "ageRange": [20, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "student", "teacher", "delivery", "cook", "selfemp"],
+      "ice": {
+        "ideas": ["피곤해서 다리에 쥐가 나는 줄 알았어요", "허리 디스크 때문에 저린 건가 싶어요"],
+        "concerns": ["이러다 온몸에 힘이 빠질까 봐 무서워요", "일을 못 하게 될까 봐 걱정돼요"],
+        "expectations": ["왜 이러는지 빨리 검사해 주세요", "더 나빠지지 않게 해주세요"]
+      },
       "iceHint": ["internet", "work", "test"],
       "opening": ["며칠 전부터 다리에 힘이 빠지고 저려요.", "며칠 사이에 다리에 힘이 없어서 계단을 못 올라가요."],
       "hpi": {
@@ -93,7 +105,7 @@
         "timing": "지속적"
       },
       "assoc": {
-        "positive": ["{{preceding}}", "양쪽이 똑같이 그러함", "계단 오르기와 의자에서 일어나기가 어려움", "손끝도 저리기 시작함", "허리와 허벅지가 뻐근하게 아픔"],
+        "positive": ["{{precedingAssoc}}", "양쪽이 똑같이 그러함", "계단 오르기와 의자에서 일어나기가 어려움", "손끝도 저리기 시작함", "허리와 허벅지가 뻐근하게 아픔"],
         "negative": ["감각이 딱 끊기는 경계는 없음", "소변·대변 조절은 아직 괜찮음", "말이 어눌하지 않음", "한쪽만 그런 것 아님", "열 없음", "목이 뻣뻣하지 않음"]
       },
       "redFlags": {
@@ -131,8 +143,10 @@
       },
       "variations": {
         "onsetDays": [3, 4, 5], "severity": [4, 5, 6],
-        "preceding": ["2주쯤 전에 설사를 며칠 심하게 했어요.", "3주 전에 감기를 심하게 앓았어요.", "한 달 전쯤 장염으로 고생했어요."]
+        "preceding": ["2주쯤 전에 설사를 며칠 심하게 했어요.", "3주 전에 감기를 심하게 앓았어요.", "한 달 전쯤 장염으로 고생했어요."],
+        "precedingAssoc": ["2주 전 며칠간 심한 설사", "3주 전 심한 감기", "한 달 전 장염"]
       },
+      "pairedVariations": [["preceding", "precedingAssoc"]],
       "disclosure": {
         "spontaneous": ["다리에 힘이 빠지고 저리다는 것"],
         "onlyIfAsked": ["선행 감염·설사", "위로 올라오는 양상", "사레들림", "숨이 얕은 느낌", "악화 속도"]
@@ -144,6 +158,11 @@
       "dx": "급성 뇌경색 (편측 위약)",
       "constraints": { "ageRange": [55, 85], "sex": "any", "requiredRisk": ["고혈압", "당뇨병"], "requiredRiskMin": 2, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "market", "driver", "housewife"],
+      "ice": {
+        "ideas": ["자다가 팔을 깔고 자서 저린 줄 알았어요", "피곤해서 몸에 힘이 빠진 줄 알았어요"],
+        "concerns": ["중풍이 온 건 아닌가 겁나요", "이대로 한쪽을 못 쓰게 될까 봐 무서워요"],
+        "expectations": ["빨리 치료해서 원래대로 돌아가고 싶어요", "뇌 사진부터 찍어주세요"]
+      },
       "iceHint": ["family", "denial", "test"],
       "opening": ["오늘 아침에 갑자기 한쪽 팔다리에 힘이 빠졌어요.", "갑자기 팔다리에 힘이 빠졌어요."],
       "hpi": {
@@ -211,6 +230,11 @@
       "dx": "중증근무력증",
       "constraints": { "ageRange": [20, 45], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "nurse", "student", "teacher", "selfemp", "parttime"],
+      "ice": {
+        "ideas": ["눈이 피곤해서 그런 것 같아요", "요즘 잠을 못 자서 그런가 싶어요"],
+        "concerns": ["뇌에 무슨 이상이 있는 건 아닐까 걱정돼요", "얼굴이 이상해 보여서 사람 만나기가 신경 쓰여요"],
+        "expectations": ["왜 이러는지 원인을 알고 싶어요", "눈꺼풀이 안 처지게 치료받고 싶어요"]
+      },
       "iceHint": ["internet", "work", "test"],
       "opening": ["눈꺼풀이 자꾸 처져요.", "팔에 힘이 없고 눈이 자꾸 감겨요."],
       "hpi": {
@@ -272,6 +296,11 @@
       "dx": "당뇨병성 말초신경병증",
       "constraints": { "ageRange": [50, 78], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["farmer", "retired", "market", "driver", "construct", "housewife"],
+      "ice": {
+        "ideas": ["혈액순환이 안 돼서 그런 것 같아요", "나이 들어서 그런가 싶어요"],
+        "concerns": ["감각이 점점 없어져서 걷기 힘들어질까 봐 걱정돼요", "중풍 오기 전 증상일까 봐요"],
+        "expectations": ["저리고 화끈거리는 것 좀 줄이는 약을 받고 싶어요", "왜 그런지 검사해 보고 싶어요"]
+      },
       "iceHint": ["medicine", "internet", "family"],
       "opening": ["발이 저리고 남의 살 같아요.", "발바닥이 화끈거리고 감각이 이상해요."],
       "hpi": {
@@ -295,7 +324,7 @@
         "소변이나 대변 조절은 되나": "그건 괜찮아요.",
         "발에 상처나 헌 데가 있나": "{{wound}}",
         "당뇨 관리는 어떻게 하고 있나": "약은 먹는데 검사는 오래 안 받았어요.",
-        "술을 얼마나 마시나": "가끔 마시는 정도예요.",
+        "술을 얼마나 마시나": "{{alcoholSay}}",
         "등이나 허리가 아픈가": "허리는 괜찮아요."
       },
       "pmh": "당뇨병으로 여러 해 약을 복용 중이며 혈당 조절이 잘 되지 않음. 척추 수술이나 경추 외상 병력은 없음",

@@ -32,6 +32,11 @@
         "delivery",
         "soldier"
       ],
+      "ice": {
+        "ideas": ["뭘 잘못 먹고 탈이 난 것 같아요", "요즘 몸이 약해져서 장이 탈 난 것 같아요"],
+        "concerns": ["물만 먹어도 쏟아지니 이러다 쓰러질까 봐 걱정돼요", "일을 며칠 못 나갈까 봐 걱정이에요"],
+        "expectations": ["설사 좀 멎게 해주세요", "수액이라도 맞고 기운 좀 차리고 싶어요"]
+      },
       "iceHint": [
         "work",
         "medicine",
@@ -203,6 +208,11 @@
         "farmer",
         "market"
       ],
+      "ice": {
+        "ideas": ["입맛이 없어서 기운이 빠지니 장도 약해진 것 같아요", "나이 들어서 장이 예민해진 것 같아요"],
+        "concerns": ["이렇게 오래가니 장에 큰 병이 생긴 건 아닐까 걱정돼요", "기운이 계속 빠져서 걱정이에요"],
+        "expectations": ["설사를 좀 멈추게 해주세요", "왜 이러는지 원인을 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "medicine",
@@ -229,7 +239,7 @@
           "배가 살살 아픔",
           "기운 없음",
           "복부 팽만감",
-          "{{mucus}}"
+          "{{mucusChart}}"
         ],
         "negative": [
           "구토 없음",
@@ -248,7 +258,7 @@
         "체중감소": "입맛이 없어서 조금 빠졌어요.",
         "전에도 이런 설사가 있었나": "이렇게 심한 건 처음이에요."
       },
-      "pmh": "{{admission}}",
+      "pmh": "{{admissionChart}}",
       "meds": "최근 항생제 복용 종료",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -301,6 +311,8 @@
         ]
       },
       "variations": {
+        "mucusChart": ["끈적한 점액변", "점액변(혈변은 없음)"],
+        "admissionChart": ["한 달 전 폐렴으로 입원", "폐렴으로 외래 항생제 치료(입원력 없음)"],
         "onsetDays": [
           5,
           7,
@@ -329,6 +341,7 @@
           "피는 없고 점액만 있어요."
         ]
       },
+      "pairedVariations": [["mucus", "mucusChart"], ["admission", "admissionChart"]],
       "disclosure": {
         "spontaneous": [
           "설사가 멈추지 않는다는 것"
@@ -362,6 +375,11 @@
         "nurse",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["장이 원래 예민한 것 같아요", "음식이 잘 안 맞아서 그런가 싶어요"],
+        "concerns": ["혹시 장에 큰 병이 있는 건 아닐까 걱정돼요", "화장실 때문에 밖에 나가는 게 신경 쓰여요"],
+        "expectations": ["검사해서 별 이상 없는지 확인하고 싶어요", "배 아픈 게 좀 덜해지는 약을 받고 싶어요"]
+      },
       "iceHint": [
         "cancer",
         "internet",
@@ -412,7 +430,7 @@
       "pmh": "특이 병력 없음",
       "meds": "지사제를 가끔 사 먹음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따르되 최근 스트레스가 큼",
       "pe": {
         "vitals": {
@@ -466,6 +484,7 @@
         ]
       },
       "variations": {
+        "fhChart": ["대장암 가족력 없음", "삼촌 대장암"],
         "onsetMonths": [
           4,
           6,
@@ -481,6 +500,7 @@
           "삼촌이 대장암을 앓으셨어요."
         ]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": [
           "배가 아프고 설사한다는 것"
@@ -514,6 +534,11 @@
         "nurse",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["장염이 오래가는 것 같아요", "요즘 무리해서 장이 상한 것 같아요"],
+        "concerns": ["피가 계속 나오니 장에 큰 병이 있는 건 아닐까 걱정돼요", "학교나 일을 제대로 못 할까 봐 걱정이에요"],
+        "expectations": ["피 나오는 것부터 멈추게 해주세요", "무슨 병인지 정확히 알고 싶어요"]
+      },
       "iceHint": [
         "cancer",
         "internet",
@@ -561,7 +586,7 @@
       "pmh": "특이 병력 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": {
@@ -615,6 +640,7 @@
         ]
       },
       "variations": {
+        "fhChart": ["염증성 장질환 가족력 없음", "사촌 크론병"],
         "onsetWeeks": [
           4,
           6,
@@ -659,7 +685,7 @@
           "사촌이 크론병이라고 들었어요."
         ]
       },
-      "pairedVariations": [["extra", "jointFinding", "eyeFinding"]],
+      "pairedVariations": [["fhx", "fhChart"], ["extra", "jointFinding", "eyeFinding"]],
       "disclosure": {
         "spontaneous": [
           "피 섞인 설사"

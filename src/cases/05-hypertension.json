@@ -16,7 +16,7 @@
       "constraints": { "ageRange": [40, 62], "sex": "any", "requiredRisk": ["음주", "흡연"], "requiredRiskMin": 1, "forbidden": ["고혈압"] },
       "occupationBias": ["office", "driver", "selfemp", "market", "teacher"],
       "ice": {
-        "ideas": ["요즘 회식이 잦고 잠을 못 자서 잠깐 오른 것 같아요", "나이 들면 다들 조금씩 오르는 거 아닌가 싶어요"],
+        "ideas": ["요즘 일이 바쁘고 잠을 못 자서 잠깐 오른 것 같아요", "나이 들면 다들 조금씩 오르는 거 아닌가 싶어요"],
         "concerns": ["혈압약은 한번 먹기 시작하면 평생 먹어야 한다던데 그게 싫어요", "이러다 갑자기 쓰러지는 건 아닌가 싶어요"],
         "expectations": ["약 없이 운동이나 식단으로 낮출 수 있는지 알고 싶어요", "검진표에 재검 받았다는 확인만 받으면 돼요"]
       },
@@ -52,8 +52,8 @@
       "pmh": "특이 병력 없음. 수술 받은 적 없음",
       "meds": "복용 중인 약 없음. 소염진통제나 감기약도 자주 먹지는 않음",
       "allergy": "없음",
-      "fh": "아버지가 고혈압으로 약을 드셨고 {{familyEvent}}",
-      "sh": "인물 카드를 따르되 음주 또는 흡연 중 하나 이상 보유. 짠 음식을 좋아하고 운동은 거의 하지 않음",
+      "fh": "아버지 고혈압. {{familyEvent}}",
+      "sh": "인물 카드를 따르되 짠 음식을 좋아하고 운동은 거의 하지 않음",
       "pe": {
         "vitals": { "sbp": [148, 166], "dbp": [90, 102], "hr": [70, 88], "rr": [14, 18], "temp": [36.3, 37.0], "spo2": [97, 99],
                     "invariant": "수축기 140 이상, 이완기 90 이상을 유지한다. 180 이상으로 올리지 않는다(응급증 케이스가 되어 달라진다). 양팔 혈압 차이는 10 이내로 둔다." },
@@ -80,7 +80,7 @@
       },
       "variations": {
         "yearsHigh": [2, 3, 5], "severity": [0, 1, 2], "weightGain": [5, 7, 10],
-        "familyEvent": ["{{olderBro}}도 고혈압 약을 먹어요.", "어머니는 특별한 병은 없으세요.", "그 아버지가 예순에 뇌졸중으로 쓰러지셨고요."],
+        "familyEvent": ["{{olderBro}}도 고혈압", "어머니는 특이사항 없음", "아버지 60세에 뇌졸중"],
         "pregOcp": [{"text": "임신은 아니고 피임약도 안 먹어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐고 호르몬제는 안 먹어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
       "disclosure": {
@@ -130,7 +130,7 @@
       "pmh": "요로감염으로 몇 년 전 치료받은 적 있음. 그 외 특이 병력 없음",
       "meds": "복용 중인 약 없음",
       "allergy": "없음",
-      "fh": "{{familyKidney}} {{familyBrain}}",
+      "fh": "{{kidneyChart}}. {{brainChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [146, 164], "dbp": [92, 104], "hr": [72, 88], "rr": [14, 18], "temp": [36.3, 37.0], "spo2": [97, 99],
@@ -156,11 +156,14 @@
         "negatives": ["신동맥 잡음 없음", "하지 부종 없음", "발열 없음", "유두부종 없음", "신경학적 국소 소견 없음"]
       },
       "variations": {
+        "brainChart": ["삼촌 뇌출혈로 사망", "뇌혈관 질환 가족력 없음"],
+        "kidneyChart": ["아버지 다낭신, 투석 중", "고모 신부전으로 투석 중"],
         "monthsHigh": [3, 6, 8], "severity": [2, 3, 4], "side": ["오른", "왼", "양"],
         "familyKidney": ["아버지가 콩팥에 물혹이 많다고 하셨고 지금 투석하세요.", "고모가 콩팥 때문에 투석하신다고 들었어요."],
         "familyBrain": ["삼촌이 뇌혈관이 터져서 돌아가셨어요.", "뇌 쪽 병은 들은 적 없어요."],
         "pregOcp": [{"text": "임신은 아니고 피임약도 안 먹어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐고 호르몬제는 안 먹어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
+      "pairedVariations": [["familyBrain", "brainChart"], ["familyKidney", "kidneyChart"]],
       "disclosure": {
         "spontaneous": ["혈압이 높게 나왔다는 것"],
         "onlyIfAsked": ["옆구리 불편감", "과거 혈뇨", "야간뇨", "가족의 콩팥병·투석력", "가족의 뇌출혈력"]
@@ -174,7 +177,7 @@
       "occupationBias": ["office", "market", "housewife", "selfemp", "care"],
       "ice": {
         "ideas": ["약이 몸에 안 맞는 것 같아요", "약을 먹는데도 안 떨어지니 제가 뭘 잘못하고 있나 싶어요"],
-        "concerns": ["약을 자꾸 늘리기만 하니 이러다 약만 한 주먹 먹게 될까 봐요", "다리에 힘이 빠지는 게 혹시 중풍 오려는 건가 겁나요"],
+        "concerns": ["약을 자꾸 늘리기만 하니 이러다 약만 한 주먹 먹게 될까 봐요", "이러다 중풍이 올까 봐 겁나요"],
         "expectations": ["약을 늘리는 것 말고 다른 원인이 있는지 검사해 보고 싶어요", "약을 바꿔서라도 혈압이 잡혔으면 좋겠어요"]
       },
       "iceHint": ["repeat", "test", "internet"],
@@ -251,7 +254,7 @@
       "constraints": { "ageRange": [28, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "teacher", "selfemp", "nurse", "student"],
       "ice": {
-        "ideas": ["공황장애 같은 건가 싶어요", "갱년기나 스트레스 때문인가 했어요"],
+        "ideas": ["공황장애 같은 건가 싶어요", "요즘 스트레스가 심해서 그런가 했어요"],
         "concerns": ["이러다 길에서 갑자기 쓰러질까 봐 무서워요", "심장에 문제가 있는 건 아닐까 걱정돼요"],
         "expectations": ["왜 이런 발작이 오는지 정확히 알고 싶어요", "증상이 올 때 어떻게 해야 하는지 알려주셨으면 해요"]
       },
@@ -262,7 +265,7 @@
         "character": "갑자기 뒷머리가 지끈거리면서 가슴이 쿵쾅거리고 온몸에 식은땀이 남. 손이 떨리고 얼굴이 하얗게 질림",
         "location": "머리 뒤쪽이 지끈거리고 가슴이 두근거림",
         "radiation": "없음",
-        "aggravating": "{{trigger}} 때 잘 생김",
+        "aggravating": "{{trigger}} 잘 생김",
         "relieving": "{{durationMin}}분쯤 지나면 저절로 가라앉고 그 뒤엔 축 처짐",
         "severity": "발작 때는 {{severity}}/10",
         "course": "처음엔 한 달에 한 번이었는데 요즘은 일주일에 두세 번으로 잦아짐",
@@ -287,7 +290,7 @@
       "pmh": "특이 병력 없음. 몇 년 전 검진에서는 혈압이 정상이었음",
       "meds": "복용 중인 약 없음",
       "allergy": "없음",
-      "fh": "{{familyEndo}}",
+      "fh": "{{endoChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [168, 192], "dbp": [96, 112], "hr": [100, 118], "rr": [16, 22], "temp": [36.4, 37.2], "spo2": [97, 99],
@@ -313,11 +316,13 @@
         "negatives": ["갑상선 비대 없음", "안구돌출 없음", "심잡음 없음", "유두부종 없음", "복부 종괴 촉지되지 않음"]
       },
       "variations": {
+        "endoChart": ["아버지 부신 종양 수술", "특이사항 없음", "{{olderSis}} 갑상선 수술"],
         "monthsSx": [3, 5, 8], "severity": [7, 8, 9], "durationMin": [15, 20, 30], "weightLoss": [3, 4, 5],
         "trigger": ["몸을 숙이거나 무거운 걸 들 때", "긴장할 때나 잠에서 깰 때", "특별한 이유 없이 아무 때나"],
         "familyEndo": ["아버지도 부신에 혹이 있어서 수술하셨대요.", "가족 중에 그런 병은 없어요.", "{{olderSis}}가 갑상선 수술을 받은 적 있어요."],
         "pregOcp": [{"text": "임신은 아니고 피임약도 안 먹어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐고 호르몬제는 안 먹어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
+      "pairedVariations": [["familyEndo", "endoChart"]],
       "disclosure": {
         "spontaneous": ["갑자기 머리가 아프고 가슴이 뛴다는 것"],
         "onlyIfAsked": ["발작적 발한", "발작 시 혈압이 200 가까이 올랐던 것", "기립성 어지럼", "체중감소", "가족의 내분비 종양력", "발작 사이에는 정상이라는 것"]
@@ -330,8 +335,8 @@
       "constraints": { "ageRange": [45, 72], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["construct", "driver", "market", "farmer", "retired"],
       "ice": {
-        "ideas": ["요즘 잠을 못 자서 머리가 아픈 줄 알았어요", "혈압약을 잠깐 쉬었더니 올라간 것 같기도 해요"],
-        "concerns": ["아버지처럼 중풍이 오는 건 아닌가 겁나요", "눈이 이러다 안 보이게 될까 봐 걱정돼요"],
+        "ideas": ["요즘 잠을 못 자서 머리가 아픈 줄 알았어요", "요즘 신경 쓸 일이 많아서 그런 것 같아요"],
+        "concerns": ["아버지처럼 중풍이 오는 건 아닌가 겁나요", "이러다 쓰러질까 봐 걱정돼요"],
         "expectations": ["일단 머리 아픈 것부터 빨리 가라앉혀 주셨으면 해요", "주사든 뭐든 혈압을 빨리 떨어뜨려 주세요"]
       },
       "iceHint": ["denial", "medicine", "work"],
@@ -364,7 +369,7 @@
         "체중감소나 밤에 땀": "없어요."
       },
       "pmh": "{{yearsHtn}}년 전 고혈압 진단. 최근 {{stopped}}",
-      "meds": "혈압약을 처방받았으나 최근 복용이 불규칙함. 진통제를 사서 먹고 있음",
+      "meds": "혈압약을 처방받았으나 최근 제대로 먹지 않음. 진통제를 사서 먹고 있음",
       "allergy": "없음",
       "fh": "아버지가 뇌졸중으로 돌아가심",
       "sh": "인물 카드를 따르되 건강검진을 받은 지 오래됨",
@@ -396,8 +401,9 @@
       "variations": {
         "onsetDays": [2, 3, 4], "severity": [7, 8, 9], "yearsHtn": [5, 8, 10],
         "adherence": ["약이 떨어져서 두어 달 안 먹었어요.", "먹었다 말았다 해요. 괜찮으면 안 먹어요.", "일이 바빠서 병원을 못 갔어요."],
-        "stopped": ["약이 떨어진 뒤 병원에 가지 못함", "괜찮은 것 같아 스스로 약을 끊음"]
+        "stopped": ["약이 떨어진 뒤 두어 달 복용하지 않음", "괜찮다 싶으면 거르는 등 불규칙하게 복용", "바빠서 병원에 가지 못해 약이 끊김"]
       },
+      "pairedVariations": [["adherence", "stopped"]],
       "disclosure": {
         "spontaneous": ["머리가 아프다는 것", "혈압이 높게 나왔다는 것"],
         "onlyIfAsked": ["시야 흐림", "구토", "약을 끊은 것", "야간 호흡곤란", "소변량 감소", "코피"]

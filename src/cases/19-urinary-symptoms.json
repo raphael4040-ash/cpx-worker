@@ -32,6 +32,11 @@
         "nurse",
         "care"
       ],
+      "ice": {
+        "ideas": ["방광염이 심해진 것 같아요", "요즘 피곤해서 몸이 약해진 것 같아요"],
+        "concerns": ["열이 높으니 큰 병이 된 건 아닐까 걱정돼요", "일을 며칠 못 나갈까 봐 걱정이에요"],
+        "expectations": ["주사든 약이든 빨리 낫게 해주세요", "열 좀 내리게 해주세요"]
+      },
       "iceHint": [
         "internet",
         "test",
@@ -76,7 +81,7 @@
         "전에도 요로감염으로 치료받은 적": "{{utiHx}}",
         "소변에 피가 섞였나": "눈으로 보기에는 그냥 뿌옇기만 해요."
       },
-      "pmh": "{{utiHx}}",
+      "pmh": "{{utiPmh}}",
       "meds": "어제부터 약국 해열진통제 복용",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -126,6 +131,7 @@
         ]
       },
       "variations": {
+        "utiPmh": ["작년 방광염으로 항생제 복용", "과거 방광염 진단 두어 번", "특이 병력 없음"],
         "onsetDays": [
           2,
           3,
@@ -151,6 +157,7 @@
           "요로감염은 이번이 처음이에요."
         ]
       },
+      "pairedVariations": [["utiHx", "utiPmh"]],
       "disclosure": {
         "spontaneous": [
           "소변볼 때 아프다는 것",
@@ -187,6 +194,11 @@
         "delivery",
         "teacher"
       ],
+      "ice": {
+        "ideas": ["방광염 같은 게 걸린 것 같아요", "요즘 무리해서 몸이 상한 것 같아요"],
+        "concerns": ["열이 계속 날까 봐 걱정돼요", "전립선에 큰 병이 생긴 건 아닐까 싶어요"],
+        "expectations": ["빨리 낫는 약을 받고 싶어요", "열 좀 내리고 아픈 걸 덜하게 해주세요"]
+      },
       "iceHint": [
         "internet",
         "denial",
@@ -231,11 +243,11 @@
         "최근 요도에 관을 넣거나 검사받은 적": "{{procedure}}",
         "전에도 전립샘 문제로 치료받은 적": "전립샘염은 이번이 처음이에요."
       },
-      "pmh": "{{procedure}}",
+      "pmh": "{{procedurePmh}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 오래 앉아 있는 시간이 긴 편",
+      "sh": "인물 카드를 따름",
       "pe": {
         "vitals": {
           "sbp": [
@@ -283,6 +295,7 @@
         ]
       },
       "variations": {
+        "procedurePmh": ["최근 건강검진에서 방광 내시경 시행", "특이 병력 없음"],
         "onsetDays": [
           2,
           3,
@@ -306,6 +319,7 @@
           "요도나 방광에 검사나 시술을 받은 적은 없어요."
         ]
       },
+      "pairedVariations": [["procedure", "procedurePmh"]],
       "disclosure": {
         "spontaneous": [
           "소변볼 때 아프다는 것",
@@ -341,6 +355,11 @@
         "parttime",
         "cook"
       ],
+      "ice": {
+        "ideas": ["물을 적게 마셔서 그런 것 같아요", "피곤해서 염증이 생긴 건가 싶어요"],
+        "concerns": ["혹시 안 좋은 병일까 봐 걱정돼요", "다른 사람이 알게 될까 봐 신경 쓰여요"],
+        "expectations": ["주사 한 번 맞고 빨리 낫고 싶어요", "검사는 조용히 받고 싶어요"]
+      },
       "iceHint": [
         "denial",
         "internet",
@@ -384,7 +403,7 @@
         "전에 성병으로 치료받은 적": "{{stiHx}}",
         "관절이 붓거나 눈이 충혈된 적": "그런 건 없어요."
       },
-      "pmh": "{{stiHx}}",
+      "pmh": "{{stiPmh}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -437,6 +456,7 @@
         ]
       },
       "variations": {
+        "stiPmh": ["과거 요도염으로 주사 치료 1회", "특이 병력 없음"],
         "onsetDays": [
           3,
           5,
@@ -461,6 +481,7 @@
           "성병으로 치료받은 적은 없어요."
         ]
       },
+      "pairedVariations": [["stiHx", "stiPmh"]],
       "disclosure": {
         "spontaneous": [
           "소변볼 때 따갑다는 것"
@@ -494,6 +515,11 @@
         "office",
         "parttime"
       ],
+      "ice": {
+        "ideas": ["나이 들어서 그런 것 같아요", "운동을 안 해서 그런가 싶어요"],
+        "concerns": ["냄새가 날까 봐 사람 만나기가 신경 쓰여요", "점점 더 심해질까 봐 걱정돼요"],
+        "expectations": ["새는 걸 줄이는 방법을 알고 싶어요", "수술 안 하고 좋아질 수 있는지 알고 싶어요"]
+      },
       "iceHint": [
         "denial",
         "family",
@@ -539,7 +565,7 @@
         "출산 경험과 분만 방식": "{{parity}}",
         "폐경했나": "{{menoSay}}"
       },
-      "pmh": "{{parity}} {{backHx}}",
+      "pmh": "{{parityPmh}}. {{backPmh}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -594,6 +620,8 @@
         ]
       },
       "variations": {
+        "backPmh": ["허리 외상력 없음", "예전 요부 염좌, 수술력 없음"],
+        "parityPmh": ["자연분만 2회(둘째 4kg 이상)", "자연분만 3회", "자연분만 2회"],
         "onsetMonths": [
           6,
           12,
@@ -620,6 +648,7 @@
         ],
         "menoSay": [{"text": "아직 생리는 해요.", "maxAge": 50}, {"text": "폐경한 지 몇 년 됐어요.", "minAge": 51}]
       },
+      "pairedVariations": [["backHx", "backPmh"], ["parity", "parityPmh"]],
       "disclosure": {
         "spontaneous": [
           "소변이 새서 왔다는 것"
@@ -654,6 +683,11 @@
         "market",
         "construct"
       ],
+      "ice": {
+        "ideas": ["나이 들어서 그런 것 같아요", "전립선이 커진 건가 싶어요"],
+        "concerns": ["혹시 전립선암일까 봐 걱정돼요", "밤에 자꾸 깨서 잠을 못 자는 게 힘들어요"],
+        "expectations": ["밤에 덜 깨게 해주세요", "소변 줄기가 좀 시원해지는 약을 받고 싶어요"]
+      },
       "iceHint": [
         "cancer",
         "family",
@@ -703,7 +737,7 @@
       "pmh": "특별한 병력 없음. 건강검진은 몇 년 안 받음",
       "meds": "{{meds}}",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따르되 저녁에 물이나 술을 늦게 마시는 편",
       "pe": {
         "vitals": {
@@ -753,6 +787,7 @@
         ]
       },
       "variations": {
+        "fhChart": ["형 전립선 수술", "특이사항 없음"],
         "onsetYears": [
           2,
           3,
@@ -781,6 +816,7 @@
           "가끔 코감기약을 사 먹음"
         ]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": [
           "밤에 소변 때문에 깬다는 것"

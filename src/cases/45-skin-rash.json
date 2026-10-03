@@ -14,6 +14,11 @@
       "dx": "약물 발진 (반점구진성 약진)",
       "constraints": { "ageRange": [30, 72], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "market", "retired", "farmer", "selfemp"],
+      "ice": {
+        "ideas": ["뭘 잘못 먹고 두드러기가 난 것 같아요", "피부에 염증이 생긴 것 같아요"],
+        "concerns": ["온몸으로 번지니까 큰일 난 건 아닐까 걱정돼요", "가려워서 잠을 못 자겠어요"],
+        "expectations": ["가려운 것 좀 멎게 해주세요", "왜 이런 게 났는지 알고 싶어요"]
+      },
       "iceHint": ["internet", "medicine", "test"],
       "opening": ["온몸에 두드러기 같은 게 났어요.", "며칠 전부터 몸에 빨간 게 돋고 가려워요."],
       "hpi": {
@@ -72,8 +77,9 @@
         "severity": [5, 6, 7],
         "drug": ["통풍약", "항생제", "경련약"],
         "priorRx": ["처음이에요.", "예전에 다른 약 먹고 살짝 두드러기 난 적은 있어요."],
-        "pmhx": ["통풍으로 최근 약을 새로 받았어요.", "이가 아파서 항생제를 처방받았어요.", "특별한 병은 없었는데 최근에 약을 하나 받아 먹고 있어요."]
+        "pmhx": ["통풍으로 최근 약을 새로 처방받음", "치통으로 항생제 처방받음", "경련으로 최근 약을 새로 처방받음"]
       },
+      "pairedVariations": [["drug", "pmhx"]],
       "disclosure": {
         "spontaneous": ["몸에 발진이 났다는 것", "가렵다는 것"],
         "onlyIfAsked": ["새로 시작한 약", "약을 시작한 시점", "미열", "점막에는 증상이 없다는 것", "발진이 번진 순서"]
@@ -85,8 +91,13 @@
       "dx": "대상포진",
       "constraints": { "ageRange": [50, 82], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "housewife", "market", "jobless"],
+      "ice": {
+        "ideas": ["피곤해서 피부에 뭐가 난 것 같아요", "벌레에 물린 건가 싶었어요"],
+        "concerns": ["너무 아파서 잠을 못 자요", "흉터가 남을까 봐 걱정돼요"],
+        "expectations": ["아픈 것 좀 멎게 해주세요", "빨리 낫는 약을 받고 싶어요"]
+      },
       "iceHint": ["family", "medicine", "denial"],
-      "opening": ["옆구리에 물집이 잡히고 아파요.", "{{side}}쪽에 발진이 났어요."],
+      "opening": ["몸에 물집이 잡히고 아파요.", "{{side}}쪽에 발진이 났어요."],
       "hpi": {
         "onset": "{{painDays}}일 전 먼저 따갑고 화끈거리는 통증이 생겼고, {{onsetDays}}일 전 그 자리에 발진이 돋음",
         "character": "타는 듯 화끈거리고 콕콕 쑤시며 옷이 스치기만 해도 아픔",
@@ -113,11 +124,11 @@
         "수두를 앓은 적 있나": "어릴 때 수두를 앓았다고 들었어요.",
         "새로 쓴 화장품이나 세제, 식물에 닿은 적이 있나": "없어요."
       },
-      "pmh": "{{immune}}",
+      "pmh": "{{immuneChart}}",
       "meds": "진통제",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 최근 과로했거나 잠을 못 잤음",
+      "sh": "인물 카드를 따르되 최근 과로하고 잠을 잘 못 잠",
       "pe": {
         "vitals": { "sbp": [116, 140], "dbp": [70, 86], "hr": [76, 96], "rr": [14, 20], "temp": [37.0, 37.8], "spo2": [96, 99],
                     "invariant": "미열 범위를 유지한다. 38.5도를 넘지 않는다." },
@@ -138,13 +149,15 @@
         "negatives": ["반대쪽 병변 없음", "안구 침범 없음", "안면신경 마비 없음", "점막 궤양 없음", "전신 파종성 병변 없음"]
       },
       "variations": {
+        "immuneChart": ["특이 병력 없음", "허리 통증으로 스테로이드 주사 여러 번"],
         "painDays": [3, 4],
         "onsetDays": [1, 2],
         "severity": [6, 7, 8],
         "side": ["오른", "왼"],
         "derm": ["가슴 옆에서 등으로 이어지는 갈비뼈 아래", "허리에서 배꼽 옆으로 이어지는", "어깨에서 팔 바깥쪽으로 이어지는"],
-        "immune": ["당뇨로 약을 먹고 있어요.", "최근에 큰 병을 앓거나 약을 먹은 적은 없어요.", "허리 때문에 스테로이드 주사를 몇 번 맞았어요."]
+        "immune": ["최근에 큰 병을 앓거나 약을 먹은 적은 없어요.", "허리 때문에 스테로이드 주사를 몇 번 맞았어요."]
       },
+      "pairedVariations": [["immune", "immuneChart"]],
       "disclosure": {
         "spontaneous": ["한쪽에 발진이 났다는 것", "그 자리가 아프다는 것"],
         "onlyIfAsked": ["통증이 발진보다 먼저 생긴 것", "한쪽에만 있는 것", "미열", "면역 저하 요인", "수두 병력"]
@@ -156,6 +169,11 @@
       "dx": "알레르기 접촉피부염 (파스)",
       "constraints": { "ageRange": [25, 70], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["construct", "market", "housewife", "care", "driver"],
+      "ice": {
+        "ideas": ["피부가 약해서 그런 것 같아요", "땀띠가 심하게 난 건가 싶어요"],
+        "concerns": ["진물이 나니 덧날까 봐 걱정돼요", "가려워서 일에 집중이 안 돼요"],
+        "expectations": ["가려운 것 좀 가라앉게 해주세요", "바를 약을 받고 싶어요"]
+      },
       "iceHint": ["medicine", "denial", "work"],
       "opening": ["허리에 벌겋게 발진이 나고 가려워요.", "피부가 벌겋게 되고 진물이 나요."],
       "hpi": {
@@ -184,7 +202,7 @@
         "직업상 닿는 물질이 있나": "{{occExposure}}"
       },
       "pmh": "허리 통증으로 파스를 자주 사용",
-      "meds": "약국에서 산 파스, 먹는 약은 없음",
+      "meds": "약국에서 산 파스 사용, 새로 먹기 시작한 약 없음",
       "allergy": "약 알레르기는 없다고 알고 있음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
@@ -213,7 +231,7 @@
         "severity": [6, 7, 8],
         "side": ["오른", "왼"],
         "prior": ["전에도 반창고 붙인 자리가 가려웠던 적이 있어요.", "이런 적은 처음이에요."],
-        "occExposure": ["일할 때 고무장갑을 오래 껴요.", "특별히 닿는 건 없어요.", "시멘트를 자주 만져요."]
+        "occExposure": ["일할 때 고무장갑을 오래 껴요.", "특별히 닿는 건 없어요.", {"text": "시멘트를 자주 만져요.", "occOnly": ["construct"]}]
       },
       "disclosure": {
         "spontaneous": ["파스 붙인 자리가 가렵고 붉다는 것"],
@@ -226,6 +244,11 @@
       "dx": "홍역",
       "constraints": { "ageRange": [18, 36], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "office", "nurse", "teacher", "parttime"],
+      "ice": {
+        "ideas": ["독한 감기에 걸린 것 같아요", "열이 많이 나서 피부에 뭐가 돋은 것 같아요"],
+        "concerns": ["열이 안 떨어져서 걱정돼요", "다른 사람한테 옮기는 병일까 봐 걱정돼요"],
+        "expectations": ["열 좀 내리게 해주세요", "무슨 병인지 알고 싶어요"]
+      },
       "iceHint": ["internet", "work", "test"],
       "opening": ["열이 나더니 발진이 났어요.", "며칠째 열이 나는데 오늘 발진이 돋았어요."],
       "hpi": {
@@ -298,6 +321,11 @@
       "dx": "전신홍반루푸스",
       "constraints": { "ageRange": [18, 42], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "student", "teacher", "nurse", "parttime"],
+      "ice": {
+        "ideas": ["피부가 예민해서 뭐가 올라온 것 같아요", "화장품이 안 맞아서 그런가 싶어요"],
+        "concerns": ["얼굴에 난 게 안 없어져서 속상해요", "피곤한 게 계속돼서 걱정이에요"],
+        "expectations": ["얼굴 붉은 걸 없애고 싶어요", "왜 이러는지 제대로 검사해보고 싶어요"]
+      },
       "iceHint": ["internet", "repeat", "cancer"],
       "opening": ["얼굴에 발진이 생겼는데 안 없어져요.", "볼이 벌게졌는데 안 없어져요."],
       "hpi": {
@@ -357,8 +385,8 @@
         "severity": [4, 5, 6],
         "joint": ["양손 손가락 관절", "양쪽 손목", "손가락과 무릎"],
         "urine": ["거품이 좀 많은 것 같아요. 아침에 눈두덩이 붓기도 해요.", "그런 건 잘 모르겠어요."],
-        "pmhx": ["예전에 피부과에서 알레르기 같다고 연고만 받았어요.", "특별한 병은 없어요."],
-        "fhx": ["이모가 류마티스로 오래 치료받으세요.", "가족 중에 특별한 병은 없어요."]
+        "pmhx": ["예전에 피부과에서 알레르기로 보고 연고만 처방", "특이 병력 없음"],
+        "fhx": ["이모 류마티스 질환", "특이사항 없음"]
       },
       "disclosure": {
         "spontaneous": ["얼굴 발진이 안 없어진다는 것"],

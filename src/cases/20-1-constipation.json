@@ -15,6 +15,11 @@
       "dx": "좌측 결장암 (기질성 변비)",
       "constraints": { "ageRange": [54, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "market", "selfemp", "housewife"],
+      "ice": {
+        "ideas": ["나이 들어서 장이 약해진 것 같아요", "앉아서 지내는 시간이 많아서 그런가 싶어요"],
+        "concerns": ["혹시 장에 혹 같은 게 생긴 건 아닐까 겁나요", "변비약이 점점 안 들어서 걱정이에요"],
+        "expectations": ["무슨 병인지 확실히 알고 싶어요", "변 보는 게 좀 편해졌으면 좋겠어요"]
+      },
       "iceHint": ["cancer", "family", "test"],
       "opening": ["몇 달 전부터 변보기가 너무 힘들어요.", "변이 가늘어지고 잘 안 나와요."],
       "hpi": {
@@ -42,10 +47,10 @@
         "대장내시경을 받아본 적이 있나": "{{screen}}",
         "열이 나거나 밤에 땀이 나나": "그런 건 없어요."
       },
-      "pmh": "특이 병력 없음. 대장내시경은 {{screen}}",
+      "pmh": "특이 병력 없음. {{screenChart}}",
       "meds": "약국에서 산 변비약을 자주 복용",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [112, 134], "dbp": [66, 82], "hr": [78, 96], "rr": [14, 18], "temp": [36.3, 37.0], "spo2": [96, 99],
@@ -68,10 +73,13 @@
         "negatives": ["복막자극징후 없음", "황달 없음", "발열 없음"]
       },
       "variations": {
+        "screenChart": ["대장내시경 받은 적 없음", "대장내시경은 10년 전이 마지막"],
+        "fhChart": ["아버지 대장암으로 사망", "대장암 가족력 없음"],
         "onsetMonths": [4, 6, 8], "severity": [3, 4, 5], "weightLoss": [4, 5, 6], "interval": [3, 4, 5],
         "fhx": ["아버지가 대장암으로 돌아가셨어요.", "가족 중에는 그런 병 없어요."],
         "screen": ["한 번도 안 받아봤어요.", "10년 전에 받고는 안 했어요."]
       },
+      "pairedVariations": [["screen", "screenChart"], ["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": ["변보기가 힘들고 변이 가늘어졌다는 것"],
         "onlyIfAsked": ["변에 피가 묻는 것", "체중감소", "숨이 차는 것", "가족력", "대장내시경 검사력"]
@@ -83,6 +91,11 @@
       "dx": "기능성 변비 (식생활·활동량 관련)",
       "constraints": { "ageRange": [20, 46], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "student", "nurse", "teacher", "driver"],
+      "ice": {
+        "ideas": ["생활이 바뀌어서 장이 예민해진 것 같아요", "체질적으로 장이 약한 것 같아요"],
+        "concerns": ["이러다 장이 아예 굳어버릴까 봐 걱정돼요", "혹시 장에 무슨 병이 있는 건 아닐까 싶어요"],
+        "expectations": ["약 말고 생활에서 고칠 방법을 알고 싶어요", "변비약을 좀 처방받고 싶어요"]
+      },
       "iceHint": ["internet", "work", "medicine"],
       "opening": ["변비가 심해서 왔어요.", "며칠씩 변을 못 봐서 너무 답답해요."],
       "hpi": {
@@ -149,6 +162,11 @@
       "dx": "약물 유발 변비 (마약성 진통제)",
       "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "jobless"],
+      "ice": {
+        "ideas": ["요즘 통 못 움직여서 그런 것 같아요", "나이 들어서 장이 굳은 건가 싶어요"],
+        "concerns": ["장이 막혀버리는 건 아닐까 걱정돼요", "배가 답답해서 밥도 잘 못 먹겠어요"],
+        "expectations": ["시원하게 좀 보게 해주세요", "관장이든 약이든 해주세요"]
+      },
       "iceHint": ["medicine", "family", "denial"],
       "opening": ["요즘 변을 통 못 봐요.", "일주일 넘게 변을 못 봤어요."],
       "hpi": {
@@ -175,7 +193,7 @@
         "약을 시작한 시점과 변비 시작이 맞나": "약 먹고부터 딱 그랬어요.",
         "가족 중 대장암이 있나": "없어요."
       },
-      "pmh": "만성 통증으로 통증클리닉에 다님. 그 외는 인물 카드를 따름",
+      "pmh": "{{painHx}}",
       "meds": "마약성 진통제({{drug}} 약)를 복용 중",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -199,9 +217,11 @@
         "negatives": ["복막자극징후 없음", "복부 종괴 없음", "발열 없음"]
       },
       "variations": {
+        "painHx": ["허리 통증으로 정형외과 진료 중", "최근 무릎 수술", "최근 대상포진"],
         "onsetWeeks": [2, 3, 4], "severity": [3, 4, 5], "interval": [5, 7],
         "drug": ["허리가 아파서 받은", "무릎 수술 뒤에 받은", "대상포진 뒤에 받은"]
       },
+      "pairedVariations": [["drug", "painHx"]],
       "disclosure": {
         "spontaneous": ["변을 못 본다는 것"],
         "onlyIfAsked": ["진통제 복용 시작 시점", "약과 증상의 시간 관계", "관장으로만 나오는 것", "입 마름과 졸림"]
@@ -213,6 +233,11 @@
       "dx": "갑상선기능저하증에 동반된 변비",
       "constraints": { "ageRange": [35, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["housewife", "office", "teacher", "market", "care"],
+      "ice": {
+        "ideas": ["요즘 무리해서 몸이 지친 것 같아요", "운동을 안 해서 장이 느려진 것 같아요"],
+        "concerns": ["몸이 자꾸 처지는 게 무슨 병이 있는 건 아닐까 걱정돼요", "이러다 일을 제대로 못 할까 봐 걱정이에요"],
+        "expectations": ["피곤한 이유를 알고 싶어요", "변도 좀 보고 기운도 차렸으면 좋겠어요"]
+      },
       "iceHint": ["internet", "test", "family"],
       "opening": ["변비가 생기고 몸이 자꾸 처져요.", "몇 달째 변을 잘 못 보고 너무 피곤해요."],
       "hpi": {
@@ -242,7 +267,7 @@
       "pmh": "특이 병력 없음",
       "meds": "변비약을 가끔 복용",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [110, 132], "dbp": [68, 84], "hr": [52, 60], "rr": [12, 16], "temp": [36.0, 36.6], "spo2": [96, 99],
@@ -262,10 +287,12 @@
         "negatives": ["복부 종괴 없음", "복막자극징후 없음", "황달 없음"]
       },
       "variations": {
+        "fhChart": ["어머니 갑상선 질환(약 복용 중)", "갑상선 질환·대장암 가족력 없음"],
         "onsetMonths": [4, 6, 10], "severity": [3, 4], "interval": [3, 4, 5], "weightGain": [4, 5, 6],
         "menses": [{"text": "생리 양이 많아지고 길어졌어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}],
         "fhx": ["어머니가 갑상선약을 드세요.", "가족 중에는 없어요."]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": ["변비와 피로감"],
         "onlyIfAsked": ["추위를 타는 것", "체중 증가", "피부 건조", "목소리 변화", "월경 변화", "가족력"]
@@ -277,6 +304,11 @@
       "dx": "파킨슨병에 동반된 변비 (신경성)",
       "constraints": { "ageRange": [62, 82], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "housewife", "jobless", "market"],
+      "ice": {
+        "ideas": ["나이 들어서 장이 느려진 것 같아요", "물을 덜 마셔서 그런가 싶어요"],
+        "concerns": ["변비가 이렇게 오래가니 장에 혹이라도 있을까 걱정돼요", "약을 먹어도 시원치 않아서 답답해요"],
+        "expectations": ["변비약을 좀 더 센 걸로 받고 싶어요", "장 검사가 필요하면 받아보고 싶어요"]
+      },
       "iceHint": ["family", "denial", "test"],
       "opening": ["변비가 심해서 왔습니다.", "몇 달째 변을 제대로 못 봐요."],
       "hpi": {

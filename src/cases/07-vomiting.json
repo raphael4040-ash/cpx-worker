@@ -15,6 +15,11 @@
       "dx": "유착성 소장폐쇄",
       "constraints": { "ageRange": [45, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "market", "farmer", "selfemp"],
+      "ice": {
+        "ideas": ["뭘 잘못 먹고 체한 것 같아요", "장염이 온 건가 싶어요"],
+        "concerns": ["며칠째 아무것도 못 먹으니 기운이 너무 없어 걱정돼요", "배가 자꾸 불러오니 큰 병인가 싶어요"],
+        "expectations": ["토하는 것부터 멈추게 해주세요", "수액이라도 맞고 싶어요"]
+      },
       "iceHint": ["denial", "family", "test"],
       "opening": ["며칠째 계속 토해요.", "먹기만 하면 다 토해요."],
       "hpi": {
@@ -41,7 +46,7 @@
         "피를 토했나": "피는 안 나왔어요.",
         "체중이 줄었나": "요 며칠 못 먹어서 얼굴이 홀쭉해졌어요."
       },
-      "pmh": "{{surgery}}",
+      "pmh": "{{surgeryPmh}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -67,8 +72,10 @@
       "variations": {
         "onsetDays": [2, 3], "severity": [6, 7, 8],
         "lastStool": ["사흘", "나흘"],
-        "surgery": ["예전에 맹장 수술을 받았어요.", "십 몇 년 전에 배를 열고 수술한 적이 있어요.", "장이 꼬여서 수술받은 적이 한 번 있어요."]
+        "surgery": ["예전에 맹장 수술을 받았어요.", "십 몇 년 전에 배를 열고 수술한 적이 있어요.", "장이 꼬여서 수술받은 적이 한 번 있어요."],
+        "surgeryPmh": ["예전에 충수돌기 절제술 받음", "십여 년 전 개복 수술 받음", "장이 꼬여서(장염전) 수술받은 적 한 번 있음"]
       },
+      "pairedVariations": [["surgery", "surgeryPmh"]],
       "disclosure": {
         "spontaneous": ["계속 토한다는 것"],
         "onlyIfAsked": ["가스와 대변이 안 나오는 것", "과거 복부 수술력", "토사물의 색과 냄새 변화", "소변량 감소", "복부 팽만"]
@@ -80,6 +87,11 @@
       "dx": "뇌압 상승 (뇌종양 의심)",
       "constraints": { "ageRange": [40, 72], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "teacher", "retired", "housewife", "selfemp"],
+      "ice": {
+        "ideas": ["위가 안 좋아서 그런 것 같아요", "아침마다 그러니 속이 비어서 그런가 싶어요"],
+        "concerns": ["몇 주째 이러니 혹시 큰 병일까 봐 걱정돼요", "위암 같은 건 아닐까 싶어요"],
+        "expectations": ["내시경이든 뭐든 해서 원인을 알고 싶어요", "토하는 것 좀 멈추는 약을 받고 싶어요"]
+      },
       "iceHint": ["cancer", "internet", "test"],
       "opening": ["아침마다 토해요.", "요즘 자꾸 갑자기 왈칵 토해요."],
       "hpi": {
@@ -143,6 +155,11 @@
       "dx": "급성 바이러스성 위장관염",
       "constraints": { "ageRange": [18, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "office", "nurse", "delivery", "teacher", "parttime"],
+      "ice": {
+        "ideas": ["뭘 잘못 먹고 탈이 난 것 같아요", "장염에 걸린 것 같아요"],
+        "concerns": ["물도 못 먹으니 탈수될까 봐 걱정돼요", "내일 일을 나가야 하는데 못 나갈까 봐요"],
+        "expectations": ["수액 맞고 빨리 기운 차리고 싶어요", "토하고 설사하는 것 멎는 약을 받고 싶어요"]
+      },
       "iceHint": ["work", "internet", "medicine"],
       "opening": ["어제부터 토하고 설사를 해요.", "속이 뒤집어져서 계속 토해요."],
       "hpi": {
@@ -207,6 +224,11 @@
       "dx": "임신 오조 (임신에 동반된 구토)",
       "constraints": { "ageRange": [21, 38], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "smoking": "never", "alcohol": "never" },
       "occupationBias": ["office", "nurse", "student", "selfemp", "parttime", "teacher"],
+      "ice": {
+        "ideas": ["위염이 도진 것 같아요", "요즘 신경을 많이 써서 위가 탈 난 것 같아요"],
+        "concerns": ["아무것도 못 먹어서 몸이 축날까 봐 걱정돼요", "이러다 쓰러질까 봐요"],
+        "expectations": ["토하는 것 좀 멎게 해주세요", "수액이라도 맞고 가고 싶어요"]
+      },
       "iceHint": ["denial", "family", "internet"],
       "opening": ["아침마다 토해서 아무것도 못 먹어요.", "한 주 넘게 계속 토해요."],
       "hpi": {
@@ -234,7 +256,7 @@
         "열이 나나": "열은 없어요."
       },
       "pmh": "특이 병력 없음",
-      "meds": "임신 가능성 때문에 약을 새로 먹지는 않고 있음",
+      "meds": "따로 사 먹는 약은 없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
@@ -270,6 +292,11 @@
       "dx": "요독증 (만성콩팥병 악화)",
       "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": ["당뇨병", "고혈압"], "requiredRiskMin": 2, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "market", "driver", "housewife"],
+      "ice": {
+        "ideas": ["위가 안 좋아진 것 같아요", "나이 들어서 소화가 안 되는 건가 싶어요"],
+        "concerns": ["입맛도 없고 계속 메스꺼우니 큰 병일까 봐 걱정돼요", "기운이 자꾸 빠지니 이러다 쓰러질까 봐요"],
+        "expectations": ["속 울렁거리는 것 좀 가라앉게 해주세요", "피검사든 뭐든 해서 원인을 알고 싶어요"]
+      },
       "iceHint": ["medicine", "family", "denial"],
       "opening": ["요즘 계속 메스껍고 토해요.", "입맛이 없고 자꾸 토하려고 해요."],
       "hpi": {

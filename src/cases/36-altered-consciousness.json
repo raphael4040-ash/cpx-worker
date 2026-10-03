@@ -36,6 +36,11 @@
         "market",
         "jobless"
       ],
+      "ice": {
+        "ideas": ["기운이 없어서 그런 줄 알았어요", "나이 들어서 깜빡하시는 건가 싶었어요"],
+        "concerns": ["혹시 중풍이 온 건 아닐까 무서워요", "이대로 못 깨어나실까 봐 걱정돼요"],
+        "expectations": ["빨리 정신이 돌아오게 해주세요", "무슨 일인지 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "test",
@@ -105,8 +110,8 @@
         "전에도 이런 적 있나": "{{recur}}",
         "간이나 콩팥이 나쁘다는 말": "{{renal}}"
       },
-      "pmh": "당뇨병 {{dmYears}}년, {{renal}}",
-      "meds": "당뇨약 복용 중이며 지난주 약이 추가됨. {{insulin}}",
+      "pmh": "당뇨병 {{dmYears}}년. {{renalChart}}",
+      "meds": "당뇨약 복용 중이며 지난주 약이 추가됨. {{insulinChart}}",
       "allergy": "보호자가 아는 한 없음",
       "fh": "보호자가 잘 모름",
       "sh": "인물 카드를 따르되 최근 식사량이 줄어 있었음",
@@ -167,6 +172,8 @@
         ]
       },
       "variations": {
+        "insulinChart": ["저녁 인슐린 주사 병용", "인슐린은 쓰지 않음"],
+        "renalChart": ["콩팥 기능 저하 지적받음", "그 외 특이 병력 없음"],
         "onsetHours": [
           2,
           3,
@@ -196,6 +203,7 @@
           "다른 병은 없다고 하셨어요."
         ]
       },
+      "pairedVariations": [["insulin", "insulinChart"], ["renal", "renalChart"]],
       "disclosure": {
         "spontaneous": [
           "아침부터 사람을 못 알아본다는 것"
@@ -219,10 +227,7 @@
           80
         ],
         "sex": "any",
-        "requiredRisk": [
-          "고혈압",
-          "흡연"
-        ],
+        "requiredRisk": ["고혈압"],
         "requiredRiskMin": 1,
         "forbidden": []
       },
@@ -233,6 +238,11 @@
         "driver",
         "market"
       ],
+      "ice": {
+        "ideas": ["혈압이 갑자기 오른 것 같아요", "체해서 쓰러지신 건가 했어요"],
+        "concerns": ["중풍이 온 건 아닐까 무서워요", "다시 깨어나실 수 있을지 걱정돼요"],
+        "expectations": ["빨리 치료해 주세요", "수술이 필요한지 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "test",
@@ -258,7 +268,7 @@
         "voice": "겁에 질려 있고 말이 끊긴다. 자기 탓처럼 말하기도 한다"
       },
       "opening": [
-        "아버지가 갑자기 쓰러지셨어요.",
+        "{{patientRel}} 갑자기 쓰러지셨어요.",
         "밥 먹다가 갑자기 쓰러지시더니 말을 못 하세요."
       ],
       "hpi": {
@@ -301,8 +311,8 @@
         "열이 났나": "열은 없었어요.",
         "술이나 약물": "술은 안 드신 상태였어요."
       },
-      "pmh": "고혈압 {{htnYears}}년, 복약 불규칙. {{anticoag}}",
-      "meds": "혈압약(불규칙 복용). {{anticoag}}",
+      "pmh": "고혈압 {{htnYears}}년, 복약 불규칙",
+      "meds": "혈압약(불규칙 복용). {{anticoagChart}}",
       "allergy": "보호자가 아는 한 없음",
       "fh": "{{familyStroke}}",
       "sh": "인물 카드를 따름",
@@ -369,6 +379,8 @@
         "_note": "좌우는 마비측(side)을 기준으로 서술한다. 병변은 마비측의 반대편이고, 산대 동공과 안구 편위는 병변측에 나타난다. 슬롯을 따로 두면 어긋나므로 관계로만 쓴다."
       },
       "variations": {
+        "anticoagChart": ["항응고제 복용 없음", "심장 문제로 항응고제 복용"],
+        "patientRel": [{"text": "아버지가", "sexOnly": "male"}, {"text": "어머니가", "sexOnly": "female"}],
         "onsetMin": [
           30,
           40,
@@ -391,11 +403,9 @@
           "피 묽게 하는 약은 안 드세요.",
           "심장 때문에 피 묽게 하는 약을 드세요."
         ],
-        "familyStroke": [
-          "할아버지도 중풍으로 돌아가셨어요.",
-          "가족 중에 그런 분은 없어요."
-        ]
+        "familyStroke": ["할아버지 뇌졸중으로 사망", "특이사항 없음"]
       },
+      "pairedVariations": [["anticoag", "anticoagChart"]],
       "disclosure": {
         "spontaneous": [
           "갑자기 쓰러졌다는 것",
@@ -432,6 +442,11 @@
         "farmer",
         "housewife"
       ],
+      "ice": {
+        "ideas": ["치매가 온 줄 알았어요", "나이 드셔서 기력이 떨어지신 것 같아요"],
+        "concerns": ["치매가 갑자기 심해진 건 아닐까 걱정돼요", "제가 너무 늦게 모시고 온 건 아닐까 싶어요"],
+        "expectations": ["왜 이러시는지 검사해 주세요", "예전처럼 돌아오실 수 있는지 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "internet",
@@ -456,7 +471,7 @@
         "voice": "차분하지만 '치매가 온 줄 알았다'며 진작 오지 못한 것을 자책한다"
       },
       "opening": [
-        "어머니가 몇 주째 자꾸 처지고 헛소리를 하세요.",
+        "{{patientRel}} 몇 주째 자꾸 처지고 헛소리를 하세요.",
         "치매가 갑자기 심해진 것 같아서 모시고 왔어요."
       ],
       "hpi": {
@@ -499,11 +514,11 @@
         "체중감소나 밤에 땀": "특별히는 없었어요.",
         "새로 시작한 약이나 수면제": "수면제는 안 드세요."
       },
-      "pmh": "고혈압. {{anticoag}} 치매 진단은 받은 적 없음",
-      "meds": "{{anticoag}} 혈압약",
+      "pmh": "치매 진단은 받은 적 없음",
+      "meds": "{{anticoagChart}}",
       "allergy": "보호자가 아는 한 없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 {{alcohol}}",
+      "sh": "인물 카드를 따르되 {{alcoholChart}}",
       "pe": {
         "vitals": {
           "sbp": [
@@ -573,6 +588,9 @@
         "_note": "유두부종은 양측성으로 쓴다. 만성 경막하출혈에서 늘 있는 것도 아니라 확률로 둔다. 좌우가 걸리는 소견은 마비측(side)을 기준으로만 서술한다."
       },
       "variations": {
+        "alcoholChart": ["반주로 조금씩 마심", "최근 몇 달 음주량이 늘었음"],
+        "anticoagChart": ["심장 문제로 아스피린 복용", "항혈소판제·항응고제 복용 없음"],
+        "patientRel": [{"text": "아버지가", "sexOnly": "male"}, {"text": "어머니가", "sexOnly": "female"}],
         "onsetWeeks": [
           3,
           4,
@@ -593,6 +611,7 @@
         ],
         "alcohol": ["{{alcoholSayHon}} 반주로 조금씩 하세요.", "{{alcoholSayHon}} 요 몇 달 늘었어요."]
       },
+      "pairedVariations": [["alcohol", "alcoholChart"], ["anticoag", "anticoagChart"]],
       "disclosure": {
         "spontaneous": [
           "몇 주째 처지고 헛소리를 한다는 것"
@@ -628,6 +647,11 @@
         "jobless",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["피곤해서 정신이 없는 건가 싶었어요", "잠을 거꾸로 자서 그런 줄 알았어요"],
+        "concerns": ["이러다 못 깨어날까 봐 걱정돼요", "정신이 계속 이상할까 봐 무서워요"],
+        "expectations": ["빨리 정신이 돌아오게 해주세요", "입원해서 치료받아야 하는지 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "repeat",
@@ -652,7 +676,7 @@
         "voice": "익숙한 듯 담담하지만 지쳐 있다. 술 이야기에는 말끝을 흐린다"
       },
       "opening": [
-        "남편이 자꾸 헛소리를 하고 손을 떨어요.",
+        "{{patientRel}} 자꾸 헛소리를 하고 손을 떨어요.",
         "낮밤이 바뀌고 사람을 못 알아봐요."
       ],
       "hpi": {
@@ -672,7 +696,7 @@
           "손이 파닥거림",
           "배가 불러오고 다리가 부음",
           "눈이 노래짐",
-          "{{constipation}}"
+          "{{constipationChart}}"
         ],
         "negative": [
           "경련 없음",
@@ -757,6 +781,8 @@
         ]
       },
       "variations": {
+        "constipationChart": ["나흘째 변을 못 봄", "사흘째 변을 못 봄"],
+        "patientRel": [{"text": "남편이", "sexOnly": "male"}, {"text": "아내가", "sexOnly": "female"}],
         "onsetDays": [
           2,
           3,
@@ -785,6 +811,7 @@
           "특이소견 없음"
         ]
       },
+      "pairedVariations": [["gib", "rectal"], ["constipation", "constipationChart"]],
       "disclosure": {
         "spontaneous": [
           "헛소리를 하고 손을 떤다는 것"
@@ -811,7 +838,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": [], "alcohol": "drinker"
       },
       "occupationBias": [
         "office",
@@ -820,6 +847,11 @@
         "selfemp",
         "student"
       ],
+      "ice": {
+        "ideas": ["술을 너무 많이 마셔서 그런 것 같아요", "피곤해서 깊이 잠든 줄 알았어요"],
+        "concerns": ["숨을 이상하게 쉬어서 너무 무서워요", "혹시 잘못되는 건 아닐까 걱정돼요"],
+        "expectations": ["빨리 깨어나게 해주세요", "무슨 일인지 알고 싶어요"]
+      },
       "iceHint": [
         "denial",
         "family",

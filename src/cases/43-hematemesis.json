@@ -15,6 +15,11 @@
       "dx": "식도정맥류 출혈 (간경변에 의한 문맥고혈압)",
       "constraints": { "ageRange": [45, 70], "sex": "any", "requiredRisk": ["음주"], "requiredRiskMin": 1, "forbidden": [], "alcohol": "heavy" },
       "occupationBias": ["construct", "driver", "selfemp", "market", "farmer"],
+      "ice": {
+        "ideas": ["위에서 피가 터진 것 같아요", "속이 많이 상한 것 같아요"],
+        "concerns": ["피를 이렇게 토하니 죽는 건 아닐까 무서워요", "또 토할까 봐 겁나요"],
+        "expectations": ["피 나는 것부터 빨리 멈추게 해주세요", "어디서 피가 나는지 알고 싶어요"]
+      },
       "iceHint": ["denial", "family", "test"],
       "opening": ["피를 왈칵 토했어요.", "조금 전에 검붉은 피를 한 대야 토했어요."],
       "hpi": {
@@ -44,11 +49,11 @@
         "구토를 반복하다가 피가 나왔나": "아니요, 갑자기 피부터 나왔어요.",
         "전에도 피를 토한 적이 있나": "처음이에요."
       },
-      "pmh": "{{liverHx}}",
+      "pmh": "{{liverChart}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 음주력이 반드시 있음. {{alcoholHx}}",
+      "sh": "인물 카드를 따르되 이십 년 넘게 과음해 옴",
       "pe": {
         "vitals": { "sbp": [92, 108], "dbp": [54, 68], "hr": [108, 124], "rr": [20, 24], "temp": [36.2, 37.2], "spo2": [95, 98],
                     "invariant": "빈맥(100 이상)과 기립 시 수축기압 20 이상 강하를 반드시 유지한다. 다만 앉은 자세 수축기 90 미만으로는 내리지 않는다." },
@@ -69,10 +74,12 @@
         "negatives": ["복막자극징후 없음", "발열 없음", "복부 강직 없음"]
       },
       "variations": {
+        "liverChart": ["예전에 간 질환 지적, 치료 안 받음", "간경변 진단, 치료 안 받음"],
         "onsetHours": [1, 2, 3], "severity": [2, 3], "episodes": [1, 2],
-        "alcoholHx": ["소주를 거의 매일 한 병씩 삼십 년 마셨어요.", "젊을 때부터 매일 마셨는데 요즘도 이틀에 한 병은 마셔요."],
+        "alcoholHx": ["{{alcoholSay}} 이십 년 넘게 그렇게 마셨어요.", "{{alcoholSay}} 젊을 때부터 늘 그 정도는 마셨어요."],
         "liverHx": ["간이 안 좋다는 말은 예전에 들었는데 병원은 안 다녔어요.", "간경화라고 들었는데 약은 안 먹어요."]
       },
+      "pairedVariations": [["liverHx", "liverChart"]],
       "disclosure": {
         "spontaneous": ["피를 토했다는 것"],
         "onlyIfAsked": ["출혈량", "흑색변", "음주력", "간질환 병력", "복부 팽만과 하지 부종", "기립 어지러움"]
@@ -84,6 +91,11 @@
       "dx": "소화성 궤양 출혈 (NSAID 연관)",
       "constraints": { "ageRange": [45, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["farmer", "market", "housewife", "retired", "construct"],
+      "ice": {
+        "ideas": ["위가 헐어서 피가 난 것 같아요", "위가 약해서 그런 것 같아요"],
+        "concerns": ["피를 토하니 큰 병일까 봐 겁나요", "또 피를 토할까 봐 걱정돼요"],
+        "expectations": ["피 나는 걸 멈추게 해주세요", "위가 어떤 상태인지 알고 싶어요"]
+      },
       "iceHint": ["denial", "medicine", "test"],
       "opening": ["커피 찌꺼기 같은 것을 토했어요.", "검은 것을 토했어요."],
       "hpi": {
@@ -115,10 +127,10 @@
         "코피가 나거나 멍이 잘 드나": "그런 건 없어요."
       },
       "pmh": "만성 통증으로 진통제를 자주 복용. 위내시경 받은 적 없음",
-      "meds": "{{nsaidHx}} 제산제를 약국에서 사 먹음",
+      "meds": "{{nsaidChart}}. 제산제를 약국에서 사 먹음",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따름. {{alcoholHx}}",
+      "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [96, 112], "dbp": [58, 70], "hr": [104, 120], "rr": [18, 22], "temp": [36.2, 37.0], "spo2": [96, 99],
                     "invariant": "빈맥(100 이상)과 기립 시 수축기압 20 이상 강하를 반드시 유지한다. 앉은 자세 수축기 90 미만으로는 내리지 않는다." },
@@ -140,10 +152,12 @@
         "negatives": ["복막자극징후 없음", "황달 없음", "복수 없음", "발열 없음"]
       },
       "variations": {
+        "nsaidChart": ["관절통으로 소염진통제를 거의 매일 복용", "허리 통증으로 진통제를 자주 복용"],
         "onsetHours": [2, 4, 6], "severity": [5, 6, 7], "monthsSx": [2, 3, 6],
         "nsaidHx": ["관절이 아파서 소염진통제를 거의 매일 사 먹었어요.", "허리 때문에 진통제를 자주 먹었어요."],
-        "alcoholHx": ["{{alcoholSay}} 최근에 좀 늘었어요.", "{{alcoholSay}} 최근에 늘지는 않았어요."]
+        "alcoholHx": ["{{alcoholSay}}"]
       },
+      "pairedVariations": [["nsaidHx", "nsaidChart"]],
       "disclosure": {
         "spontaneous": ["검은 것을 토했다는 것"],
         "onlyIfAsked": ["흑색변", "진통제 복용", "기존 속쓰림", "기립 어지러움", "출혈량"]
@@ -155,6 +169,11 @@
       "dx": "말로리-바이스 증후군",
       "constraints": { "ageRange": [22, 55], "sex": "any", "requiredRisk": ["음주"], "requiredRiskMin": 1, "forbidden": [], "alcohol": "drinker" },
       "occupationBias": ["office", "selfemp", "cook", "delivery", "student"],
+      "ice": {
+        "ideas": ["너무 세게 토해서 목이 찢어진 것 같아요", "속이 상해서 피가 난 것 같아요"],
+        "concerns": ["위에 큰 병이 있는 건 아닐까 걱정돼요", "또 피를 토할까 봐 무서워요"],
+        "expectations": ["별일 아닌지 확인하고 싶어요", "속 쓰린 것 좀 가라앉게 해주세요"]
+      },
       "iceHint": ["denial", "internet", "work"],
       "opening": ["토하다가 피가 나왔어요.", "어젯밤에 피를 토했어요."],
       "hpi": {
@@ -188,7 +207,7 @@
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 음주력이 반드시 있음. {{alcoholHx}}",
+      "sh": "인물 카드를 따르되 전날 폭음함",
       "pe": {
         "vitals": { "sbp": [106, 124], "dbp": [64, 78], "hr": [96, 112], "rr": [16, 20], "temp": [36.3, 37.1], "spo2": [96, 99],
                     "invariant": "경한 빈맥과 기립 시 수축기압 12 이상 강하를 유지한다. 수축기 90 미만으로는 내리지 않는다." },
@@ -211,8 +230,8 @@
       },
       "variations": {
         "onsetHours": [6, 10, 14], "severity": [3, 4], "episodes": [4, 5, 6],
-        "trigger": ["과음한", "회식에서 폭음한", "체하고 나서"],
-        "alcoholHx": ["어제 소주 두 병 넘게 마셨어요.", "회식에서 폭음했어요. 평소엔 주에 한두 번이요."]
+        "trigger": ["과음한", "모임에서 폭음한", "술을 마시고 체한"],
+        "alcoholHx": ["어제 소주 두 병 넘게 마셨어요.", "모임에서 폭음했어요. 평소엔 주에 한두 번이요."]
       },
       "disclosure": {
         "spontaneous": ["토하다가 피가 나왔다는 것"],
@@ -225,6 +244,11 @@
       "dx": "진행성 위암에서의 출혈",
       "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "market", "selfemp", "housewife"],
+      "ice": {
+        "ideas": ["속병이 오래돼서 피가 난 것 같아요", "나이 들어서 위가 약해진 것 같아요"],
+        "concerns": ["혹시 나쁜 병일까 봐 겁나요", "자꾸 못 먹으니 몸이 축나서 걱정돼요"],
+        "expectations": ["어디가 문제인지 확실히 알고 싶어요", "피 나는 것부터 멈추게 해주세요"]
+      },
       "iceHint": ["cancer", "family", "denial"],
       "opening": ["검붉은 것을 토했어요.", "요즘 통 못 먹었는데 오늘 피 같은 것을 토했어요."],
       "hpi": {
@@ -254,10 +278,10 @@
         "삼킬 때 걸리는 느낌이 있나": "가끔 명치에 걸리는 느낌이 있어요.",
         "코피가 나거나 멍이 잘 드나": "그런 건 없어요."
       },
-      "pmh": "{{scopeHx}}",
+      "pmh": "{{scopeChart}}",
       "meds": "소화제를 사 먹음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [98, 116], "dbp": [58, 72], "hr": [100, 116], "rr": [18, 22], "temp": [36.2, 37.1], "spo2": [96, 99],
@@ -280,10 +304,13 @@
         "negatives": ["황달 없음", "복수 없음", "복막자극징후 없음", "발열 없음"]
       },
       "variations": {
+        "fhChart": ["아버지 위암으로 사망", "위암 가족력 없음"],
+        "scopeChart": ["위내시경 십 년 넘게 안 받음", "위내시경 받은 적 없음"],
         "onsetHours": [3, 6, 10], "severity": [3, 4, 5], "monthsSx": [3, 4, 6], "weightLoss": [6, 8, 10],
         "scopeHx": ["위내시경은 십 년 넘게 안 받았어요.", "위내시경을 한 번도 안 받아봤어요."],
         "fhx": ["아버지가 위암으로 돌아가셨어요.", "가족 중에는 없어요."]
       },
+      "pairedVariations": [["fhx", "fhChart"], ["scopeHx", "scopeChart"]],
       "disclosure": {
         "spontaneous": ["검붉은 것을 토했다는 것"],
         "onlyIfAsked": ["체중감소", "조기 포만감", "흑색변", "가족력", "내시경 검사력", "숨참"]

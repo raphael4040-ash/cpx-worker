@@ -14,6 +14,11 @@
       "dx": "콩팥전 급성콩팥손상 (위장관 소실에 의한 혈량저하)",
       "constraints": { "ageRange": [62, 82], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "housewife", "market", "selfemp", "care"],
+      "ice": {
+        "ideas": ["장염이 심하게 와서 기운이 빠진 것 같아요", "며칠 못 먹어서 그런 것 같아요"],
+        "concerns": ["소변이 안 나오니 콩팥이 망가진 건 아닐까 걱정돼요", "이러다 쓰러질까 봐 걱정이에요"],
+        "expectations": ["수액이라도 맞고 기운 좀 차리고 싶어요", "설사 좀 멎게 해주세요"]
+      },
       "iceHint": ["family", "denial", "medicine"],
       "opening": ["소변이 거의 안 나와요.", "며칠 설사하고 나서 소변을 못 봐요."],
       "hpi": {
@@ -43,7 +48,7 @@
         "한약이나 건강기능식품을 먹나": "안 먹어요."
       },
       "pmh": "고혈압으로 오래 치료 중. 무릎 관절통으로 진통소염제를 자주 복용",
-      "meds": "{{meds}}",
+      "meds": "{{medsChart}}",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따르되 최근 며칠 식사를 거의 못 함",
@@ -69,12 +74,14 @@
         "negatives": ["방광 팽만 없음", "하지 부종 없음", "폐 수포음 없음", "늑골척추각 압통 없음", "복막자극징후 없음"]
       },
       "variations": {
+        "medsChart": ["이뇨제 복용, 약국 소염진통제를 자주 복용", "ACE 억제제·이뇨제 복용, 관절약(소염진통제) 복용"],
         "onsetDays": [3, 4, 5], "severity": [4, 5, 6],
         "urineML": [200, 250, 300], "voidCount": [2, 3], "intakeML": [300, 400, 500],
         "weightLoss": [3, 4],
         "meds": ["혈압약이랑 물 빼는 약을 먹고 있고, 무릎 아파서 소염진통제도 자주 사 먹어요.", "혈압약(신장 보호한다는 약)과 이뇨제를 먹고, 관절약도 같이 먹고 있어요."],
         "dre": [{"text": "전립선이 심하게 커져 있지 않고 압통 없음", "sexOnly": "male"}, {"text": "직장 내 종괴나 압통 없음", "sexOnly": "female"}]
       },
+      "pairedVariations": [["meds", "medsChart"]],
       "disclosure": {
         "spontaneous": ["소변이 잘 안 나온다는 것", "며칠째 설사한다는 것"],
         "onlyIfAsked": ["구토로 물을 못 마신 것", "복용 중인 이뇨제·혈압약·진통소염제", "기립 시 어지럼", "체중감소", "소변 색이 진한 것"]
@@ -86,6 +93,11 @@
       "dx": "감염후 급성사구체신염",
       "constraints": { "ageRange": [16, 19], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["고혈압", "당뇨병"] },
       "occupationBias": ["student", "highschool"],
+      "ice": {
+        "ideas": ["피곤해서 몸이 부은 것 같아요", "물을 많이 안 마셔서 소변 색이 진한 것 같아요"],
+        "concerns": ["콩팥에 병이 생긴 건 아닐까 걱정돼요", "한동안 아무것도 못 하게 될까 봐 걱정이에요"],
+        "expectations": ["왜 붓고 소변 색이 변했는지 알고 싶어요", "부기 좀 빠지게 해주세요"]
+      },
       "iceHint": ["family", "internet", "test"],
       "opening": ["소변이 콜라색이고 양이 줄었어요.", "얼굴이 붓고 소변이 잘 안 나와요."],
       "hpi": {
@@ -117,7 +129,8 @@
       "meds": "없음",
       "allergy": "없음",
       "fh": "가족 중 콩팥병이나 혈뇨로 치료받은 사람 없음",
-      "sh": "인물 카드를 따름. 고등학생이며 본인이 직접 답한다. 보호자가 대기실에 함께 왔다. 흡연·음주 없음",
+      "sh": "인물 카드를 따름",
+      "_spBehavior": "본인이 직접 답한다. 보호자는 대기실에서 기다리고 있다.",
       "pe": {
         "vitals": { "sbp": [138, 156], "dbp": [86, 96], "hr": [72, 96], "rr": [16, 22], "temp": [36.5, 37.3], "spo2": [96, 99],
                     "invariant": "그 나이 정상 상한을 넘는 혈압을 유지한다. 혈압이 정상이면 진단 단서가 사라진다. 고열은 넣지 않는다." },
@@ -159,6 +172,11 @@
       "dx": "신독성 급성세뇨관손상 (진통소염제·조영제)",
       "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "construct", "market", "selfemp", "driver"],
+      "ice": {
+        "ideas": ["나이 들어서 콩팥이 약해진 것 같아요", "물을 적게 마셔서 그런가 싶어요"],
+        "concerns": ["콩팥이 망가져서 투석하게 될까 봐 걱정돼요", "입맛이 없어서 기운이 자꾸 빠져요"],
+        "expectations": ["콩팥 상태가 어떤지 알고 싶어요", "소변이 다시 잘 나오게 해주세요"]
+      },
       "iceHint": ["medicine", "denial", "internet"],
       "opening": ["{{onsetDays}}일 전부터 소변이 확 줄었어요.", "{{triggerOpening}}"],
       "hpi": {
@@ -187,8 +205,8 @@
         "전에 콩팥이 안 좋다는 말을 들은 적": "{{ckdHx}}",
         "한약이나 건강기능식품을 먹나": "안 먹어요."
       },
-      "pmh": "{{ckdHx}} 만성 요통·관절통으로 진통소염제 장기 복용",
-      "meds": "진통소염제를 몇 달째 하루 두 번 복용. {{triggerAnswer}}",
+      "pmh": "{{ckdChart}}. 만성 요통·관절통으로 진통소염제 장기 복용. {{triggerChart}}",
+      "meds": "진통소염제를 몇 달째 하루 두 번 복용",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따르되 물은 적게 마시는 편",
@@ -213,6 +231,8 @@
         "negatives": ["방광 팽만 없음", "발열 없음", "발진 없음", "늑골척추각 압통 없음", "폐 수포음 없음"]
       },
       "variations": {
+        "triggerChart": ["열흘 전 조영제 CT 시행", "최근 감기로 며칠 식사를 못 하는 중에도 진통제 계속 복용"],
+        "ckdChart": ["건강검진에서 콩팥 수치 경도 상승 지적", "콩팥 질환 지적받은 적 없음"],
         "onsetDays": [5, 7, 10], "severity": [3, 4, 5],
         "urineML": [350, 400, 450], "voidCount": [2, 3], "intakeML": [800, 1000],
         "triggerAnswer": ["열흘쯤 전에 조영제 넣는 CT를 찍었어요.", "감기로 며칠 못 먹으면서도 진통제는 계속 먹었어요."],
@@ -220,7 +240,7 @@
         "ckdHx": ["건강검진에서 콩팥 수치가 살짝 높다는 말을 들은 적 있어요.", "콩팥 얘기는 들은 적 없어요."],
         "dre": [{"text": "전립선이 경도로 커져 있으나 잔뇨를 시사할 정도는 아니고 압통 없음", "sexOnly": "male"}, {"text": "직장 내 종괴나 압통 없음", "sexOnly": "female"}]
       },
-      "pairedVariations": [["triggerAnswer", "triggerOpening"]],
+      "pairedVariations": [["ckdHx", "ckdChart"], ["triggerAnswer", "triggerOpening", "triggerChart"]],
       "disclosure": {
         "spontaneous": ["소변량이 줄었다는 것"],
         "onlyIfAsked": ["진통소염제 장기 복용", "최근 조영제 검사나 금식", "발등 부종", "메스꺼움과 가려움", "과거 콩팥 수치 지적"]
@@ -232,6 +252,11 @@
       "dx": "콩팥후 급성콩팥손상 (전립선비대에 의한 급성 요폐)",
       "constraints": { "ageRange": [65, 85], "sex": "male", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "selfemp", "market", "driver", "construct"],
+      "ice": {
+        "ideas": ["나이 들어서 소변보는 힘이 약해진 것 같아요", "추운 데 있다가 그런가 싶어요"],
+        "concerns": ["방광이 터지는 건 아닐까 무서워요", "계속 이렇게 소변을 못 볼까 봐 걱정돼요"],
+        "expectations": ["제발 소변 좀 빼주세요", "아랫배 아픈 것부터 풀어주세요"]
+      },
       "iceHint": ["denial", "family", "medicine"],
       "opening": ["어제부터 소변을 못 봤어요.", "아랫배가 빵빵하고 소변이 안 나와요."],
       "hpi": {
@@ -260,7 +285,7 @@
         "허리를 다치거나 아픈 적": "허리를 다친 적은 없어요."
       },
       "pmh": "몇 년 전부터 소변 줄기가 가늘고 야간뇨가 있었으나 검사받은 적 없음",
-      "meds": "{{triggerAnswer}}",
+      "meds": "{{triggerChart}}",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따르되 어제 저녁 술자리가 있었음",
@@ -287,10 +312,12 @@
         "negatives": ["발열 없음", "회음부 감각 저하 없음", "하지 근력 저하 없음", "탈수 소견 없음", "복막자극징후 없음"]
       },
       "variations": {
+        "triggerChart": ["이틀 전부터 약국 감기약(콧물약) 복용", "새로 먹은 약 없음 (전날 음주)"],
         "onsetHours": [12, 16, 20], "severity": [7, 8, 9],
         "urineML": [30, 50], "intakeML": [1200, 1500],
         "triggerAnswer": ["이틀 전부터 콧물 때문에 약국 감기약을 먹었어요.", "그 밖에 따로 먹는 약은 없고, 어제 술을 좀 마셨어요."]
       },
+      "pairedVariations": [["triggerAnswer", "triggerChart"]],
       "disclosure": {
         "spontaneous": ["소변을 못 본다는 것", "아랫배가 빵빵하다는 것"],
         "onlyIfAsked": ["몇 년 전부터의 배뇨 증상(가는 줄기·야간뇨)", "최근 감기약 복용", "어제 음주", "다리 저림이나 항문 주변 감각이 정상이라는 것"]

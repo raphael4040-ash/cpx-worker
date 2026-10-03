@@ -23,6 +23,11 @@
       ],
       "constraints": { "ageRange": [24, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}}병" },
       "occupationBias": ["office", "selfemp", "cook", "delivery", "parttime"],
+      "ice": {
+        "ideas": ["위가 약해서 속이 쓰린 것 같아요", "밥을 불규칙하게 먹어서 그런 것 같아요"],
+        "concerns": ["위에 염증이 심하게 생긴 건 아닐까 걱정돼요", "속이 쓰려서 일에 집중이 안 돼요"],
+        "expectations": ["속 쓰린 약을 받고 싶어요", "위내시경을 해봐야 하는지 알고 싶어요"]
+      },
       "iceHint": ["denial", "work", "medicine"],
       "opening": ["속이 자꾸 쓰려서 왔어요.", "요즘 아침에 속이 안 좋아서요."],
       "hpi": {
@@ -81,7 +86,7 @@
         "family": ["{{spouse}}가 줄이라고 해요.", "별말 없어요."],
         "attempt": ["줄여야지 생각만 하고 안 해봤어요.", "한 달 쉬어본 적 있어요."],
         "driving": ["대리 불러요.", "가까운 거리는 몇 번 그런 적 있어요."],
-        "fhx": ["아버지가 술을 많이 드셨어요.", "특별히 없어요."]
+        "fhx": ["아버지 음주 문제", "특이사항 없음"]
       },
       "disclosure": {
         "spontaneous": ["속이 쓰리다는 것"],
@@ -103,6 +108,11 @@
       ],
       "constraints": { "ageRange": [38, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "거의 매일 소주 {{bottles}}병" },
       "occupationBias": ["construct", "selfemp", "driver", "market", "jobless"],
+      "ice": {
+        "ideas": ["나이 들어서 잠이 줄어든 것 같아요", "신경 쓸 일이 많아서 그런 것 같아요"],
+        "concerns": ["잠을 못 자서 일을 제대로 못 할까 봐 걱정돼요", "가족들이 걱정을 많이 해서 마음이 무거워요"],
+        "expectations": ["수면제를 좀 받고 싶어요", "잠 좀 푹 자고 싶어요"]
+      },
       "iceHint": ["family", "denial", "medicine"],
       "opening": ["잠이 안 와서 왔어요.", "{{spouse}}가 가보라고 해서 왔는데요."],
       "hpi": {
@@ -168,9 +178,9 @@
         "spider": ["거미혈관종 없음", "가슴 앞쪽에 거미혈관종이 두어 개 보인다"],
         "palmar": ["손바닥 홍반 없음", "손바닥이 붉다"],
         "liverFinding": ["간이 늑골연 아래로 2 cm 만져지고 표면은 매끄럽다", "간은 만져지지 않는다"],
-        "pmhx": ["건강검진에서 간수치가 높다고 들었어요.", "특별한 병은 없어요."],
-        "meds": ["없음", "수면제를 가끔 사 먹어요."],
-        "fhx": ["아버지가 술로 고생하셨어요.", "특별히 없어요."]
+        "pmhx": ["건강검진에서 간수치 상승 지적", "특이 병력 없음"],
+        "meds": ["없음", "약국 수면유도제를 가끔 복용"],
+        "fhx": ["아버지 알코올 문제", "특이사항 없음"]
       },
       "disclosure": {
         "spontaneous": ["잠이 안 온다는 것"],
@@ -191,6 +201,11 @@
       ],
       "constraints": { "ageRange": [42, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}}병, {{years}}년" },
       "occupationBias": ["selfemp", "construct", "driver", "market", "office"],
+      "ice": {
+        "ideas": ["피곤해서 간수치가 오른 것 같아요", "술 때문이라는 건 어느 정도 알고 있어요"],
+        "concerns": ["간경화가 되는 건 아닐까 걱정돼요", "술을 끊을 수 있을지 자신이 없어요"],
+        "expectations": ["간이 얼마나 나쁜지 알고 싶어요", "어떻게 하면 끊을 수 있는지 도움을 받고 싶어요"]
+      },
       "iceHint": ["test", "family", "internet"],
       "opening": ["간수치가 높다고 나와서 왔어요.", "검진에서 간이 안 좋다고 해서요. 술을 끊어야 한다는데요."],
       "hpi": {
@@ -221,7 +236,7 @@
         "다른 약이나 건강보조식품": "{{supplement}}"
       },
       "pmh": "{{pmhx}}",
-      "meds": "{{supplement}}",
+      "meds": "{{suppChart}}",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
@@ -245,6 +260,7 @@
         "negatives": ["황달 없음", "복수 없음", "비장 비대 없음", "날개짓 떨림 없음", "하지 부종 없음"]
       },
       "variations": {
+        "suppChart": ["간에 좋다는 건강보조식품 복용", "없음"],
         "onsetWeeks": [2, 3, 4], "days": [5, 6, 7], "bottles": ["한", "1.5", "두"], "years": [10, 15, 20],
         "ast": [88, 104, 126], "alt": [52, 61, 74], "ggt": [210, 285, 340],
         "liverSize": [2, 3],
@@ -252,9 +268,10 @@
         "spider": ["거미혈관종 없음", "가슴 앞쪽에 거미혈관종이 한두 개 보인다"],
         "palmar": ["손바닥 홍반 없음", "손바닥이 약간 붉다"],
         "gyneco": ["특이소견 없음", {"text": "경도의 여성형 유방이 보인다", "sexOnly": "male"}],
-        "pmhx": ["특이 병력 없음", "고혈압으로 약 먹어요.", "지방간이라는 말을 들은 적 있어요."],
+        "pmhx": ["특이 병력 없음", "몇 년 전부터 검진에서 간수치 경도 상승", "지방간 지적받음"],
         "supplement": ["간에 좋다는 걸 사 먹고 있어요.", "따로 챙겨 먹는 건 없어요."]
       },
+      "pairedVariations": [["supplement", "suppChart"]],
       "disclosure": {
         "spontaneous": ["간수치가 높다고 나왔다는 것"],
         "onlyIfAsked": ["음주 빈도·양·기간", "검진 수치", "간염 여부", "합병증 증상 없음", "건강보조식품", "금주 의향"]
@@ -275,6 +292,11 @@
       ],
       "constraints": { "ageRange": [68, 84], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "매일 저녁 소주 {{cups}}잔" },
       "occupationBias": ["retired", "farmer", "housewife", "jobless"],
+      "ice": {
+        "ideas": ["나이 들면 잠이 없어진다고 하잖아요", "반주 조금은 몸에 좋다고 들었어요"],
+        "concerns": ["잠을 못 자면 다음 날 너무 힘들어요", "자식들한테 걱정 끼치는 게 미안해요"],
+        "expectations": ["잠 잘 오는 약을 좀 받고 싶어요", "잠을 푹 잘 수 있는 방법을 알고 싶어요"]
+      },
       "iceHint": ["family", "medicine", "denial"],
       "opening": ["잠이 안 와서 반주를 좀 해요.", "딸이 병원에 가보라고 해서 왔어요."],
       "hpi": {
@@ -303,8 +325,8 @@
         "다른 약은": "{{otherMeds}}",
         "운전은": "{{driving}}"
       },
-      "pmh": "고혈압 등 만성질환. {{fallHistory}}",
-      "meds": "{{otherMeds}} 수면제를 술과 함께 복용",
+      "pmh": "{{fallHistory}}",
+      "meds": "{{otherChart}}. 수면제를 술과 함께 복용",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따르되 혼자 거주",
@@ -327,19 +349,20 @@
         "negatives": ["황달 없음", "복수 없음", "국소 신경학적 결손 없음", "손 떨림 없음"]
       },
       "variations": {
+        "otherChart": ["관절약(소염진통제) 복용", "그 외 약 없음"],
         "onsetYears": [2, 3, 5], "cups": [3, 4, 5], "drop": ["18 정도", "22 정도"],
         "fall": ["몇 달 전에 화장실에서 한 번 미끄러졌어요.", "넘어진 적은 없어요."],
-        "fallHistory": ["작년에 낙상으로 손목을 다친 적 있어요.", "낙상력 없음"],
+        "fallHistory": ["몇 달 전 화장실에서 낙상", "낙상력 없음"],
         "memory": ["요즘 깜빡깜빡해요.", "그렇진 않은 것 같아요."],
-        "family": ["딸이 술 좀 그만 드시라고 해요.", "혼자 살아서 뭐라 할 사람도 없어요."],
+        "family": ["딸이 술 좀 그만 드시라고 해요.", "딸은 멀리 살아서 자주 못 봐요."],
         "medSource": ["예전에 받은 걸 계속 먹어요.", "동네 의원에서 받아요."],
-        "otherMeds": ["혈압약과 관절약을 먹어요.", "혈압약, 당뇨약, 수면제를 먹어요."],
+        "otherMeds": ["관절약도 먹고 있어요.", "그 밖에 따로 먹는 약은 없어요."],
         "driving": ["운전은 안 해요.", "가끔 낮에만 해요."],
         "cognition": ["시간·장소 지남력은 정상이고 지연 회상에서 세 단어 중 한 단어를 놓친다", "인지 선별검사는 정상 범위다"],
         "gait": ["보행이 약간 불안정하고 돌아설 때 휘청인다", "보행은 안정적이다"],
         "bruise": ["양쪽 정강이에 시기가 다른 멍이 몇 군데 있다", "특이소견 없음"]
       },
-      "pairedVariations": [["fall", "fallHistory"]],
+      "pairedVariations": [["fall", "fallHistory", "gait", "bruise"], ["memory", "cognition"], ["otherMeds", "otherChart"]],
       "disclosure": {
         "spontaneous": ["잠이 안 와서 술을 마신다는 것"],
         "onlyIfAsked": ["수면제 병용", "낙상", "기억력 변화", "가족의 우려", "약의 출처", "기립 어지럼"]

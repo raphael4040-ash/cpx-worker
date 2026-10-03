@@ -33,6 +33,11 @@
         "cook",
         "delivery"
       ],
+      "ice": {
+        "ideas": ["요즘 피곤해서 천식이 도진 것 같아요", "요즘 공기가 안 좋아서 그런 것 같아요"],
+        "concerns": ["숨이 막혀서 큰일 날까 봐 무서워요", "일을 못 나가게 될까 봐 걱정이에요"],
+        "expectations": ["숨 좀 편하게 쉬게 해주세요", "숨 쉬기 편해지는 약을 받고 싶어요"]
+      },
       "iceHint": [
         "work",
         "medicine",
@@ -79,7 +84,7 @@
         "가만히 있어도 숨이 찬가, 어느 정도 걸으면 힘든가": "심할 때는 가만히 있어도 차요. 계단은 한 층도 힘들어요.",
         "입술이 파래진 적이 있나": "그런 건 없어요."
       },
-      "pmh": "어릴 때부터 천식. {{admission}}",
+      "pmh": "어릴 때부터 천식. {{admissionChart}}",
       "meds": "증상 완화 흡입기만 사용, 예방 흡입기는 처방받았으나 잘 안 씀",
       "allergy": "{{atopy}}",
       "fh": "{{fhx}}",
@@ -130,6 +135,7 @@
         ]
       },
       "variations": {
+        "admissionChart": ["작년 응급실 방문", "입원력 없음"],
         "onsetDays": [
           2,
           3,
@@ -149,16 +155,10 @@
           "찬 바람 쐬면 심해져요.",
           "이사하면서 먼지를 많이 마셨어요."
         ],
-        "atopy": [
-          "알레르기 비염이 있어요.",
-          "어릴 때 아토피가 있었어요.",
-          "없음"
-        ],
-        "fhx": [
-          "형제가 천식이 있어요.",
-          "특이사항 없음"
-        ]
+        "atopy": ["알레르기 비염", "어릴 때 아토피", "없음"],
+        "fhx": ["형제 천식", "특이사항 없음"]
       },
+      "pairedVariations": [["admission", "admissionChart"]],
       "disclosure": {
         "spontaneous": [
           "숨이 차다는 것"
@@ -194,6 +194,11 @@
         "farmer",
         "market"
       ],
+      "ice": {
+        "ideas": ["나이 들어서 기력이 없어서 숨이 찬 것 같아요", "감기가 와서 그런가 싶어요"],
+        "concerns": ["심장이 더 나빠진 건 아닐까 걱정돼요", "숨이 차서 일상생활이 너무 힘들어요"],
+        "expectations": ["숨 좀 편하게 쉬게 해주세요", "입원해야 하는지 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "denial",
@@ -242,7 +247,7 @@
         "입술이 파래진 적이 있나": "그런 건 없어요."
       },
       "pmh": "{{cardiacHx}}",
-      "meds": "이뇨제와 혈압약 처방받아 복용 중. {{compliance}}",
+      "meds": "이뇨제와 혈압약 처방받아 복용 중. {{complianceChart}}",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
@@ -300,6 +305,7 @@
         ]
       },
       "variations": {
+        "complianceChart": ["최근 며칠 이뇨제를 거름", "복약 순응 양호"],
         "onsetDays": [
           3,
           5,
@@ -318,12 +324,9 @@
           "이뇨제를 먹으면 화장실을 자주 가서 며칠 걸렀어요.",
           "약은 잘 챙겨 먹어요."
         ],
-        "cardiacHx": [
-          "몇 년 전 심근경색으로 시술받았어요.",
-          "심장이 약하다는 말을 들었어요.",
-          "고혈압과 당뇨로 약 먹어요."
-        ]
+        "cardiacHx": ["몇 년 전 심근경색으로 시술", "심기능 저하 지적받음", "심장비대 지적받음"]
       },
+      "pairedVariations": [["compliance", "complianceChart"]],
       "disclosure": {
         "spontaneous": [
           "숨이 차다는 것"
@@ -358,6 +361,11 @@
         "teacher",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["심장에 문제가 있는 것 같아요", "폐가 안 좋은 건가 싶어요"],
+        "concerns": ["이러다 진짜 죽을까 봐 무서워요", "심장병이 있는 건 아닐까 걱정돼요"],
+        "expectations": ["심장이나 폐에 이상이 없는지 확인하고 싶어요", "그럴 때 어떻게 해야 하는지 알고 싶어요"]
+      },
       "iceHint": [
         "cancer",
         "internet",
@@ -375,7 +383,7 @@
         "aggravating": "긴장할 때, 사람 많은 곳",
         "relieving": "{{relief}} 뒤 10~20분쯤 지나 저절로 가라앉음",
         "severity": "{{severity}}/10",
-        "course": "{{episodes}}",
+        "course": "{{episodesChart}}",
         "timing": "발작적. 발작 사이에는 완전히 정상"
       },
       "assoc": {
@@ -456,6 +464,7 @@
         ]
       },
       "variations": {
+        "episodesChart": ["최근 두 달 새 네댓 번 반복", "이번이 두 번째"],
         "onsetHours": [
           2,
           6,
@@ -486,6 +495,7 @@
           "특별한 건 없어요."
         ]
       },
+      "pairedVariations": [["episodes", "episodesChart"]],
       "disclosure": {
         "spontaneous": [
           "숨이 안 쉬어졌다는 것"
@@ -519,6 +529,11 @@
         "care",
         "retired"
       ],
+      "ice": {
+        "ideas": ["나이 들어서 체력이 떨어진 것 같아요", "운동을 안 해서 숨이 찬 것 같아요"],
+        "concerns": ["심장이나 폐에 문제가 생긴 건 아닐까 걱정돼요", "기운이 없어서 일하기가 힘들어요"],
+        "expectations": ["왜 숨이 차는지 검사해보고 싶어요", "기운 좀 차리게 해주세요"]
+      },
       "iceHint": [
         "denial",
         "family",
@@ -565,7 +580,7 @@
         "대장내시경 받은 적": "받아본 적 없어요."
       },
       "pmh": "특이 병력 없음",
-      "meds": "{{nsaid}}",
+      "meds": "{{nsaidChart}}",
       "allergy": "없음",
       "fh": "{{fhx}}",
       "sh": "인물 카드를 따름",
@@ -622,6 +637,7 @@
         }
       },
       "variations": {
+        "nsaidChart": ["관절통으로 진통제 자주 복용", "진통소염제 복용 없음"],
         "onsetMonths": [
           2,
           3,
@@ -640,7 +656,7 @@
           "가끔 까맣게 나온 것 같아요.",
           "특별히 이상한 건 못 봤어요."
         ],
-        "menses": [{"text": "요즘 생리량이 많고 오래가요.", "sexOnly": "female"}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}, {"text": "폐경했어요.", "sexOnly": "female"}],
+        "menses": [{"text": "요즘 생리량이 많고 오래가요.", "sexOnly": "female", "maxAge": 52}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}, {"text": "폐경했어요.", "sexOnly": "female", "minAge": 50}],
         "weightLoss": [
           "없어요.",
           "2kg 정도 빠진 것 같아요."
@@ -653,12 +669,9 @@
           "흑색변이 묻어 나온다",
           "특이소견 없음"
         ],
-        "fhx": [
-          "특이사항 없음",
-          "아버지가 대장암을 앓으셨어요."
-        ]
+        "fhx": ["특이사항 없음", "아버지 대장암"]
       },
-      "pairedVariations": [["bleedingSource", "stool", "rectal"]],
+      "pairedVariations": [["nsaid", "nsaidChart"], ["bleedingSource", "stool", "rectal"]],
       "disclosure": {
         "spontaneous": [
           "숨이 차고 기운이 없다는 것"
@@ -691,6 +704,11 @@
         "delivery",
         "soldier"
       ],
+      "ice": {
+        "ideas": ["몸살이 심하게 온 것 같아요", "체해서 토하는 것 같아요"],
+        "concerns": ["숨이 이상하게 쉬어져서 무서워요", "몸이 너무 축나서 걱정돼요"],
+        "expectations": ["수액이라도 맞고 기운 좀 차리고 싶어요", "왜 이런지 빨리 알고 싶어요"]
+      },
       "iceHint": [
         "denial",
         "test",
@@ -738,8 +756,8 @@
         "최근 아팠던 적": "{{infection}}",
         "가만히 있어도 숨이 찬가": "가만히 있어도 숨을 크게 쉬게 돼요."
       },
-      "pmh": "{{dmHx}}",
-      "meds": "{{insulin}}",
+      "pmh": "{{dmChart}}",
+      "meds": "{{insulinChart}}",
       "allergy": "없음",
       "fh": "{{fhx}}",
       "sh": "인물 카드를 따름",
@@ -800,6 +818,8 @@
         ]
       },
       "variations": {
+        "insulinChart": ["없음", "인슐린 사용 중이나 며칠 거름"],
+        "dmChart": ["당뇨 진단받은 적 없음", "작년 당뇨 진단"],
         "onsetDays": [
           3,
           5,
@@ -827,12 +847,9 @@
           "일주일 전에 감기를 앓았어요.",
           "딱히 없어요."
         ],
-        "fhx": [
-          "아버지가 당뇨가 있어요.",
-          "특이사항 없음"
-        ]
+        "fhx": ["아버지 당뇨", "특이사항 없음"]
       },
-      "pairedVariations": [["dmHx", "insulin"]],
+      "pairedVariations": [["insulin", "insulinChart"], ["dmHx", "dmChart"], ["dmHx", "insulin"]],
       "disclosure": {
         "spontaneous": [
           "숨이 가쁘고 기운이 없다는 것"

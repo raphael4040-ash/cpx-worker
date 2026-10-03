@@ -22,7 +22,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["고혈압"]
       },
       "occupationBias": [
         "office",
@@ -31,6 +31,11 @@
         "delivery",
         "cook"
       ],
+      "ice": {
+        "ideas": ["찬바람을 쐬어서 그런 것 같아요", "목이 약해서 그런가 싶어요"],
+        "concerns": ["폐렴으로 넘어간 건 아닐까 걱정돼요", "기침 때문에 잠을 못 자서 힘들어요"],
+        "expectations": ["기침 좀 멎는 약을 받고 싶어요", "폐는 괜찮은지 확인하고 싶어요"]
+      },
       "iceHint": [
         "medicine",
         "work",
@@ -171,6 +176,11 @@
         "care",
         "student"
       ],
+      "ice": {
+        "ideas": ["감기가 오래 가는 것 같아요", "기침을 오래 해서 목이 상한 것 같아요"],
+        "concerns": ["혹시 폐암일까 봐 무서워요", "가족들한테 옮는 병이면 어쩌나 걱정돼요"],
+        "expectations": ["엑스레이 찍어서 확실히 알고 싶어요", "기침이 좀 멎었으면 좋겠어요"]
+      },
       "iceHint": [
         "cancer",
         "denial",
@@ -182,7 +192,7 @@
       ],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 서서히",
-        "character": "가래가 섞인 기침. 최근 가래에 피가 비침",
+        "character": "{{coughChar}}",
         "location": "해당 없음",
         "radiation": "해당 없음",
         "aggravating": "특별한 유발 요인 없음",
@@ -216,7 +226,7 @@
         "예전에 결핵 앓은 적": "{{pastTb}}",
         "면역을 떨어뜨리는 병이나 약을 쓰나": "스테로이드나 항암치료를 받은 적은 없어요."
       },
-      "pmh": "{{pastTb}}",
+      "pmh": "{{pastTbPmh}}",
       "meds": "감기약을 사 먹었음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -296,6 +306,7 @@
           "최근에 가래에 피가 비쳤어요.",
           "피는 안 섞였어요."
         ],
+        "coughChar": ["가래가 섞인 기침. 최근 가래에 피가 비침", "가래가 섞인 기침. 피는 섞이지 않음"],
         "contact": [
           "같이 일하던 분이 결핵으로 치료받았어요.",
           "짚이는 데는 없어요."
@@ -304,6 +315,7 @@
           "결핵을 앓은 적은 없어요.",
           "20년 전에 결핵 치료를 받은 적 있어요."
         ],
+        "pastTbPmh": ["특이 병력 없음", "20년 전 결핵 치료"],
         "lymph": [
           "커진 것 없음",
           "경부에 작고 단단한 림프절이 만져진다"
@@ -313,6 +325,7 @@
           "왼"
         ]
       },
+      "pairedVariations": [["hemoptysis", "coughChar"], ["pastTb", "pastTbPmh"]],
       "disclosure": {
         "spontaneous": [
           "기침이 오래간다는 것"
@@ -337,7 +350,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["고혈압"]
       },
       "occupationBias": [
         "office",
@@ -346,6 +359,11 @@
         "nurse",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["목감기가 오래가는 것 같아요", "비염 때문인가 싶어요"],
+        "concerns": ["혹시 천식일까 봐 걱정돼요", "기침 때문에 사람들 눈치가 보여요"],
+        "expectations": ["기침 멎는 약을 받고 싶어요", "왜 이렇게 오래가는지 알고 싶어요"]
+      },
       "iceHint": [
         "medicine",
         "internet",
@@ -390,9 +408,9 @@
         "밤에 기침으로 깨나": "누우면 좀 심해지긴 해요.",
         "알레르기": "{{allergyHx}}"
       },
-      "pmh": "{{allergyHx}}",
+      "pmh": "{{allergyPmh}}",
       "meds": "없음",
-      "allergy": "{{allergyHx}}",
+      "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
       "pe": {
@@ -453,11 +471,10 @@
           3,
           4
         ],
-        "allergyHx": [
-          "알레르기 비염이 있어요.",
-          "특이사항 없음"
-        ]
+        "allergyHx": ["알레르기 비염이 있어요.", "특별한 알레르기는 없어요."],
+        "allergyPmh": ["알레르기 비염", "특이 병력 없음"]
       },
+      "pairedVariations": [["allergyHx", "allergyPmh"]],
       "disclosure": {
         "spontaneous": [
           "기침과 목 간지러움"
@@ -493,6 +510,11 @@
         "housewife",
         "driver"
       ],
+      "ice": {
+        "ideas": ["목감기가 안 떨어지는 것 같아요", "목이 건조해서 그런가 싶어요"],
+        "concerns": ["폐에 이상이 있는 건 아닐까 걱정돼요", "기침이 몇 달째라 큰 병인가 싶어요"],
+        "expectations": ["기침 좀 멎게 해주세요", "폐 사진 찍어서 괜찮은지 보고 싶어요"]
+      },
       "iceHint": [
         "medicine",
         "internet",
@@ -637,6 +659,11 @@
         "farmer",
         "driver"
       ],
+      "ice": {
+        "ideas": ["감기에 걸려서 그런 것 같아요", "요즘 날씨가 추워져서 그런가 싶어요"],
+        "concerns": ["숨이 더 차서 입원해야 할까 봐 걱정돼요", "이러다 숨을 못 쉬게 될까 봐요"],
+        "expectations": ["숨 쉬는 게 편해지게 해주세요", "가래 좀 줄이는 약을 받고 싶어요"]
+      },
       "iceHint": [
         "guilty",
         "family",

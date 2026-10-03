@@ -33,6 +33,11 @@
         "cook",
         "farmer"
       ],
+      "ice": {
+        "ideas": ["무거운 걸 들다가 삐끗한 것 같아요", "허리를 잘못 써서 근육이 놀란 것 같아요"],
+        "concerns": ["디스크가 터진 건 아닐까 걱정돼요", "일을 못 하게 될까 봐 걱정이에요"],
+        "expectations": ["진통제나 물리치료 받고 빨리 낫고 싶어요", "사진 찍어서 뼈는 괜찮은지 보고 싶어요"]
+      },
       "iceHint": [
         "work",
         "medicine",
@@ -81,7 +86,7 @@
       "meds": "약국 진통제",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 무거운 것을 드는 일이 많음",
+      "sh": "인물 카드를 따름",
       "pe": {
         "vitals": {
           "sbp": [
@@ -185,6 +190,11 @@
         "delivery",
         "care"
       ],
+      "ice": {
+        "ideas": ["허리 디스크가 생긴 것 같아요", "허리를 무리하게 써서 그런 것 같아요"],
+        "concerns": ["수술해야 하는 건 아닐까 걱정돼요", "다리 저린 게 계속될까 봐요"],
+        "expectations": ["MRI를 찍어서 확인하고 싶어요", "저린 게 좀 덜하게 해주세요"]
+      },
       "iceHint": [
         "internet",
         "work",
@@ -195,7 +205,7 @@
         "엉덩이 쪽이 당기고 다리가 저려요."
       ],
       "hpi": {
-        "onset": "{{onsetWeeks}}주 전부터. {{trigger}} 이후 시작",
+        "onset": "{{onsetWeeks}}주 전부터. {{trigger}} 시작",
         "character": "허리는 뻐근하고 다리는 전기가 흐르듯 저림",
         "location": "허리에서 {{side}}쪽 엉덩이, 허벅지 뒤, 종아리 바깥, 발등까지",
         "radiation": "무릎 아래 발까지 내려감",
@@ -359,6 +369,11 @@
         "housewife",
         "market"
       ],
+      "ice": {
+        "ideas": ["나이 들어서 허리가 약해진 것 같아요", "다리 혈액순환이 안 돼서 그런가 싶어요"],
+        "concerns": ["점점 걷기 힘들어질까 봐 걱정돼요", "수술해야 할까 봐 걱정이에요"],
+        "expectations": ["좀 더 오래 걸을 수 있게 해주세요", "주사나 약으로 나아질 수 있는지 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "internet",
@@ -521,6 +536,11 @@
         "driver",
         "care"
       ],
+      "ice": {
+        "ideas": ["원래 있던 허리병이 심해진 것 같아요", "허리를 무리해서 그런 것 같아요"],
+        "concerns": ["이러다 못 걷게 될까 봐 무서워요", "신경이 다친 건 아닐까 걱정돼요"],
+        "expectations": ["빨리 검사해서 원인을 알고 싶어요", "아픈 것부터 좀 가라앉혀 주세요"]
+      },
       "iceHint": [
         "denial",
         "internet",
@@ -561,9 +581,10 @@
         "다리에 힘이 빠지나": "계단 오를 때 다리가 풀려요.",
         "언제부터 나빠졌나": "며칠 사이에 갑자기 심해졌어요.",
         "열이 나나": "없어요.",
-        "정맥주사 맞은 적이나 최근 감염·시술": "없어요."
+        "정맥주사 맞은 적이나 최근 감염·시술": "없어요.",
+        "전에도 허리가 아팠던 적": "{{priorBack}}"
       },
-      "pmh": "{{priorBack}}",
+      "pmh": "{{priorBackPmh}}",
       "meds": "진통제",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -619,6 +640,7 @@
         ]
       },
       "variations": {
+        "priorBackPmh": ["몇 년 전 허리 디스크 진단", "평소 가끔 요통이 있었음"],
         "onsetDays": [
           3,
           5,
@@ -638,6 +660,7 @@
           "허리는 원래 가끔 아팠어요."
         ]
       },
+      "pairedVariations": [["priorBack", "priorBackPmh"]],
       "disclosure": {
         "spontaneous": [
           "허리가 아프다는 것"
@@ -672,6 +695,11 @@
         "construct",
         "housewife"
       ],
+      "ice": {
+        "ideas": ["나이 들어서 허리가 약해진 것 같아요", "디스크가 생긴 건가 싶어요"],
+        "concerns": ["진통제를 먹어도 안 들으니 큰 병일까 봐 걱정돼요", "점점 심해지니 무슨 병이 있는 건 아닐까 걱정돼요"],
+        "expectations": ["통증 좀 줄여주세요", "MRI든 뭐든 찍어서 원인을 알고 싶어요"]
+      },
       "iceHint": [
         "cancer",
         "family",
@@ -716,11 +744,11 @@
         "기침이나 가래": "{{extraSymptom}}",
         "정맥주사 맞은 적이나 최근 감염·시술": "없어요."
       },
-      "pmh": "{{cancerHx}}",
+      "pmh": "{{cancerPmh}}",
       "meds": "진통제",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 흡연력 확인이 중요",
+      "sh": "인물 카드를 따름",
       "pe": {
         "vitals": {
           "sbp": [
@@ -775,6 +803,7 @@
         ]
       },
       "variations": {
+        "cancerPmh": ["3년 전 폐암 수술", {"text": "5년 전 유방암 치료", "sexOnly": "female"}, "특이 병력 없음"],
         "onsetMonths": [
           3,
           4,
@@ -828,12 +857,9 @@
           "좌측 쇄골상 림프절이 단단하게 만져진다"
         ],
         "breast": ["특이소견 없음", {"text": "우측 유방에 수술 흉터가 있다", "sexOnly": "female"}, "특이소견 없음"],
-        "lungFinding": [
-          "양측 정상",
-          "우측 상부 호흡음이 약간 감소"
-        ]
+        "lungFinding": ["우측 상부 호흡음이 약간 감소", "양측 정상", "양측 정상"]
       },
-      "pairedVariations": [["cancerHx", "breast"], ["weakness", "motorFinding"]],
+      "pairedVariations": [["cancerHx", "breast", "cancerPmh", "lungFinding"], ["weakness", "motorFinding"]],
       "disclosure": {
         "spontaneous": [
           "허리가 오래 아프다는 것"

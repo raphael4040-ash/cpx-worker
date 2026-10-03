@@ -23,6 +23,11 @@
       ],
       "constraints": { "ageRange": [45, 68], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [], "smokingLabel": "하루 {{packs}}갑, {{years}}년" },
       "occupationBias": ["construct", "driver", "welder", "market", "selfemp"],
+      "ice": {
+        "ideas": ["감기가 오래가는 것 같아요", "날이 추워져서 기침이 심해진 것 같아요"],
+        "concerns": ["기침 때문에 일하기가 불편해요", "밤에 기침이 나서 잠을 설쳐요"],
+        "expectations": ["기침약이나 좀 받고 싶어요", "빨리 감기가 나았으면 좋겠어요"]
+      },
       "iceHint": ["denial", "work", "medicine"],
       "opening": ["감기 때문에 왔는데요.", "기침약이나 좀 받으러 왔어요."],
       "hpi": {
@@ -77,7 +82,7 @@
                    "생각은 없어요. 스트레스 받으면 이거라도 피워야죠.",
                    "주변에서 하도 뭐라 해서 듣긴 하는데, 지금은 아니에요."],
         "pastAttempt": ["한 번도 안 해봤어요.", "옛날에 며칠 참아본 게 다예요."],
-        "fhx": ["아버지가 폐암으로 돌아가셨어요.", "특별히 없어요."]
+        "fhx": ["아버지 폐암으로 사망", "특이사항 없음"]
       },
       "disclosure": {
         "spontaneous": ["기침 때문에 왔다는 것"],
@@ -98,6 +103,11 @@
       ],
       "constraints": { "ageRange": [28, 48], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [], "smokingLabel": "하루 {{packs}}갑, {{years}}년" },
       "occupationBias": ["office", "delivery", "cook", "selfemp", "parttime"],
+      "ice": {
+        "ideas": ["담배가 몸에 안 좋다는 건 알아요", "끊는 건 결국 의지 문제인 것 같아요"],
+        "concerns": ["끊으려다 잘 안 될까 봐 걱정돼요", "식구들 건강에 안 좋을까 봐 마음에 걸려요"],
+        "expectations": ["끊는 방법이 있으면 알고 싶어요", "도움을 받으면 끊을 수 있는지 알고 싶어요"]
+      },
       "iceHint": ["family", "work", "medicine"],
       "opening": ["담배를 끊어야 하나 싶어서요.", "애가 생기고 나서 고민이 돼서 왔어요."],
       "hpi": {
@@ -108,11 +118,11 @@
         "aggravating": "스트레스 받을 때, 술자리, 동료들과 같이 나갈 때",
         "relieving": "해당 없음",
         "severity": "해당 없음",
-        "course": "{{pastAttempt}}",
+        "course": "{{attemptChart}}",
         "timing": "해당 없음"
       },
       "assoc": {
-        "positive": ["{{motivation}}", "아침 기침이 조금 있음", "담배 냄새 때문에 눈치가 보임"],
+        "positive": ["{{motivChart}}", "아침 기침이 조금 있음", "담배 냄새 때문에 눈치가 보임"],
         "negative": ["객혈 없음", "체중감소 없음", "숨참 뚜렷하지 않음", "가슴 통증 없음"]
       },
       "redFlags": {
@@ -147,6 +157,8 @@
         "negatives": ["수포음 없음", "천명음 없음", "곤봉지 없음"]
       },
       "variations": {
+        "motivChart": ["아이가 태어나 담배 냄새가 신경 쓰임", "배우자가 계속 금연을 권함", "담뱃값 부담"],
+        "attemptChart": ["작년에 두 번 금연 시도, 각각 일주일 유지", "몇 년 전 한 달 금연"],
         "onsetMonths": [2, 3, 6], "packs": ["0.5", 1], "years": [{ "text": 8, "minAge": 27 }, { "text": 12, "minAge": 31 }, { "text": 15, "minAge": 34 }],
         "motivation": ["아이가 태어나서요. 안고 있으면 냄새가 배는 게 신경 쓰여요.",
                        "{{spouse}}가 계속 뭐라고 해서요.",
@@ -157,6 +169,7 @@
         "household": ["{{spouse}}는 안 피우고 같이 일하는 사람들은 다 피워요.", "집에는 없고 밖에서만요."],
         "ecig": ["전자담배로 바꿔봤는데 결국 둘 다 피우게 됐어요.", "써본 적 없어요."]
       },
+      "pairedVariations": [["motivation", "motivChart"], ["pastAttempt", "attemptChart"]],
       "disclosure": {
         "spontaneous": ["담배를 끊을까 고민 중이라는 것"],
         "onlyIfAsked": ["구체적 흡연량", "의존도", "과거 시도와 재흡연 이유", "장애물", "전자담배 병용"]
@@ -177,6 +190,11 @@
       ],
       "constraints": { "ageRange": [32, 60], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [], "smokingLabel": "하루 {{packs}}갑, {{years}}년" },
       "occupationBias": ["office", "teacher", "selfemp", "driver", "market"],
+      "ice": {
+        "ideas": ["이번에는 정말 끊어야 할 때인 것 같아요", "혼자서는 힘들 것 같아요"],
+        "concerns": ["끊는 동안 많이 힘들까 봐 겁나요", "스트레스 받을 때 참을 수 있을지 걱정돼요"],
+        "expectations": ["끊는 데 도움 되는 방법을 알고 싶어요", "약이나 패치를 써볼 수 있는지 알고 싶어요"]
+      },
       "iceHint": ["medicine", "family", "test"],
       "opening": ["이번에는 진짜 끊으려고요. 도와주세요.", "다음 달부터 끊기로 했는데 방법을 알고 싶어요."],
       "hpi": {
@@ -187,11 +205,11 @@
         "aggravating": "술자리, 스트레스, 식후",
         "relieving": "해당 없음",
         "severity": "해당 없음",
-        "course": "{{pastAttempt}}",
+        "course": "{{attemptChart}}",
         "timing": "해당 없음"
       },
       "assoc": {
-        "positive": ["{{trigger}}", "이번에는 준비를 제대로 하고 싶음"],
+        "positive": ["{{triggerChart}}", "이번에는 준비를 제대로 하고 싶음"],
         "negative": ["객혈 없음", "체중감소 없음", "가슴 통증 없음"]
       },
       "redFlags": {
@@ -206,7 +224,7 @@
         "우울하거나 불안한 편인가": "{{mood}}"
       },
       "pmh": "{{pmhx}}",
-      "meds": "{{meds}}",
+      "meds": "그 외 복용 약 없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
@@ -227,21 +245,21 @@
         "negatives": ["곤봉지 없음", "구강 내 백반증 없음", "림프절 비대 없음"]
       },
       "variations": {
+        "triggerChart": ["건강검진에서 폐 이상 소견을 듣고 겁이 남", "아버지가 폐암 진단을 받음", "식구들이 담배 냄새를 싫어함"],
+        "attemptChart": ["3년 전 두 달간 금연", "작년에 일주일 금연"],
         "onsetWeeks": [1, 2, 3], "packs": [1, "1.5"], "years": [{ "text": 10, "minAge": 29 }, { "text": 15, "minAge": 34 }, { "text": 20, "minAge": 39 }, { "text": 25, "minAge": 44 }],
         "firstCig": ["일어나자마자요.", "한 시간쯤 뒤에요."],
-        "trigger": ["건강검진에서 폐에 뭐가 보인다고 해서 겁이 났어요.",
-                    "아버지가 폐암 진단을 받으셨어요.",
-                    "아이가 담배 냄새 난다고 안 오려고 해요."],
+        "trigger": ["건강검진에서 폐에 뭐가 보인다고 해서 겁이 났어요.", "아버지가 폐암 진단을 받으셨어요.", "식구들이 담배 냄새 난다고 싫어해요."],
         "pastAttempt": ["3년 전에 두 달까지 갔었어요.", "작년에 일주일 참았어요."],
         "withdrawal": ["짜증이 많이 났고 잠이 안 왔어요.", "집중이 안 되고 계속 입이 심심했어요."],
         "relapseReason": ["회식에서 한 대 얻어 피운 게 시작이었어요.", "일이 몰려서 스트레스 받다가요."],
         "aidHistory": ["패치를 며칠 붙였는데 가려워서 뗐어요.", "약이나 패치는 안 써봤어요."],
         "household": ["집에는 없어요.", "같이 일하는 사람 몇 명이 피워요."],
         "mood": ["특별히 그렇진 않아요.", "요즘 일 때문에 좀 우울하긴 해요."],
-        "pmhx": ["특이 병력 없음", "고혈압으로 약 먹어요."],
-        "meds": ["없음", "혈압약"],
+        "pmhx": ["특이 병력 없음", "몇 년 전 검진에서 혈압 경계치"],
         "lungFinding": ["양측 정상", "호기가 약간 길다"]
       },
+      "pairedVariations": [["trigger", "triggerChart"], ["pastAttempt", "attemptChart"]],
       "disclosure": {
         "spontaneous": ["끊기로 결심했다는 것"],
         "onlyIfAsked": ["결심 계기", "의존도", "과거 금단 증상", "재흡연 방아쇠", "보조요법 경험", "기분 상태"]
@@ -261,6 +279,11 @@
       ],
       "constraints": { "ageRange": [58, 78], "sex": "any", "requiredRisk": ["흡연"], "requiredRiskMin": 1, "forbidden": [], "smokingLabel": "현재 하루 {{packsNow}}갑 (과거 {{packYears}}갑년)" },
       "occupationBias": ["retired", "construct", "welder", "farmer", "driver"],
+      "ice": {
+        "ideas": ["다시 피워서 숨이 더 찬 것 같아요", "날이 추워져서 그런가 싶어요"],
+        "concerns": ["폐가 더 나빠질까 봐 걱정돼요", "또 끊을 수 있을지 자신이 없어요"],
+        "expectations": ["숨 좀 덜 차게 해주세요", "다시 끊을 방법을 알고 싶어요"]
+      },
       "iceHint": ["guilty", "denial", "family"],
       "opening": ["끊었다가 다시 피우게 됐어요.", "숨이 차서 왔는데 담배를 다시 피우고 있어요."],
       "hpi": {
@@ -268,7 +291,7 @@
         "character": "예전만큼은 아니고 하루 {{packsNow}}갑 정도",
         "location": "해당 없음",
         "radiation": "해당 없음",
-        "aggravating": "{{relapseReason}}",
+        "aggravating": "{{relapseChart}}",
         "relieving": "해당 없음",
         "severity": "해당 없음",
         "course": "진단 후 끊었다가 다시 피우기 시작함. 숨찬 것이 조금 더 심해짐",
@@ -312,6 +335,7 @@
         "negatives": ["하지 부종 없음", "고열 없음", "편측 호흡음 소실 없음"]
       },
       "variations": {
+        "relapseChart": ["상을 치른 뒤 한 대 피운 것이 계기", "친구 모임에서 얻어 피우다 재흡연", "일이 안 풀려 스트레스로 재흡연"],
         "quitMonths": [4, 6, 10], "relapseWeeks": [3, 6, 8], "packsNow": ["0.5", 1],
         "dxYears": [3, 5, 8], "packYears": [30, 40, 45],
         "relapseReason": ["상을 치르고 나서 한 대 피운 게 다시 시작이었어요.",
@@ -320,6 +344,7 @@
         "ecig": ["전자담배로 바꿨는데 그게 낫지 않나요.", "전자담배는 안 써요."],
         "dyspneaChange": ["예전보다 계단이 더 힘들어요.", "비슷한 것 같기도 해요."]
       },
+      "pairedVariations": [["relapseReason", "relapseChart"]],
       "disclosure": {
         "spontaneous": ["다시 피우게 됐다는 것", "숨이 찬 것"],
         "onlyIfAsked": ["재흡연 계기", "금연 유지 기간", "현재 흡연량", "전자담배 전환", "흡입기 순응도"]

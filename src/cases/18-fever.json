@@ -32,6 +32,11 @@
         "student",
         "housewife"
       ],
+      "ice": {
+        "ideas": ["몸살감기가 심하게 온 것 같아요", "요즘 무리해서 몸이 상한 것 같아요"],
+        "concerns": ["열이 계속 나니까 큰 병일까 봐 걱정돼요", "일을 며칠 못 나갈까 봐 걱정이에요"],
+        "expectations": ["열 좀 내리게 해주세요", "약 먹고 빨리 낫고 싶어요"]
+      },
       "iceHint": [
         "test",
         "work",
@@ -78,7 +83,7 @@
         "최근 해외여행이나 동물·벌레·날음식 노출": "그런 건 없어요.",
         "소변량이 줄었거나 어지럽거나 정신이 흐린가": "소변은 평소만큼 보고 어지럽진 않아요."
       },
-      "pmh": "{{recur}}",
+      "pmh": "{{recurPmh}}",
       "meds": "해열제",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -131,6 +136,7 @@
         ]
       },
       "variations": {
+        "recurPmh": ["이전에 방광염으로 여러 번 치료받음", "특이 병력 없음"],
         "onsetDays": [
           2,
           3
@@ -153,6 +159,7 @@
           "방광염이나 콩팥 염증은 이번이 처음이에요."
         ]
       },
+      "pairedVariations": [["recur", "recurPmh"]],
       "disclosure": {
         "spontaneous": [
           "열이 난다는 것"
@@ -189,6 +196,11 @@
         "driver",
         "market"
       ],
+      "ice": {
+        "ideas": ["감기가 심해진 것 같아요", "독감에 걸린 건가 싶어요"],
+        "concerns": ["폐렴이면 어쩌나 걱정돼요", "숨이 차니까 입원해야 할까 봐요"],
+        "expectations": ["열이랑 기침 좀 가라앉게 해주세요", "사진 찍어서 폐가 괜찮은지 보고 싶어요"]
+      },
       "iceHint": [
         "family",
         "denial",
@@ -241,7 +253,7 @@
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 흡연 또는 당뇨 중 하나 이상 보유",
+      "sh": "인물 카드를 따름",
       "pe": {
         "vitals": {
           "sbp": [
@@ -349,6 +361,11 @@
         "nurse",
         "care"
       ],
+      "ice": {
+        "ideas": ["독감에 걸린 것 같아요", "몸살감기가 세게 온 것 같아요"],
+        "concerns": ["주변 사람들한테 옮길까 봐 걱정돼요", "며칠 동안 학교나 일을 못 나갈까 봐요"],
+        "expectations": ["독감 검사를 받아보고 싶어요", "빨리 낫는 약을 받고 싶어요"]
+      },
       "iceHint": [
         "work",
         "medicine",
@@ -501,6 +518,11 @@
         "office",
         "market"
       ],
+      "ice": {
+        "ideas": ["몸살이 오래가는 것 같아요", "요즘 무리해서 기운이 빠진 것 같아요"],
+        "concerns": ["열이 몇 주째라 무슨 큰 병이 있는 건 아닐까 걱정돼요", "기운이 자꾸 빠져서 일을 못 할까 봐요"],
+        "expectations": ["왜 열이 안 떨어지는지 검사해 보고 싶어요", "기운 좀 차릴 수 있게 해주세요"]
+      },
       "iceHint": [
         "cancer",
         "internet",
@@ -547,7 +569,7 @@
         "피부에 점 같은 게 생겼나": "{{skin}}",
         "최근 해외여행이나 동물·벌레·날음식 노출": "그런 건 없어요."
       },
-      "pmh": "{{cardiac}}",
+      "pmh": "{{cardiacPmh}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -610,6 +632,7 @@
         ]
       },
       "variations": {
+        "cardiacPmh": ["어릴 때 심장 판막 이상을 들은 적 있음", "특이 병력 없음"],
         "onsetWeeks": [
           3,
           4,
@@ -646,7 +669,7 @@
           "특이소견 없음"
         ]
       },
-      "pairedVariations": [["skin", "nailFinding"]],
+      "pairedVariations": [["cardiac", "cardiacPmh"], ["skin", "nailFinding"]],
       "disclosure": {
         "spontaneous": [
           "열이 오래 난다는 것",

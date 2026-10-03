@@ -12,8 +12,13 @@
     {
       "id": "sz-gtc-first",
       "dx": "첫 전신강직간대발작 (간질성 경련)",
-      "constraints": { "ageRange": [19, 42], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병"] },
+      "constraints": { "ageRange": [20, 42], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병"], "alcohol": "drinker" },
       "occupationBias": ["student", "office", "delivery", "soldier", "cook"],
+      "ice": {
+        "ideas": ["피곤해서 빈혈로 쓰러진 것 같아요", "뭘 잘못 먹고 체해서 그런 건가 싶어요"],
+        "concerns": ["간질이면 운전이나 일을 못 하게 될까 봐 걱정돼요", "또 쓰러지면 어떡하나 무서워요"],
+        "expectations": ["뇌에 이상이 있는지 검사해 보고 싶어요", "다시 안 그러게 약이 있으면 받고 싶어요"]
+      },
       "iceHint": ["work", "internet", "cancer"],
       "opening": ["어제 갑자기 쓰러져서 온몸이 뻣뻣해졌다고 해요.", "저는 기억이 안 나는데 같이 있던 사람이 경련을 했다고 해서 왔어요."],
       "hpi": {
@@ -21,7 +26,7 @@
         "character": "옆에서 본 사람 말로는 온몸이 뻣뻣해지더니 팔다리를 규칙적으로 떨었다고 함. 입에서 거품이 났다고 함",
         "location": "해당 없음",
         "radiation": "해당 없음",
-        "aggravating": "요 며칠 일이 몰려 {{sleepHours}}시간밖에 못 잤고 전날 술을 마셨음",
+        "aggravating": "요 며칠 {{sleepHours}}시간밖에 못 잤고 전날 술을 마셨음",
         "relieving": "해당 없음",
         "severity": "{{severity}}/10",
         "course": "{{duration}}분쯤 뒤 멈췄고 그 뒤로 {{postictal}}분 동안 멍하니 말도 못 알아들었다고 함. 지금은 온몸이 쑤시는 것 말고는 괜찮음",
@@ -47,10 +52,10 @@
         "가족 중에 경련하는 사람": "{{fhx}}",
         "마지막 월경일이나 임신 가능성": "{{lmpAnswer}}"
       },
-      "pmh": "{{childhoodFebrile}} {{headTrauma}}",
+      "pmh": "{{febrilePmh}}{{headPmh}}",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhxChart}}",
       "sh": "인물 카드를 따르되 최근 수면부족이 심하고 전날 음주가 있었음",
       "pe": {
         "vitals": { "sbp": [116, 138], "dbp": [70, 84], "hr": [76, 96], "rr": [14, 18], "temp": [36.4, 37.1], "spo2": [97, 99],
@@ -81,14 +86,18 @@
       "variations": {
         "onsetHours": [18, 24, 30], "duration": [2, 3], "postictal": [15, 20, 30],
         "severity": [4, 5, 6], "sleepHours": [3, 4],
-        "place": [{"text": "학교 강의실", "occOnly": ["학생"]}, {"text": "회사 사무실", "occOnly": ["사무실"]}, "집 거실"],
+        "place": [{"text": "학교 강의실", "occOnly": ["학생"]}, {"text": "회사 사무실", "occOnly": ["office"]}, "집 거실"],
         "aura": ["아무 느낌 없이 그냥 쓰러졌대요.", "잠깐 이상한 냄새가 났던 것 같기도 해요."],
         "headTrauma": ["머리 다친 적은 없어요.", "몇 년 전에 오토바이 사고로 머리를 부딪친 적은 있어요."],
+        "headPmh": ["", "몇 년 전 오토바이 사고로 머리를 부딪침."],
         "childhoodFebrile": ["어릴 때도 그런 적은 없대요.", "어릴 때 열나면서 경기를 한 적이 있다고 들었어요."],
+        "febrilePmh": ["", "어릴 때 열성 경련 병력. "],
         "fhx": ["가족 중엔 없어요.", "사촌 중에 간질약을 먹는 사람이 있다고 들었어요."],
+        "fhxChart": ["특이사항 없음", "사촌이 뇌전증 약을 복용 중"],
         "headFinding": ["특별한 외상 흔적이 없다", "뒤통수에 작은 멍이 있고 열상은 없다"],
         "lmpAnswer": [{"text": "마지막 생리는 2주 전이고 임신 가능성은 없어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
+      "pairedVariations": [["headTrauma", "headPmh"], ["childhoodFebrile", "febrilePmh"], ["fhx", "fhxChart"]],
       "disclosure": {
         "spontaneous": ["쓰러졌다는 것", "본인은 기억이 없다는 것"],
         "onlyIfAsked": ["혀를 깨문 것", "요실금", "발작 후 혼미 시간", "수면부족과 음주", "목격자가 설명한 발작 양상", "가족력"]
@@ -100,6 +109,11 @@
       "dx": "혈관미주신경성 실신에 동반된 경련유사 움직임 (비경련성)",
       "constraints": { "ageRange": [19, 40], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "soldier", "office", "nurse", "teacher"],
+      "ice": {
+        "ideas": ["너무 피곤해서 잠깐 기절한 것 같아요", "빈혈이 있어서 그런가 싶어요"],
+        "concerns": ["떨었다고 하니 혹시 간질일까 봐 걱정돼요", "또 쓰러지다 머리를 다칠까 봐요"],
+        "expectations": ["간질인지 아닌지 확실히 알고 싶어요", "괜찮다는 확인만 받으면 좋겠어요"]
+      },
       "iceHint": ["internet", "family", "denial"],
       "opening": ["어제 쓰러지면서 팔다리를 떨었다고 해서 왔어요.", "쓰러졌는데 옆에서 경련을 했다고 해서 왔어요."],
       "hpi": {
@@ -180,8 +194,13 @@
     {
       "id": "sz-hypoglycemia",
       "dx": "저혈당에 의한 경련 (설포닐우레아 복용)",
-      "constraints": { "ageRange": [55, 82], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [55, 82], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [], "alcohol": "drinker" },
       "occupationBias": ["retired", "farmer", "housewife", "market", "driver"],
+      "ice": {
+        "ideas": ["나이 들어서 중풍 기가 온 것 같아요", "요즘 기력이 없어서 그런가 싶어요"],
+        "concerns": ["혹시 치매가 시작된 건 아닐까 걱정돼요", "또 이러다 혼자 있을 때 쓰러질까 봐요"],
+        "expectations": ["뇌 검사를 해봤으면 해요", "다시 안 그러게 해주셨으면 해요"]
+      },
       "iceHint": ["family", "medicine", "denial"],
       "opening": ["아침에 갑자기 헛소리를 하다가 떨었대요.", "정신을 잃고 경련을 했다고 해서 왔어요."],
       "hpi": {
@@ -261,8 +280,13 @@
     {
       "id": "sz-alcohol-withdrawal",
       "dx": "알코올 금단 경련",
-      "constraints": { "ageRange": [38, 66], "sex": "any", "requiredRisk": ["과음"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [38, 66], "sex": "any", "requiredRisk": ["과음"], "requiredRiskMin": 1, "forbidden": [], "alcoholLabel": "매일 소주 1병 이상" },
       "occupationBias": ["construct", "driver", "market", "cook", "selfemp"],
+      "ice": {
+        "ideas": ["요즘 일이 많고 피곤해서 그런 것 같아요", "잠을 못 자서 몸이 상한 건가 싶어요"],
+        "concerns": ["간질이 생긴 건 아닐까 걱정돼요", "손이 계속 떨리니 일을 못 하게 될까 봐요"],
+        "expectations": ["떨리는 것 좀 멎게 해주세요", "뇌에 문제가 없는지 확인하고 싶어요"]
+      },
       "iceHint": ["denial", "work", "medicine"],
       "opening": ["며칠 전에 갑자기 쓰러져서 떨었대요.", "어제 쓰러져서 온몸을 떨었다고 해서 왔어요."],
       "hpi": {
@@ -348,8 +372,13 @@
       "dx": "저나트륨혈증에 의한 경련 (이뇨제 유발, 비간질성 대사성)",
       "constraints": { "ageRange": [66, 86], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer"],
+      "ice": {
+        "ideas": ["나이 들어서 기력이 떨어진 줄 알았어요", "치매가 오는 건가 싶었어요"],
+        "concerns": ["중풍이 온 건 아닌지 걱정돼요", "또 경련하다 크게 다칠까 봐 무서워요"],
+        "expectations": ["왜 이러는지 원인을 찾아주셨으면 해요", "입원해서 제대로 검사받고 싶어요"]
+      },
       "iceHint": ["family", "medicine", "denial"],
-      "opening": ["어머니가 며칠 헛소리를 하시더니 오늘 경련을 했어요.", "요즘 기운이 없고 정신이 오락가락하다가 떨었대요."],
+      "opening": ["며칠 정신이 흐릿하더니 오늘 경련을 했대요.", "요즘 기운이 없고 정신이 오락가락하다가 떨었대요."],
       "hpi": {
         "onset": "{{onsetHours}}시간 전 경련. 그전 {{prodromeWeeks}}주 동안 기운 없고 정신이 흐릿했음",
         "character": "옆에서 본 사람 말로는 팔다리를 떨면서 눈이 돌아갔다고 함",

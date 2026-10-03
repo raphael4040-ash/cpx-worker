@@ -23,37 +23,42 @@
       ],
       "constraints": { "ageRange": [42, 60], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["당뇨병", "이상지질혈증"] },
       "occupationBias": ["office", "driver", "selfemp", "market", "teacher"],
+      "ice": {
+        "ideas": ["나이 들면 다들 조금씩 높아지는 거 아닌가 싶어요", "요즘 기름진 걸 많이 먹어서 그런 것 같아요"],
+        "concerns": ["평생 약을 먹어야 할까 봐 걱정돼요", "혹시 심장에 문제가 생길까 봐 걱정이에요"],
+        "expectations": ["약을 먹어야 하는지 알고 싶어요", "약 없이 낮출 방법이 있으면 알고 싶어요"]
+      },
       "iceHint": ["denial", "medicine", "work"],
-      "opening": ["회사 건강검진에서 콜레스테롤이 높다고 나왔어요.", "검진 결과지 받고 와보라고 해서 왔는데요."],
+      "opening": ["건강검진에서 콜레스테롤이 높다고 나왔어요.", "검진 결과지 받고 와보라고 해서 왔는데요."],
       "hpi": {
-        "onset": "{{onsetWeeks}}주 전 직장 건강검진 결과를 받음",
+        "onset": "{{onsetWeeks}}주 전 건강검진 결과를 받음",
         "character": "증상은 전혀 없음. 결과지에 재검·상담 권고가 찍혀 있어 옴",
         "location": "해당 없음",
         "radiation": "해당 없음",
         "aggravating": "해당 없음",
         "relieving": "해당 없음",
         "severity": "증상 없음",
-        "course": "{{priorResult}}",
+        "course": "{{priorChart}}",
         "timing": "해당 없음"
       },
       "assoc": {
-        "positive": ["최근 몇 년 체중이 {{weightGain}}kg 늘었음", "회식이 잦음", "운동을 거의 안 함"],
+        "positive": ["최근 몇 년 체중이 {{weightGain}}kg 늘었음", "외식이 잦음", "운동을 거의 안 함"],
         "negative": ["가슴 통증 없음", "운동 시 숨참 없음", "다리 저림 없음", "피부에 노란 덩어리 없음", "추위 못 견딤 없음", "변비 없음"]
       },
       "redFlags": {
         "가슴이 아프거나 답답한 적": "그런 건 없어요.",
         "걸을 때 종아리가 아파서 쉬어야 하나": "아니요.",
         "담배는": "{{smokingSay}}",
-        "혈압이나 혈당은": "혈압도 좀 높다고 나왔어요. 당은 경계라고 들었어요.",
+        "혈압이나 혈당은": "혈압약은 먹고 있어요. 당은 경계라고 들었어요.",
         "가족 중 심장병이나 뇌졸중": "{{fhx}}",
         "검진 수치가 어떻게 나왔나": "총콜레스테롤 {{tc}}, LDL {{ldl}}, HDL {{hdl}}, 중성지방 {{tg}} 이라고 적혀 있어요.",
         "전에도 높다고 들은 적": "{{priorResult}}"
       },
       "pmh": "당뇨 진단을 받은 적은 없음. 심혈관질환 병력 없음",
-      "meds": "혈압약 한 알을 복용 중",
+      "meds": "그 외 복용 약 없음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
-      "sh": "인물 카드를 따르되 회식과 야식이 잦고 운동은 거의 하지 않음",
+      "fh": "{{fhChart}}",
+      "sh": "인물 카드를 따르되 외식과 야식이 잦고 운동은 거의 하지 않음",
       "pe": {
         "vitals": { "sbp": [132, 152], "dbp": [82, 94], "hr": [68, 88], "rr": [14, 18], "temp": [36.3, 36.8], "spo2": [97, 99],
                     "invariant": "경한 고혈압을 유지한다. 증상이 없는 케이스이므로 빈맥이나 발열은 넣지 않는다." },
@@ -73,12 +78,15 @@
         "negatives": ["황색종 없음", "각막환 없음", "경동맥 잡음 없음", "말초동맥 박동 감소 없음"]
       },
       "variations": {
+        "fhChart": ["아버지 60세 심근경색, 스텐트 시술", "특이사항 없음"],
+        "priorChart": ["작년 검진에서도 높았으나 지나침", "이번에 처음 지적받음"],
         "onsetWeeks": [2, 3, 4],
         "tc": [246, 258, 271], "ldl": [162, 175, 188], "hdl": [38, 41, 44], "tg": [210, 245, 280],
         "weightGain": [6, 8, 10], "waist": [94, 98, 102], "bmi": ["27.4", "28.1", "29.0"],
         "fhx": ["아버지가 예순에 심근경색으로 스텐트를 넣으셨어요.", "특별히 없어요."],
         "priorResult": ["작년 검진에도 높다고 나왔는데 그냥 넘겼어요.", "이번에 처음 들었어요."]
       },
+      "pairedVariations": [["fhx", "fhChart"], ["priorResult", "priorChart"]],
       "disclosure": {
         "spontaneous": ["검진에서 콜레스테롤이 높다고 나왔다는 것"],
         "onlyIfAsked": ["구체적 수치", "작년에도 높았던 것", "가족력", "흡연", "체중 증가", "회식 빈도"]
@@ -98,6 +106,11 @@
       ],
       "constraints": { "ageRange": [26, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병", "갑상선기능저하증"], "smoking": "never", "alcohol": "never" },
       "occupationBias": ["office", "teacher", "nurse", "selfemp", "student"],
+      "ice": {
+        "ideas": ["제가 먹는 게 잘못된 것 같아요", "체질적으로 높은 건가 싶어요"],
+        "concerns": ["젊은데 심장병이 올까 봐 무서워요", "약을 평생 먹어야 할까 봐 걱정돼요"],
+        "expectations": ["어떻게 하면 수치를 낮출 수 있는지 알고 싶어요", "약을 꼭 먹어야 하는지 알고 싶어요"]
+      },
       "iceHint": ["family", "internet", "test"],
       "opening": ["콜레스테롤이 너무 높게 나왔다고 해서요.", "콜레스테롤 때문에 상담받으러 왔어요."],
       "hpi": {
@@ -127,7 +140,7 @@
       "pmh": "특이 병력 없음. 당뇨·갑상선질환 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "아버지 {{fatherAge}}세 심근경색 사망. {{familyTested}}",
+      "fh": "아버지 {{fatherAge}}세 심근경색 사망. {{testedChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [112, 130], "dbp": [68, 82], "hr": [64, 84], "rr": [14, 18], "temp": [36.3, 36.8], "spo2": [97, 99],
@@ -147,16 +160,18 @@
         "negatives": ["복부 비만 없음", "경동맥 잡음 없음", "갑상선 비대 없음"]
       },
       "variations": {
+        "testedChart": ["형제 검사력 없음", "동생도 콜레스테롤 높음"],
         "onsetWeeks": [2, 4, 6],
         "tc": [332, 358, 381], "ldl": [248, 268, 292],
         "waist": [76, 80, 84], "bmi": ["21.8", "22.5", "23.1"],
         "fatherAge": [46, 52, 55],
         "xanthoma": ["아킬레스건 쪽이 두툼해진 것 같긴 해요.", "눈꺼풀에 노란 게 좀 있어요.", "그런 건 못 봤어요."],
-        "tendonFinding": ["양측 아킬레스건이 두껍고 결절이 만져진다", "특이소견 없음"],
-        "eyelidFinding": ["양측 눈꺼풀 안쪽에 황색판종이 있다", "특이소견 없음"],
+        "tendonFinding": ["양측 아킬레스건이 두껍고 결절이 만져진다", "특이소견 없음", "양측 아킬레스건이 약간 두껍게 만져진다"],
+        "eyelidFinding": ["특이소견 없음", "양측 눈꺼풀 안쪽에 황색판종이 있다", "특이소견 없음"],
         "corneaFinding": ["각막 가장자리에 흰 테가 보인다", "특이소견 없음"],
         "familyTested": ["형제는 검사해본 적 없어요.", "동생도 높다고 들었어요."]
       },
+      "pairedVariations": [["xanthoma", "tendonFinding", "eyelidFinding"], ["familyTested", "testedChart"]],
       "disclosure": {
         "spontaneous": ["콜레스테롤이 높다는 것"],
         "onlyIfAsked": ["20대부터 높았던 것", "식단 조절 실패", "아버지의 조기 사망", "황색종", "가족 검사 여부"]
@@ -175,6 +190,11 @@
       ],
       "constraints": { "ageRange": [38, 66], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "이상지질혈증"] },
       "occupationBias": ["housewife", "office", "teacher", "market", "care"],
+      "ice": {
+        "ideas": ["나이가 들어서 콜레스테롤이 오른 것 같아요", "요즘 운동을 안 해서 그런가 싶어요"],
+        "concerns": ["갑자기 이렇게 오르니 무슨 병이 있는 건 아닐까 걱정돼요", "약을 먹기 시작하면 평생 먹어야 할까 봐 걱정돼요"],
+        "expectations": ["콜레스테롤 약을 받고 싶어요", "왜 갑자기 올랐는지 알고 싶어요"]
+      },
       "iceHint": ["internet", "medicine", "denial"],
       "opening": ["콜레스테롤이 높다고 해서 왔어요.", "검진에서 콜레스테롤 수치가 높대요."],
       "hpi": {
@@ -205,7 +225,7 @@
       "pmh": "특이 병력 없음. 갑상선 질환 진단받은 적 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [110, 130], "dbp": [66, 80], "hr": [52, 60], "rr": [14, 18], "temp": [36.0, 36.5], "spo2": [97, 99],
@@ -225,14 +245,16 @@
         "negatives": ["황색종 없음", "빈맥 없음", "안구돌출 없음", "손 떨림 없음"]
       },
       "variations": {
+        "fhChart": ["어머니 갑상선 질환(약 복용)", "갑상선 질환 가족력 없음"],
         "onsetWeeks": [2, 3, 5],
         "tc": [268, 284, 302], "ldl": [178, 192, 205],
         "weightGain": [4, 5, 7], "bmi": ["25.2", "26.0", "26.8"],
-        "menses": ["생리량이 늘고 주기가 불규칙해졌어요.", "폐경했어요."],
+        "menses": [{"text": "생리량이 늘고 주기가 불규칙해졌어요.", "maxAge": 52}, {"text": "폐경한 지 몇 년 됐어요.", "minAge": 50}],
         "neck": ["목이 좀 두꺼워진 것 같기도 해요.", "특별히 못 느꼈어요."],
         "thyroidFinding": ["갑상선이 전체적으로 약간 커져 있고 단단하며 결절은 만져지지 않는다", "갑상선 크기는 정상이다"],
         "fhx": ["어머니가 갑상선약을 드세요.", "특별히 없어요."]
       },
+      "pairedVariations": [["fhx", "fhChart"], ["neck", "thyroidFinding"]],
       "disclosure": {
         "spontaneous": ["콜레스테롤이 올랐다는 것"],
         "onlyIfAsked": ["피로·추위·변비·체중 증가", "작년과의 차이", "월경 변화", "가족력"]
@@ -252,6 +274,11 @@
       ],
       "constraints": { "ageRange": [35, 58], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [], "alcoholLabel": "주 {{drinkDays}}회 이상" },
       "occupationBias": ["selfemp", "driver", "construct", "cook", "market"],
+      "ice": {
+        "ideas": ["요즘 기름진 걸 많이 먹어서 그런 것 같아요", "살이 쪄서 그런가 싶어요"],
+        "concerns": ["피가 뿌옇다니까 무서워요", "혹시 큰 병이 생긴 건 아닐까 걱정돼요"],
+        "expectations": ["수치를 빨리 낮추는 약을 받고 싶어요", "얼마나 위험한 건지 알고 싶어요"]
+      },
       "iceHint": ["denial", "test", "work"],
       "opening": ["중성지방이 너무 높다고 해서 왔어요.", "피가 뿌옇게 나왔다고 다시 오라고 했어요."],
       "hpi": {
@@ -278,7 +305,7 @@
         "검진 수치": "중성지방 {{tg}}, 당화혈색소 {{a1c}} 라고 했어요.",
         "췌장염을 앓은 적": "{{pancreatitis}}"
       },
-      "pmh": "제2형 당뇨병 {{dmYears}}년. {{pancreatitis}}",
+      "pmh": "제2형 당뇨병 {{dmYears}}년. {{pancChart}}",
       "meds": "경구 당뇨약을 처방받았으나 불규칙하게 복용",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -301,6 +328,7 @@
         "negatives": ["복막자극징후 없음", "황달 없음", "발열 없음"]
       },
       "variations": {
+        "pancChart": ["재작년 췌장염으로 입원", "췌장염 병력 없음"],
         "onsetDays": [3, 5, 7],
         "tg": [1120, 1450, 1780], "a1c": ["9.8%", "10.6%", "11.2%"],
         "dmYears": [6, 9, 12], "drinkDays": [3, 4, 5], "bottles": ["한", "1.5", "두"],
@@ -308,6 +336,7 @@
         "eruptive": ["팔꿈치와 엉덩이 쪽에 좁쌀 같은 노란 발진이 무리지어 있다", "특이소견 없음"],
         "pancreatitis": ["재작년에 췌장염으로 입원한 적 있어요.", "췌장염을 앓은 적은 없어요."]
       },
+      "pairedVariations": [["pancreatitis", "pancChart"]],
       "disclosure": {
         "spontaneous": ["중성지방이 높다는 것"],
         "onlyIfAsked": ["음주량", "당뇨약 복용 중단", "과거 췌장염", "다음·다뇨", "발진"]
@@ -327,6 +356,11 @@
       ],
       "constraints": { "ageRange": [58, 78], "sex": "any", "requiredRisk": ["고혈압", "당뇨병", "흡연"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "market", "farmer", "driver", "housewife"],
+      "ice": {
+        "ideas": ["약을 오래 먹으면 몸에 안 좋다고 들었어요", "요즘은 괜찮은 것 같아서 안 먹어도 될 줄 알았어요"],
+        "concerns": ["약을 끊어도 괜찮은 건지 걱정돼요", "다시 먹어야 한다고 하실까 봐 걱정돼요"],
+        "expectations": ["약 말고 다른 방법이 있는지 알고 싶어요", "꼭 다시 먹어야 하는지 알고 싶어요"]
+      },
       "iceHint": ["medicine", "denial", "family"],
       "opening": ["콜레스테롤약 때문에 여쭤보려고 왔어요.", "콜레스테롤약을 안 먹은 지 좀 됐는데 괜찮을까요."],
       "hpi": {
@@ -350,12 +384,12 @@
         "양쪽 다 그랬나": "네, 양쪽 다요.",
         "가슴이 아프거나 답답한 적": "{{anginaAnswer}}",
         "심장 시술이나 뇌졸중 병력": "{{cvdHx}}",
-        "지금 먹는 다른 약": "{{otherMeds}}",
+        "지금 먹는 다른 약": "아스피린은 계속 먹고 있어요.",
         "약을 끊고 검사는 해봤나": "안 해봤어요.",
         "누구와 상의하고 끊었나": "그냥 제 판단으로 끊었어요."
       },
-      "pmh": "{{cvdHx}} 고혈압 등 위험인자 보유",
-      "meds": "{{otherMeds}} 스타틴은 {{onsetMonths}}개월 전부터 복용 중단",
+      "pmh": "{{cvdChart}}",
+      "meds": "아스피린 복용. 스타틴은 {{onsetMonths}}개월 전부터 복용 중단",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
@@ -368,7 +402,7 @@
           "하지 근육 촉진": "압통 없음, 부종 없음",
           "심부건반사": "양측 대칭, 정상",
           "심음 청진": "규칙적, 심잡음 없음",
-          "가슴 시진": "{{scarFinding}}",
+          "서혜부 시진": "{{scarFinding}}",
           "경동맥 청진": "잡음 없음",
           "말초 맥박": "양측 족배동맥 잘 만져짐",
           "눈꺼풀·아킬레스건": "황색종 없음",
@@ -377,12 +411,13 @@
         "negatives": ["근력 저하 없음", "근육 압통 없음", "발열 없음", "경동맥 잡음 없음"]
       },
       "variations": {
+        "cvdChart": ["3년 전 심근경색, 스텐트 시술", "재작년 뇌경색으로 입원"],
         "onsetMonths": [4, 6, 9], "reliefWeeks": [2, 3, 4], "severity": [3, 4, 5],
         "cvdHx": ["3년 전 심근경색으로 스텐트를 넣었어요.", "재작년에 뇌경색으로 입원했었어요."],
-        "otherMeds": ["혈압약과 아스피린을 먹어요.", "혈압약, 아스피린, 당뇨약을 먹어요."],
         "anginaAnswer": ["요즘 계단 오를 때 좀 답답한 것 같기도 해요.", "그런 건 없어요."],
         "scarFinding": ["우측 서혜부에 시술 흉터가 있다", "특이소견 없음"]
       },
+      "pairedVariations": [["cvdHx", "cvdChart", "scarFinding"]],
       "disclosure": {
         "spontaneous": ["약을 끊었다는 것"],
         "onlyIfAsked": ["끊은 시점과 이유", "근육 증상의 양상", "심혈관 병력", "최근 흉부 증상", "상의 없이 끊은 것"]

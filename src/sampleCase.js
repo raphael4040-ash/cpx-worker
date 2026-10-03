@@ -410,6 +410,8 @@ function drawGuardian(scenario, person, personas, slots) {
   const MALE_REL = ["아들", "사위", "아버지", "아빠", "남편", "형", "오빠", "할아버지", "삼촌"];
   if (FEMALE_REL.some((w) => rel.includes(w))) gSex = "female";
   else if (MALE_REL.some((w) => rel.includes(w))) gSex = "male";
+  // 성별이 안 드러나는 관계 이름이라 추첨에 맡겼더니 여성 환자에게 여성 배우자가 나왔다.
+  else if (rel.includes("배우자")) gSex = person.sex === "female" ? "male" : "female";
 
   lo = Math.max(lo, 22);
   hi = Math.min(hi, 88);

@@ -14,6 +14,11 @@
       "dx": "조절되지 않는 제2형 당뇨병에 의한 삼투성 이뇨",
       "constraints": { "ageRange": [45, 70], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["selfemp", "market", "driver", "farmer", "construct", "retired"],
+      "ice": {
+        "ideas": ["날이 갈수록 몸이 축나는 것 같아요", "요즘 단 걸 많이 먹어서 그런가 싶어요"],
+        "concerns": ["당뇨가 많이 나빠진 건 아닐까 걱정돼요", "살이 자꾸 빠지니 다른 병이 있는 건 아닐까 걱정돼요"],
+        "expectations": ["왜 이렇게 목이 마른지 알고 싶어요", "소변 좀 덜 보게 해주세요"]
+      },
       "iceHint": ["denial", "internet", "test"],
       "opening": ["소변을 너무 많이 봐요.", "물을 아무리 마셔도 갈증이 나고 소변만 봐요."],
       "hpi": {
@@ -41,7 +46,7 @@
         "어지럽거나 일어설 때 핑 도나": "일어설 때 가끔 핑 돌아요."
       },
       "pmh": "제2형 당뇨병 진단 후 추적. 최근 몇 달 병원에 가지 않음",
-      "meds": "{{adherence}}",
+      "meds": "{{adherenceChart}}",
       "allergy": "없음",
       "fh": "아버지가 당뇨병으로 치료받았음",
       "sh": "인물 카드를 따르되 단 음료를 자주 마시고 최근 활동량이 줄었음",
@@ -66,6 +71,7 @@
         "negatives": ["발열 없음", "방광 팽만 없음", "쿠스마울 호흡 없음", "늑골척추각 압통 없음", "부종 없음"]
       },
       "variations": {
+        "adherenceChart": ["당뇨약을 자주 거름", "당뇨약이 떨어져 두 달째 중단"],
         "onsetWeeks": [3, 4, 6, 8], "severity": [3, 4, 5],
         "urineL": [3.5, 4, 5], "intakeL": [4, 5], "nocturia": [3, 4],
         "weightLoss": [4, 5, 7],
@@ -76,6 +82,7 @@
           {"text": "외음부에 칸디다 감염을 시사하는 발적이 있다", "sexOnly": "female"}
         ]
       },
+      "pairedVariations": [["adherence", "adherenceChart"]],
       "disclosure": {
         "spontaneous": ["소변을 많이 본다는 것", "갈증이 심하다는 것"],
         "onlyIfAsked": ["체중감소", "당뇨약을 걸러 온 것", "시야가 흐린 것", "음부 가려움", "발 저림", "기립 시 어지럼"]
@@ -87,6 +94,11 @@
       "dx": "중추성 요붕증",
       "constraints": { "ageRange": [22, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병"] },
       "occupationBias": ["office", "student", "delivery", "construct", "soldier", "nurse"],
+      "ice": {
+        "ideas": ["몸에 열이 많아서 물이 당기는 것 같아요", "콩팥에 탈이 난 것 같아요"],
+        "concerns": ["물을 이렇게 마셔도 괜찮은 건지 걱정돼요", "일을 제대로 못 할까 봐 걱정이에요"],
+        "expectations": ["원인이 뭔지 검사해보고 싶어요", "갈증 좀 덜하게 해주세요"]
+      },
       "iceHint": ["internet", "test", "cancer"],
       "opening": ["물을 계속 마시고 소변을 하루 종일 봐요.", "물을 너무 많이 마셔서 왔어요."],
       "hpi": {
@@ -94,7 +106,7 @@
         "character": "소변이 물처럼 맑고 양이 아주 많음. 갈증이 참기 힘들 정도",
         "location": "해당 없음 — 통증은 없음",
         "radiation": "해당 없음",
-        "aggravating": "물을 못 마시는 상황(회의·이동)에서 갈증이 견디기 힘듦",
+        "aggravating": "물을 못 마시는 상황(일하는 중·이동 중)에서 갈증이 견디기 힘듦",
         "relieving": "찬물을 마시면 잠깐 편해짐",
         "severity": "{{severity}}/10 — 일상생활에 지장이 큼",
         "timing": "하루 소변량 약 {{urineL}} L, 밤에 {{nocturia}}번 깨서 소변과 물. 하루 물 섭취량 약 {{intakeL}} L",
@@ -113,7 +125,7 @@
         "먹는 약이 있나": "이것 때문에 따로 먹는 약은 없어요.",
         "단 것을 많이 먹거나 당뇨 이야기 들은 적": "당뇨 얘기는 들은 적 없어요."
       },
-      "pmh": "{{trigger2}}",
+      "pmh": "{{trigger2Chart}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -139,12 +151,14 @@
         "negatives": ["탈수 소견 없음", "기립성 저혈압 없음", "방광 팽만 없음", "부종 없음", "발열 없음"]
       },
       "variations": {
+        "trigger2Chart": ["몇 달 전 교통사고로 두부 외상, 입원 치료", "작년 뇌하수체 종양 수술", "특이 병력 없음"],
         "onsetWeeks": [2, 3, 6], "severity": [5, 6, 7],
         "urineL": [6, 7, 8], "intakeL": [6, 7, 8], "nocturia": [3, 4, 5],
         "trigger2": ["몇 달 전 교통사고로 머리를 다쳐 입원한 적 있어요.", "작년에 뇌하수체에 혹이 있다고 해서 수술받았어요.", "큰 병을 앓은 적은 없어요."],
         "visual": ["가끔 머리가 아픈데 눈은 괜찮아요.", "특별히 안 보이거나 하진 않아요."],
         "visualExam": ["시야 결손 없음", "대면검사에서 뚜렷한 시야 결손은 확인되지 않는다"]
       },
+      "pairedVariations": [["trigger2", "trigger2Chart"]],
       "disclosure": {
         "spontaneous": ["물을 계속 마시고 소변을 많이 본다는 것"],
         "onlyIfAsked": ["소변이 물처럼 맑다는 것", "찬물을 찾는 것", "머리 외상이나 뇌수술 병력", "밤에도 깨서 물을 마시는 것", "체중은 그대로라는 것"]
@@ -156,6 +170,11 @@
       "dx": "원발다음증 (심인성 다음)",
       "constraints": { "ageRange": [28, 58], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병"] },
       "occupationBias": ["office", "housewife", "teacher", "jobless", "parttime", "care"],
+      "ice": {
+        "ideas": ["몸에 수분이 부족해서 그런 것 같아요", "물을 많이 마시는 게 몸에 좋다고 해서 그런가 싶어요"],
+        "concerns": ["혹시 당뇨가 생긴 건 아닐까 걱정돼요", "콩팥이 나빠진 건 아닐까 걱정돼요"],
+        "expectations": ["당뇨인지 아닌지 검사해보고 싶어요", "입 마르는 게 좀 나았으면 좋겠어요"]
+      },
       "iceHint": ["internet", "test", "denial"],
       "opening": ["물을 너무 많이 마셔요. 소변도 계속 봐요.", "하루 종일 물병을 달고 살아요."],
       "hpi": {
@@ -176,14 +195,14 @@
       "redFlags": {
         "밤에도 소변 때문에 깨나": "자고 나면 아침까지 안 깨요. 자는 동안은 괜찮아요.",
         "체중이 줄었나": "몸무게는 그대로예요.",
-        "먹는 약이 있나": "{{meds}}",
+        "먹는 약이 있나": "{{medsSay}}",
         "머리를 다치거나 뇌 수술 받은 적": "그런 적 없어요.",
         "당뇨 이야기를 들은 적": "건강검진에서 당은 괜찮다고 했어요.",
         "입이 마르는 느낌이 먼저인가, 소변이 먼저인가": "입이 말라서 물을 마시고 그러니까 소변을 보는 것 같아요.",
         "최근 스트레스나 힘든 일": "{{stress}}"
       },
       "pmh": "특이 병력 없음. 건강검진에서 혈당·신장 기능은 정상이라고 들음",
-      "meds": "{{meds}}",
+      "meds": "{{medsChart}}",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따르되 커피와 물을 하루 종일 번갈아 마심",
@@ -208,11 +227,13 @@
         "negatives": ["탈수 소견 없음", "기립성 저혈압 없음", "체중감소 없음", "방광 팽만 없음", "갑상선 종대 없음"]
       },
       "variations": {
+        "medsSay": ["따로 먹는 약은 없어요.", "약국에서 산 수면유도제를 가끔 먹어요.", "콧물 때문에 약국에서 알레르기약을 자주 사 먹어요."],
+        "medsChart": ["없음", "약국 수면유도제를 가끔 복용", "약국 항히스타민제를 자주 복용(구강건조 유발 가능)"],
         "onsetMonths": [3, 6, 9], "severity": [3, 4],
         "urineL": [3.5, 4], "intakeL": [4, 5], "nocturia": [0, 1],
-        "meds": ["없음", "약국에서 산 수면유도제를 가끔 먹음", "구강건조를 일으킬 수 있는 항히스타민제를 자주 사 먹음"],
         "stress": ["일이 많아지고 잠을 잘 못 자요.", "집안일로 걱정이 많았어요."]
       },
+      "pairedVariations": [["medsChart", "medsSay"]],
       "disclosure": {
         "spontaneous": ["물을 많이 마시고 소변을 자주 본다는 것"],
         "onlyIfAsked": ["밤에는 깨지 않는다는 것", "체중 변화가 없다는 것", "스트레스와 시작 시점이 겹치는 것", "복용 중인 약", "입마름이 먼저라는 것"]
@@ -224,6 +245,11 @@
       "dx": "리튬에 의한 신성 요붕증",
       "constraints": { "ageRange": [30, 58], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["당뇨병"] },
       "occupationBias": ["office", "jobless", "parttime", "selfemp", "housewife", "market"],
+      "ice": {
+        "ideas": ["나이 들어서 콩팥이 약해진 것 같아요", "몸에 열이 많아서 그런가 싶어요"],
+        "concerns": ["혹시 당뇨가 생긴 건 아닐까 걱정돼요", "밤에 자꾸 깨서 너무 힘들어요"],
+        "expectations": ["소변을 좀 덜 보게 해주세요", "왜 그런지 원인을 알고 싶어요"]
+      },
       "iceHint": ["medicine", "internet", "test"],
       "opening": ["소변이 너무 많이 나와요.", "몇 달 전부터 물을 아무리 마셔도 목이 말라요."],
       "hpi": {
@@ -252,7 +278,7 @@
         "당뇨라는 얘기를 들은 적": "혈당은 괜찮다고 했어요."
       },
       "pmh": "양극성장애로 정신건강의학과 추적 중, 리튬 {{lithiumYears}}년 복용",
-      "meds": "리튬(기분안정제)을 수년째 복용 중. {{monitoring}}",
+      "meds": "리튬(기분안정제)을 수년째 복용 중. {{monitoringChart}}",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따르되 물병을 늘 곁에 둠",
@@ -277,11 +303,13 @@
         "negatives": ["심한 탈수 없음", "방광 팽만 없음", "발열 없음", "부종 없음", "국소 신경학적 이상 없음"]
       },
       "variations": {
+        "monitoringChart": ["최근 한동안 혈중농도 검사 안 함", "정기 혈중농도 검사를 최근 거름"],
         "onsetMonths": [4, 6, 12], "severity": [4, 5, 6],
         "urineL": [4, 5, 6], "intakeL": [5, 6], "nocturia": [2, 3, 4],
         "lithiumYears": [8, 10, 12],
         "monitoring": ["요즘은 바빠서 피검사를 한동안 안 했어요.", "몇 달에 한 번 피검사를 하는데 최근에는 못 갔어요."]
       },
+      "pairedVariations": [["monitoring", "monitoringChart"]],
       "disclosure": {
         "spontaneous": ["소변이 너무 많이 나온다는 것", "갈증이 난다는 것"],
         "onlyIfAsked": ["정신과 약을 오래 복용 중인 것", "약 이름과 복용 기간", "혈중 농도 검사를 거른 것", "손 떨림", "밤에 깨는 횟수"]
@@ -293,6 +321,11 @@
       "dx": "이뇨제(티아지드) 복용에 의한 다뇨",
       "constraints": { "ageRange": [55, 78], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "selfemp", "driver"],
+      "ice": {
+        "ideas": ["나이 들어서 방광이 약해진 것 같아요", "물을 잘못 마셔서 그런가 싶어요"],
+        "concerns": ["밖에서 화장실 때문에 곤란할까 봐 걱정돼요", "콩팥에 문제가 생긴 건 아닐까 걱정돼요"],
+        "expectations": ["소변 좀 덜 보게 해주세요", "생활하기 편해졌으면 좋겠어요"]
+      },
       "iceHint": ["medicine", "family", "denial"],
       "opening": ["소변을 자꾸 봐서 외출을 못 하겠어요.", "화장실을 너무 자주 가요."],
       "hpi": {

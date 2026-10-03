@@ -14,6 +14,11 @@
       "dx": "공황장애 (광장공포 동반)",
       "constraints": { "ageRange": [22, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "student", "nurse", "delivery", "selfemp"],
+      "ice": {
+        "ideas": ["심장에 문제가 있는 것 같아요", "검사에서 못 찾은 무슨 병이 있는 것 같아요"],
+        "concerns": ["심장병인데 검사에서 못 찾은 건 아닐까 걱정돼요", "언젠가 진짜로 쓰러질까 봐 무서워요"],
+        "expectations": ["정말 몸에 이상이 없는지 확실히 알고 싶어요", "그럴 때 어떻게 해야 하는지 알고 싶어요"]
+      },
       "iceHint": ["internet", "test", "cancer"],
       "opening": ["갑자기 심장이 터질 것 같고 숨이 안 쉬어져요.", "응급실에 두 번이나 갔는데 아무 이상 없다고 해서 왔어요."],
       "hpi": {
@@ -80,7 +85,7 @@
         "episodes": [4, 5, 7],
         "coffee": [1, 2],
         "firstPlace": ["지하철 안에서", "고속도로에서 운전하다가", "사람 많은 마트에서"],
-        "fhVar": ["특이사항 없음", "어머니도 불안이 심하셨다고 들었어요."]
+        "fhVar": ["특이사항 없음", "어머니 불안 증상"]
       },
       "disclosure": {
         "spontaneous": ["갑자기 심장이 뛰고 숨이 막힌다는 것", "응급실에 갔었다는 것"],
@@ -93,6 +98,11 @@
       "dx": "범불안장애",
       "constraints": { "ageRange": [28, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "office", "teacher", "selfemp", "care"],
+      "ice": {
+        "ideas": ["원래 성격이 예민해서 그런 것 같아요", "나이 들면서 걱정이 많아진 것 같아요"],
+        "concerns": ["이러다 몸에 병이 날까 봐 걱정돼요", "계속 이렇게 살아야 하나 싶어 지쳐요"],
+        "expectations": ["잠이라도 푹 잘 수 있게 해주세요", "걱정을 좀 덜 하는 방법을 알고 싶어요"]
+      },
       "iceHint": ["family", "medicine", "denial"],
       "opening": ["별것도 아닌 일에 계속 걱정이 돼서 잠을 못 자요.", "늘 마음이 조마조마하고 목하고 어깨가 뭉쳐요."],
       "hpi": {
@@ -120,7 +130,7 @@
         "기분이 계속 가라앉나": "우울하다기보다 늘 불안하고 초조해요.",
         "체중이 줄거나 더위를 타나": "그런 건 없어요.",
         "커피나 술": "커피는 하루 {{coffee}}잔이요. {{alcoholSay}}",
-        "새로 먹기 시작한 약이 있나": "{{medsVar}}",
+        "새로 먹기 시작한 약이 있나": "{{medsSay}}",
         "무서운 일을 겪은 뒤부터인가": "특별히 그런 일은 없었어요."
       },
       "pmh": "{{pmhVar}}",
@@ -157,12 +167,12 @@
         "worseMonths": [2, 3, 6],
         "severity": [5, 6, 7],
         "coffee": [1, 2, 3],
-        "protective": ["애들 생각하면 그런 생각 하면 안 되죠.", "부모님이 계셔서요.", "교회 다니면서 마음을 붙잡아요."],
-        "pmhVar": ["특이 병력 없음", "몇 년 전 위내시경에서 위염이 있다고 들었어요."],
-        "medsVar": ["없음", "약국에서 산 소화제만 가끔 먹어요."],
-        "fhVar": ["특이사항 없음", "어머니가 신경이 예민하셔서 약을 드셨어요."]
+        "protective": [{"text": "애들 생각하면 그런 생각 하면 안 되죠.", "minAge": 32}, "부모님이 계셔서요.", "교회 다니면서 마음을 붙잡아요."],
+        "pmhVar": ["특이 병력 없음", "몇 년 전 위내시경에서 위염"],
+        "medsVar": ["없음", "약국 소화제를 가끔 복용"], "medsSay": ["새로 먹는 약은 없어요.", "약국에서 산 소화제만 가끔 먹어요."],
+        "fhVar": ["특이사항 없음", "어머니 불안 증상으로 약 복용"]
       },
-      "pairedVariations": [["pmhVar", "medsVar"]],
+      "pairedVariations": [["pmhVar", "medsVar", "medsSay"]],
       "disclosure": {
         "spontaneous": ["걱정이 많고 잠을 못 잔다는 것", "목과 어깨가 뭉친다는 것"],
         "onlyIfAsked": ["증상이 6개월 넘게 이어진 것", "걱정이 여러 주제로 옮겨 다니는 것", "집중력 저하와 피로", "수동적인 자살사고와 보호 요인", "커피와 음주", "발작성 삽화가 없다는 것"]
@@ -174,8 +184,13 @@
       "dx": "외상후스트레스장애 (교통사고 후)",
       "constraints": { "ageRange": [24, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["driver", "delivery", "office", "market", "selfemp"],
+      "ice": {
+        "ideas": ["시간이 지나면 괜찮아질 줄 알았는데 제가 약해서 그런 것 같아요", "그 일이 너무 충격이라 그런 것 같아요"],
+        "concerns": ["평생 이렇게 살게 될까 봐 걱정돼요", "일을 제대로 못 하게 될까 봐 걱정이에요"],
+        "expectations": ["잠이라도 제대로 자고 싶어요", "그 장면이 그만 떠올랐으면 좋겠어요"]
+      },
       "iceHint": ["denial", "family", "work"],
-      "opening": ["사고 난 뒤로 운전을 못 하겠어요.", "자꾸 그때 장면이 떠올라서 잠을 못 자요."],
+      "opening": ["사고 난 뒤로 차를 못 타겠어요.", "자꾸 그때 장면이 떠올라서 잠을 못 자요."],
       "hpi": {
         "onset": "{{monthsAgo}}개월 전 {{event}} 뒤부터",
         "character": "그 장면이 눈앞에 다시 펼쳐지듯 떠오르고, 비슷한 소리만 들어도 심장이 내려앉음",
@@ -184,7 +199,7 @@
         "aggravating": "차를 타거나 사고 난 길을 지날 때, 급브레이크 소리, 밤에 혼자 있을 때",
         "relieving": "사람들과 있을 때, 낮에 일에 몰두할 때는 덜함",
         "severity": "{{severity}}/10",
-        "course": "처음 한 달보다 나아지지 않고 오히려 회피가 심해짐. {{impact}}",
+        "course": "처음 한 달보다 나아지지 않고 오히려 회피가 심해짐",
         "timing": "거의 매일. 악몽은 일주일에 {{nightmares}}번쯤"
       },
       "assoc": {
@@ -204,7 +219,7 @@
         "예전에도 큰일을 겪은 적 있나": "이번이 처음이에요.",
         "환청이나 헛것이 보이나": "그런 건 없어요."
       },
-      "pmh": "{{headInjury}}",
+      "pmh": "{{headChart}}",
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -232,16 +247,18 @@
         "negatives": ["환각 없음", "갑상선 비대 없음", "국소 신경학적 이상 없음", "발열 없음"]
       },
       "variations": {
+        "headChart": ["사고 당시 머리 외상·의식 소실 없음", "사고 당시 잠깐 멍했음, 의식 소실 없음"],
         "monthsAgo": [3, 4, 6],
         "severity": [6, 7, 8],
         "nightmares": [2, 3, 4],
-        "event": ["큰 교통사고를 당한", "일하다 크게 다칠 뻔한 사고를 겪은", "눈앞에서 사고를 목격한"],
-        "protective": ["애들이 있어서 그럴 수는 없어요.", "부모님 생각하면 못 하죠.", "{{spouse}}가 옆에서 챙겨줘요."],
+        "event": ["큰 교통사고를 당한", "운전하다 다른 차와 크게 부딪힌", "타고 가던 버스가 크게 사고 난"],
+        "protective": [{"text": "애들이 있어서 그럴 수는 없어요.", "minAge": 32}, "부모님 생각하면 못 하죠.", {"text": "{{spouse}}가 옆에서 챙겨줘요.", "minAge": 30}],
         "headInjury": ["의식을 잃은 적은 없고 머리도 안 다쳤어요.", "사고 때 잠깐 멍했지만 의식을 잃지는 않았어요."],
         "drinkChange": ["그 일 뒤로 술이 늘었어요. 잠들려고 마셔요.", "{{alcoholSay}} 늘지는 않았어요."],
         "impact": ["볼일 보러 갈 때 차를 못 타서 한참 돌아다녀요.", {"text": "운전을 못 하게 돼서 일을 바꿔야 할 상황이에요.", "occOnly": ["driver", "delivery"]}],
         "scarFinding": ["오른쪽 무릎에 아문 흉터가 있다", "특별한 외상 흔적 없음"]
       },
+      "pairedVariations": [["headInjury", "headChart"]],
       "disclosure": {
         "spontaneous": ["사고 뒤로 힘들다는 것", "잠을 못 잔다는 것"],
         "onlyIfAsked": ["재경험(악몽·플래시백)의 구체적 내용", "회피 행동과 생활 제약", "과각성과 놀람 반응", "수동적 죽음 소망과 보호 요인", "음주 변화", "머리 외상 여부"]
@@ -253,6 +270,11 @@
       "dx": "갑상선기능항진증에 의한 불안",
       "constraints": { "ageRange": [25, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "housewife", "teacher", "nurse", "market"],
+      "ice": {
+        "ideas": ["신경을 많이 써서 예민해진 것 같아요", "기력이 많이 떨어진 것 같아요"],
+        "concerns": ["심장에 병이 생긴 건 아닐까 걱정돼요", "이러다 일상생활을 못 하게 될까 봐 걱정이에요"],
+        "expectations": ["두근거리는 거 좀 멎게 해주세요", "어디가 문제인지 검사해보고 싶어요"]
+      },
       "iceHint": ["internet", "test", "family"],
       "opening": ["가슴이 두근거리고 자꾸 불안해요.", "신경이 예민해지고 손이 떨려서 왔어요."],
       "hpi": {
@@ -286,7 +308,7 @@
       "pmh": "{{pmhVar}}",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhVar}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [128, 148], "dbp": [58, 72], "hr": [102, 120], "rr": [16, 20], "temp": [36.8, 37.4], "spo2": [97, 99],
@@ -318,9 +340,10 @@
         "weightLoss": [5, 6, 8],
         "stools": [3, 4],
         "menstrual": [{"text": "생리량이 줄고 건너뛰는 달이 있어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}],
-        "pmhVar": ["특이 병력 없음", "몇 년 전 건강검진에서 갑상선 수치를 다시 보라는 말을 들었어요."],
-        "fhVar": ["{{olderSis}}가 갑상선 약을 먹어요.", "특이사항 없음"]
+        "pmhVar": ["특이 병력 없음", "몇 년 전 건강검진에서 갑상선 수치 재검 권유"],
+        "fhVar": ["{{olderSis}}가 갑상선 약을 먹어요.", "가족 중에 그런 사람은 없어요."], "fhChart": ["{{olderSis}} 갑상선 질환(약 복용)", "갑상선 질환 가족력 없음"]
       },
+      "pairedVariations": [["fhVar", "fhChart"]],
       "disclosure": {
         "spontaneous": ["두근거리고 불안하다는 것", "손이 떨린다는 것"],
         "onlyIfAsked": ["체중 감소", "더위를 못 참는 것", "대변 횟수 증가", "목 앞의 변화", "눈의 변화", "월경 변화", "가족 중 갑상선 질환"]
@@ -332,8 +355,13 @@
       "dx": "카페인 유발 불안 (물질 유발 불안)",
       "constraints": { "ageRange": [19, 38], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "office", "highschool", "delivery", "parttime"],
+      "ice": {
+        "ideas": ["요즘 준비하는 일 때문에 신경을 많이 써서 그런 것 같아요", "잠을 못 자서 몸이 예민해진 것 같아요"],
+        "concerns": ["심장에 문제가 있는 건 아닐까 걱정돼요", "이러다 준비하는 일을 망칠까 봐 걱정이에요"],
+        "expectations": ["잠을 좀 잘 수 있게 해주세요", "두근거리는 걸 멈추는 약이 있으면 좋겠어요"]
+      },
       "iceHint": ["internet", "work", "test"],
-      "opening": ["가슴이 두근거리고 손이 떨려서 왔어요.", "요즘 불안하고 잠이 안 와요. 요즘 무리해서 그런가 싶기도 하고요."],
+      "opening": ["가슴이 두근거리고 손이 떨려서 왔어요.", "요즘 불안하고 잠이 안 와요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전부터. {{trigger}} 준비하면서 시작됨",
         "character": "가슴이 두근거리고 안절부절못하며 손이 떨리고 소변을 자주 봄",

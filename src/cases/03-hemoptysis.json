@@ -15,6 +15,11 @@
       "dx": "폐결핵",
       "constraints": { "ageRange": [28, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["construct", "market", "cook", "retired", "farmer"],
+      "ice": {
+        "ideas": ["감기가 오래 가서 목이 상한 것 같아요", "기침을 하도 오래 해서 어디가 헐었나 싶어요"],
+        "concerns": ["혹시 폐암일까 봐 무서워요", "가족들한테 옮는 병이면 어쩌나 걱정돼요"],
+        "expectations": ["무슨 병인지 사진이든 뭐든 찍어서 확실히 알고 싶어요", "기침이 좀 멎는 약을 받고 싶어요"]
+      },
       "iceHint": ["cancer", "denial", "internet"],
       "opening": ["가래에 피가 섞여 나와요.", "기침하다가 피가 나와서 놀라서 왔어요."],
       "hpi": {
@@ -44,11 +49,11 @@
         "코피나 잇몸 출혈": "그런 건 없어요.",
         "피 나오는 약을 먹나": "그런 약은 없어요."
       },
-      "pmh": "{{pastTb}}",
+      "pmh": "{{pastTbPmh}}",
       "meds": "약국에서 산 감기약과 기침약을 간간이 복용",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 최근 몇 달간 식사가 부실하고 체중이 줄었음",
+      "sh": "인물 카드를 따르되 최근 몇 달간 식사가 부실함",
       "pe": {
         "vitals": { "sbp": [106, 126], "dbp": [66, 80], "hr": [84, 100], "rr": [16, 20], "temp": [37.2, 37.6], "spo2": [95, 98],
                     "invariant": "미열 범위를 유지한다. 저혈압이나 90% 미만의 저산소혈증은 넣지 않는다(대량 객혈 케이스가 되어 달라진다)." },
@@ -76,8 +81,10 @@
         "onsetWeeks": [2, 3, 4], "coughMonths": [2, 3, 4], "severity": [3, 4, 5],
         "weightLoss": [4, 5, 6], "side": ["오른", "왼"],
         "contact": ["작년에 같이 일하던 사람이 결핵으로 쉬었다고 들었어요.", "그런 얘기는 못 들었어요."],
-        "pastTb": ["특이 병력 없음", "젊었을 때 폐에 그림자가 있다는 말을 들은 적은 있어요."]
+        "pastTb": ["아니요, 그런 적은 없어요.", "젊었을 때 폐에 그림자가 있다는 말을 들은 적은 있어요."],
+        "pastTbPmh": ["특이 병력 없음", "젊었을 때 폐에 그림자가 있다는 말을 들음"]
       },
+      "pairedVariations": [["pastTb", "pastTbPmh"]],
       "disclosure": {
         "spontaneous": ["가래에 피가 섞인다는 것", "기침이 오래됐다는 것"],
         "onlyIfAsked": ["체중감소", "야간발한", "오후 미열", "결핵 접촉력", "출혈량이 적다는 것"]
@@ -89,6 +96,11 @@
       "dx": "기관지확장증",
       "constraints": { "ageRange": [45, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["housewife", "retired", "market", "farmer", "selfemp"],
+      "ice": {
+        "ideas": ["기침을 세게 해서 목에서 피가 난 것 같아요", "원래 가래가 많아서 목이 상한 것 같아요"],
+        "concerns": ["피가 나오니까 혹시 폐암일까 봐 걱정돼요", "피가 더 많이 나오면 어떡하나 싶어요"],
+        "expectations": ["피가 안 나게 해주셨으면 해요", "폐 사진 찍어서 괜찮은지 보고 싶어요"]
+      },
       "iceHint": ["repeat", "medicine", "work"],
       "opening": ["가래에 피가 나와요.", "기침하는데 오늘 가래에 피가 섞였어요."],
       "hpi": {
@@ -117,7 +129,7 @@
         "어릴 때 폐를 앓은 적 있나": "{{childhood}}",
         "피 나오는 약을 먹나": "그런 약은 없어요."
       },
-      "pmh": "{{childhood}} 매년 겨울마다 기관지염으로 항생제를 여러 번 복용",
+      "pmh": "{{childhoodPmh}}. 매년 겨울마다 기관지염으로 항생제를 여러 번 복용",
       "meds": "증상 있을 때 동네 의원에서 받은 항생제와 거담제",
       "allergy": "없음",
       "fh": "특이사항 없음",
@@ -148,6 +160,7 @@
       "variations": {
         "recurYears": [3, 5, 7], "recurCount": [3, 4, 5], "severity": [3, 4, 5], "side": ["오른", "왼"],
         "childhood": ["어릴 때 폐렴으로 오래 입원한 적이 있어요.", "어릴 때 결핵 치료를 받았다고 들었어요."],
+        "childhoodPmh": ["어릴 때 폐렴으로 오래 입원한 적 있음", "어릴 때 결핵 치료를 받았다고 들음"],
         "clubbing": ["손톱 끝이 둥글게 부풀어 있다", "없다"]
       },
       "disclosure": {
@@ -161,6 +174,11 @@
       "dx": "급성 기관지염",
       "constraints": { "ageRange": [19, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["student", "office", "teacher", "delivery", "nurse"],
+      "ice": {
+        "ideas": ["기침을 너무 해서 목이 터진 것 같아요", "감기가 심하게 들어서 그런 것 같아요"],
+        "concerns": ["피가 나오니까 혹시 큰 병일까 봐 놀랐어요", "결핵 같은 거면 어쩌나 싶어요"],
+        "expectations": ["별일 아닌지만 확인하고 싶어요", "기침 좀 덜 나게 약을 받고 싶어요"]
+      },
       "iceHint": ["internet", "cancer", "work"],
       "opening": ["기침하다가 가래에 피가 나와서 놀랐어요.", "가래에 피가 섞여 나와요."],
       "hpi": {
@@ -231,6 +249,11 @@
       "dx": "폐색전증",
       "constraints": { "ageRange": [38, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
       "occupationBias": ["office", "driver", "retired", "housewife", "market"],
+      "ice": {
+        "ideas": ["폐렴이 온 것 같아요", "뭔가 폐에 탈이 난 것 같아요"],
+        "concerns": ["숨이 차서 이러다 숨이 막힐까 봐 무서워요", "피까지 나오니 큰 병이 생긴 건 아닐까 걱정돼요"],
+        "expectations": ["숨 쉬는 게 편해지게 해주세요", "왜 이러는지 빨리 검사해 주세요"]
+      },
       "iceHint": ["internet", "test", "family"],
       "opening": ["숨이 차고 가래에 피가 나와요.", "갑자기 숨이 차면서 피 섞인 가래가 나와요."],
       "hpi": {
@@ -261,8 +284,8 @@
         "체중이 줄었나": "아니요.",
         "밤에 식은땀": "지금 식은땀이 나요. 밤마다 나는 건 아니에요."
       },
-      "pmh": "{{immobility}} {{cancerHx}}",
-      "meds": "{{ocp}}",
+      "pmh": "{{cancerPmh}}{{immobilityPmh}}",
+      "meds": "{{ocpMeds}}",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",
@@ -294,11 +317,14 @@
         "legSx": ["오른쪽 종아리가 며칠 전부터 붓고 아팠어요.", "왼쪽 종아리가 뻐근하고 부은 것 같아요.", "다리는 별 이상 없어요."],
         "legFinding": ["오른쪽 종아리가 반대쪽보다 굵고 눌렀을 때 아파한다", "왼쪽 종아리가 반대쪽보다 굵고 눌렀을 때 아파한다", "양측 하지에 부종이나 압통이 없다"],
         "immobility": ["3주 전에 무릎 수술을 받고 거의 누워 지냈어요.", "허리를 다쳐서 2주 정도 못 움직였어요.", "최근에 수술받거나 오래 누워 지낸 적은 없어요."],
+        "immobilityPmh": ["3주 전 무릎 수술 후 거의 누워 지냄.", "2주 전 허리를 다쳐 거의 못 움직임.", ""],
         "travel": ["그런 일은 없었어요.", "그런 일은 없었어요.", "지난주에 열두 시간 비행기를 타고 왔어요."],
         "cancerHx": ["작년부터 암 치료를 받고 있어요.", "암 진단받은 적은 없어요."],
-        "ocp": [{ "text": "피임약을 몇 달째 먹고 있어요.", "sexOnly": "female", "maxAge": 52 }, "그런 약은 안 먹어요."]
+        "cancerPmh": ["작년부터 암 치료 중. ", ""],
+        "ocp": [{ "text": "피임약을 몇 달째 먹고 있어요.", "sexOnly": "female", "maxAge": 52 }, "그런 약은 안 먹어요."],
+        "ocpMeds": [{ "text": "경구피임약 복용 중", "sexOnly": "female", "maxAge": 52 }, "복용 약 없음"]
       },
-      "pairedVariations": [["legSx", "legFinding"], ["immobility", "travel"]],
+      "pairedVariations": [["legSx", "legFinding"], ["immobility", "travel", "immobilityPmh"], ["cancerHx", "cancerPmh"], ["ocp", "ocpMeds"]],
       "disclosure": {
         "spontaneous": ["숨이 차다는 것", "가래에 피가 섞였다는 것"],
         "onlyIfAsked": ["흉막성 흉통", "한쪽 다리 부기와 통증", "최근 수술·부동", "장거리 이동", "암 병력", "피임약 복용"]
@@ -310,10 +336,15 @@
       "dx": "항응고제(와파린) 과다항응고에 의한 출혈",
       "constraints": { "ageRange": [62, 85], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market"],
+      "ice": {
+        "ideas": ["목이 헐어서 피가 나는 것 같아요", "나이 들어서 몸이 약해져 그런가 싶어요"],
+        "concerns": ["피가 안 멎으면 어떡하나 걱정돼요", "혹시 폐에 큰 병이 생긴 건 아닐까 싶어요"],
+        "expectations": ["피가 왜 나는지 알고 싶어요", "피 나는 것 좀 멎게 해주세요"]
+      },
       "iceHint": ["medicine", "family", "denial"],
       "opening": ["가래에 피가 섞여 나와요.", "기침할 때 피가 나와서 왔어요."],
       "hpi": {
-        "onset": "{{onsetDays}}일 전부터. {{trigger}} 먹기 시작한 뒤로 생김",
+        "onset": "{{onsetDays}}일 전부터",
         "character": "기침할 때 가래에 검붉은 피가 섞여 나옴. 양치할 때 잇몸에서도 피가 남",
         "location": "해당 없음",
         "radiation": "해당 없음",
@@ -324,7 +355,7 @@
         "timing": "하루 한두 번"
       },
       "assoc": {
-        "positive": ["팔다리에 멍이 여기저기 듦", "양치할 때 잇몸 출혈", "소변 색이 좀 붉게 보인 적 있음", "기운 없음"],
+        "positive": ["팔다리에 멍이 여기저기 듦", "양치할 때 잇몸 출혈", "기운 없음"],
         "negative": ["체중감소 없음", "야간발한 없음", "가슴 통증 없음", "발열 없음", "숨참은 심하지 않음"]
       },
       "redFlags": {

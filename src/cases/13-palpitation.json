@@ -24,7 +24,7 @@
           "고혈압"
         ],
         "requiredRiskMin": 1,
-        "forbidden": []
+        "forbidden": [], "alcohol": "drinker"
       },
       "occupationBias": [
         "retired",
@@ -33,6 +33,11 @@
         "housewife",
         "driver"
       ],
+      "ice": {
+        "ideas": ["요즘 잠을 설쳐서 심장이 놀란 것 같아요", "나이 들어서 심장이 약해진 건가 싶어요"],
+        "concerns": ["심장마비가 오는 건 아닐까 무서워요", "이러다 중풍이라도 올까 봐 걱정돼요"],
+        "expectations": ["심장이 다시 제대로 뛰게 해주세요", "심전도든 뭐든 찍어서 원인을 알고 싶어요"]
+      },
       "iceHint": [
         "family",
         "denial",
@@ -200,6 +205,11 @@
         "teacher",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["스트레스 때문인 것 같아요", "잠을 못 자서 그런가 싶어요"],
+        "concerns": ["심장에 큰 병이 있는 건 아닐까 걱정돼요", "갑자기 쓰러질까 봐 무서워요"],
+        "expectations": ["무슨 병인지 정확히 알고 싶어요", "또 그러면 어떻게 해야 하는지 알고 싶어요"]
+      },
       "iceHint": [
         "internet",
         "work",
@@ -364,6 +374,11 @@
         "market",
         "farmer"
       ],
+      "ice": {
+        "ideas": ["요즘 무리해서 그런 것 같아요", "나이 들어서 심장이 약해진 건가 싶어요"],
+        "concerns": ["이러다 쓰러지는 건 아닐까 무서워요", "심장이 멈출까 봐 겁나요"],
+        "expectations": ["두근거리는 게 안 생기게 해주세요", "심장 검사를 제대로 받아보고 싶어요"]
+      },
       "iceHint": [
         "denial",
         "family",
@@ -409,11 +424,11 @@
         "운동 중에 생기나": "무리해서 움직일 때 그런 것 같아요.",
         "체중감소나 열": "그런 건 없어요."
       },
-      "pmh": "{{cardiacHx}} 고혈압",
-      "meds": "{{adherence}}",
+      "pmh": "{{cardiacPmh}}. 고혈압",
+      "meds": "{{adherenceMeds}}",
       "allergy": "없음",
-      "fh": "{{fhx}}",
-      "sh": "인물 카드를 따르되 과거 흡연력 확인이 중요",
+      "fh": "{{fhxChart}}",
+      "sh": "인물 카드를 따름",
       "pe": {
         "vitals": {
           "sbp": [
@@ -473,6 +488,9 @@
         ]
       },
       "variations": {
+        "cardiacPmh": ["3년 전 심근경색으로 스텐트 시술", "5년 전 관상동맥이 막혀 시술"],
+        "adherenceMeds": ["심장약·혈압약을 처방받았으나 최근 잘 복용하지 않음", "심장약과 혈압약을 꾸준히 복용"],
+        "fhxChart": ["특이사항 없음", "아버지가 60세 전에 심장 문제로 급사"],
         "onsetDays": [
           1,
           2,
@@ -510,6 +528,7 @@
           "아버지가 예순도 안 돼서 심장으로 갑자기 돌아가셨어요."
         ]
       },
+      "pairedVariations": [["cardiacHx", "cardiacPmh"], ["adherence", "adherenceMeds"], ["fhx", "fhxChart"]],
       "disclosure": {
         "spontaneous": [
           "가슴이 두근거린다는 것"
@@ -547,6 +566,11 @@
         "student",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["요즘 신경 쓸 일이 많아서 그런 것 같아요", "잠을 못 자서 몸이 상한 것 같아요"],
+        "concerns": ["심장병일까 봐 걱정돼요", "이러다 일을 못 하게 될까 봐요"],
+        "expectations": ["두근거리는 것 좀 멎게 해주세요", "피검사든 뭐든 해서 원인을 알고 싶어요"]
+      },
       "iceHint": [
         "internet",
         "work",
@@ -598,7 +622,7 @@
       "pmh": "특이 병력 없음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": {
@@ -660,6 +684,7 @@
         ]
       },
       "variations": {
+        "fhChart": ["이모 갑상선 질환(약 복용)", "특이사항 없음"],
         "onsetMonths": [
           2,
           3,
@@ -680,6 +705,7 @@
           "가족 중에는 없어요."
         ]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": [
           "가슴이 두근거린다는 것",
@@ -718,6 +744,11 @@
         "nurse",
         "selfemp"
       ],
+      "ice": {
+        "ideas": ["심장에 문제가 있는 것 같아요", "몸이 많이 약해진 것 같아요"],
+        "concerns": ["이러다 정말 죽는 건 아닌가 무서워요", "심장마비가 올까 봐 걱정돼요"],
+        "expectations": ["심장 검사를 받아서 괜찮은지 확인하고 싶어요", "그럴 때 어떻게 해야 하는지 알고 싶어요"]
+      },
       "iceHint": [
         "internet",
         "cancer",

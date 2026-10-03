@@ -236,6 +236,7 @@
     {
       "id": "wnd-puncture",
       "dx": "발바닥 자상 (녹슨 못)",
+      "pmh": "{{comorbidPmh}}",
       "situation": "{{age}}세 {{sexText}} 환자가 {{hoursAgo}}시간 전 {{place}}에서 {{footwear}} 신은 채 녹슨 못을 밟았습니다. {{side}}발바닥에 작은 구멍이 있습니다.",
       "constraints": {
         "ageRange": [
@@ -245,7 +246,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "construct",
@@ -347,6 +348,7 @@
         "처치 후": "변화 없음"
       },
       "variations": {
+        "comorbidPmh": ["당뇨병(약 복용)", "당뇨·말초혈관질환 없음"],
         "age": [
           28,
           40,
@@ -391,10 +393,7 @@
           "접종 이력이 불확실해 미접종에 준해 톡소이드를 접종하고 면역글로불린 적응증을 판단합니다.",
           "최근 접종 이력이 확인되어 추가 접종은 하지 않습니다."
         ],
-        "comorbid": [
-          "당뇨가 있어서 약을 먹고 있어요.",
-          "특별한 병은 없어요."
-        ],
+        "comorbid": ["당뇨가 있어서 약을 먹고 있어요.", "당뇨나 혈관 쪽 병은 없어요."],
         "entry": [
           3,
           4,
@@ -427,7 +426,7 @@
       "pairedVariations": [
         ["footwear", "footwearDetail"],
         ["tetanus", "tetanusPlan"],
-        ["comorbid", "antibiotic"]
+        ["comorbid", "antibiotic", "comorbidPmh"]
       ],
       "disclosure": {
         "spontaneous": [
@@ -445,7 +444,7 @@
     {
       "id": "wnd-contusion",
       "dx": "타박상 (전완부 둔상, 구획증후군 감별 필요)",
-      "situation": "{{age}}세 {{sexText}} 환자가 {{hoursAgo}}시간 전 {{mechanism}} {{side}}팔을 부딪혔습니다. 부어오르고 아파서 왔습니다.",
+      "situation": "{{age}}세 {{sexText}} 환자가 {{hoursAgo}}시간 전 {{mechanism}} {{side}}팔을 다쳤습니다. 부어오르고 아파서 왔습니다.",
       "constraints": {
         "ageRange": [
           18,
@@ -579,18 +578,12 @@
           "뚜렷한 변형은 없습니다.",
           "약간의 변형이 의심됩니다."
         ],
-        "neurovascular": [
-          "손가락 감각과 움직임은 정상이고 요골동맥이 잘 만져집니다.",
-          "손가락 끝 감각이 약간 둔하고 요골동맥은 잘 만져집니다."
-        ],
+        "neurovascular": ["손가락 끝 감각이 약간 둔하고 요골동맥은 잘 만져집니다.", "손가락 감각과 움직임은 정상이고 요골동맥이 잘 만져집니다."],
         "compartment": [
           "손가락을 수동으로 펴면 통증이 심해지고 전완이 단단하게 만져집니다. 구획증후군을 의심해야 합니다.",
           "수동 신전 시 통증 악화는 없고 전완은 부드럽습니다."
         ],
-        "splint": [
-          "부목으로 고정하고 정형외과에 의뢰합니다.",
-          "부목은 필요하지 않다고 판단합니다."
-        ],
+        "splint": ["부목은 필요하지 않다고 판단합니다.", "부목으로 고정하고 정형외과에 의뢰합니다."],
         "progress": [
           "부종이 더 진행하고 통증이 심해집니다.",
           "부종은 더 늘지 않습니다."
@@ -611,7 +604,7 @@
           96
         ]
       },
-      "pairedVariations": [
+      "pairedVariations": [["compartment", "neurovascular", "progress"], ["deformity", "splint"], 
         ["mechanism", "mechanismDetail"]
       ],
       "disclosure": {

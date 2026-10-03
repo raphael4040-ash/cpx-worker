@@ -14,6 +14,11 @@
       "dx": "갑상선기능저하증",
       "constraints": { "ageRange": [35, 68], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["housewife", "office", "market", "care", "teacher"],
+      "ice": {
+        "ideas": ["나이 들어서 기력이 떨어진 것 같아요", "요즘 신경 쓸 일이 많아서 그런가 싶어요"],
+        "concerns": ["몸에 무슨 병이 있는 건 아닐까 걱정돼요", "이대로 계속 처질까 봐 걱정이에요"],
+        "expectations": ["왜 이렇게 피곤한지 검사해보고 싶어요", "기운 좀 차리게 해주세요"]
+      },
       "iceHint": ["internet", "family", "test"],
       "opening": ["몇 달째 너무 피곤해요.", "기운이 하나도 없고 자꾸 처져요."],
       "hpi": {
@@ -44,7 +49,7 @@
       "pmh": "특이 병력 없음. 출산 후 갑상선 수치가 잠깐 이상했다는 말을 들은 적 있음",
       "meds": "없음",
       "allergy": "없음",
-      "fh": "{{fhx}}",
+      "fh": "{{fhChart}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [110, 134], "dbp": [70, 86], "hr": [50, 62], "rr": [12, 16], "temp": [35.9, 36.5], "spo2": [97, 99],
@@ -66,12 +71,14 @@
         "negatives": ["발열 없음", "림프절 비대 없음", "간비장 비대 없음", "결막 창백 없음", "심잡음 없음"]
       },
       "variations": {
+        "fhChart": ["어머니 갑상선 질환(약 복용)", "언니 갑상선 수술", "갑상선 질환 가족력 없음"],
         "onsetMonths": [4, 5, 6],
         "weightGain": [4, 5, 6],
         "severity": [5, 6, 7],
-        "menses": ["생리량이 많아지고 기간도 길어졌어요.", "생리 주기가 들쭉날쭉해요.", "폐경한 지 몇 년 됐어요."],
+        "menses": [{"text": "생리량이 많아지고 기간도 길어졌어요.", "maxAge": 50}, {"text": "생리 주기가 들쭉날쭉해요.", "maxAge": 52}, {"text": "폐경한 지 몇 년 됐어요.", "minAge": 50}],
         "fhx": ["어머니가 갑상선 약을 드세요.", "언니가 갑상선 수술을 받았어요.", "가족 중에는 없어요."]
       },
+      "pairedVariations": [["fhx", "fhChart"]],
       "disclosure": {
         "spontaneous": ["기운이 없다는 것"],
         "onlyIfAsked": ["추위를 타는 것", "변비", "체중 증가", "목소리 변화", "얼굴 부종", "월경 변화", "가족력"]
@@ -81,8 +88,13 @@
     {
       "id": "fat-depression",
       "dx": "주요우울장애",
-      "constraints": { "ageRange": [25, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [25, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"], "alcohol": "drinker" },
       "occupationBias": ["office", "jobless", "housewife", "selfemp", "student"],
+      "ice": {
+        "ideas": ["요즘 무리해서 몸이 지친 것 같아요", "영양이 부족해서 그런가 싶어요"],
+        "concerns": ["몸 어디에 병이 생긴 건 아닐까 걱정돼요", "이러다 일을 아예 못 하게 될까 봐 걱정돼요"],
+        "expectations": ["기운 나는 약이나 영양제를 받고 싶어요", "피검사라도 해보고 싶어요"]
+      },
       "iceHint": ["denial", "medicine", "work"],
       "opening": ["요즘 너무 피곤해요.", "기운이 없어서 일을 못 하겠어요."],
       "hpi": {
@@ -150,8 +162,13 @@
     {
       "id": "fat-lymphoma",
       "dx": "호지킨림프종",
-      "constraints": { "ageRange": [20, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [20, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "drinker" },
       "occupationBias": ["office", "student", "teacher", "selfemp", "parttime"],
+      "ice": {
+        "ideas": ["요즘 일이 많아서 지친 것 같아요", "몸살 기운이 오래가는 것 같아요"],
+        "concerns": ["쉬어도 안 나아지니 무슨 병이 있는 건 아닐까 걱정돼요", "일을 계속할 수 있을지 걱정이에요"],
+        "expectations": ["왜 이렇게 피곤한지 검사해보고 싶어요", "기운 좀 차렸으면 좋겠어요"]
+      },
       "iceHint": ["denial", "internet", "work"],
       "opening": ["몇 달째 기운이 없고 자꾸 지쳐요.", "피곤해서 아무것도 못 하겠어요."],
       "hpi": {
@@ -170,7 +187,7 @@
         "negative": ["기침·가래 없음", "인후통 없음", "배뇨 이상 없음", "설사 없음", "추위를 타는 것 없음", "관절이 붓지는 않음"]
       },
       "redFlags": {
-        "체중이 줄었나": "여섯 달 사이에 {{weightLoss}}kg 빠졌어요. 일부러 뺀 건 아니에요.",
+        "체중이 줄었나": "{{onsetMonths}}개월 사이에 {{weightLoss}}kg 빠졌어요. 일부러 뺀 건 아니에요.",
         "밤에 땀을 흘리나": "자다 깨면 베개랑 옷이 다 젖어 있어요. 옷을 갈아입어야 해요.",
         "목이나 겨드랑이에 멍울이 만져지나": "{{side}}쪽 목에 몇 개 만져져요. 눌러도 안 아파요.",
         "열이 나나": "저녁에 37도 후반까지 올라요.",
@@ -224,6 +241,11 @@
       "dx": "약물 유발 피로 (베타차단제·항히스타민제)",
       "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "jobless"],
+      "ice": {
+        "ideas": ["나이 들어서 기력이 떨어진 것 같아요", "날이 바뀌어서 몸이 처지는 것 같아요"],
+        "concerns": ["심장에 문제가 생긴 건 아닐까 걱정돼요", "이러다 쓰러질까 봐 걱정돼요"],
+        "expectations": ["기운 좀 나게 해주세요", "왜 이러는지 알고 싶어요"]
+      },
       "iceHint": ["medicine", "family", "repeat"],
       "opening": ["기운이 하나도 없어요.", "요즘 축 처져요."],
       "hpi": {
@@ -256,7 +278,7 @@
       "meds": "혈압약과 {{drug}}, 그 밖에 잠 안 올 때 먹는 수면유도제와 약국 항히스타민제",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 고혈압을 반드시 보유",
+      "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [112, 132], "dbp": [66, 80], "hr": [46, 58], "rr": [14, 18], "temp": [36.3, 36.9], "spo2": [96, 99],
                     "invariant": "서맥을 유지한다. 맥박이 65를 넘지 않고 발열은 없다." },
@@ -279,7 +301,7 @@
       "variations": {
         "onsetWeeks": [3, 4, 6],
         "severity": [4, 5, 6],
-        "drug": ["맥박을 늦추는 혈압약", "부정맥약", "알레르기약"]
+        "drug": ["맥박을 늦추는 혈압약", "부정맥약"]
       },
       "disclosure": {
         "spontaneous": ["기운이 없다는 것"],
@@ -290,8 +312,13 @@
     {
       "id": "fat-cfs",
       "dx": "만성피로증후군",
-      "constraints": { "ageRange": [25, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [25, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["office", "teacher", "nurse", "selfemp", "parttime"],
+      "ice": {
+        "ideas": ["몸이 원래 약해진 것 같아요", "아직 회복이 덜 된 건가 싶어요"],
+        "concerns": ["검사는 다 정상인데 계속 이러니 답답해요", "남들이 꾀병이라고 생각할까 봐 속상해요"],
+        "expectations": ["원인을 제대로 찾고 싶어요", "예전처럼 일할 수 있게 해주세요"]
+      },
       "iceHint": ["repeat", "test", "work"],
       "opening": ["반년 넘게 피곤한데 검사는 다 정상이래요.", "쉬어도 피로가 안 풀려요."],
       "hpi": {
