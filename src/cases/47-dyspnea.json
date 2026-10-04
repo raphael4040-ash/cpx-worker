@@ -35,7 +35,7 @@
       ],
       "ice": {
         "ideas": ["요즘 피곤해서 천식이 도진 것 같아요", "요즘 공기가 안 좋아서 그런 것 같아요"],
-        "concerns": ["숨이 막혀서 큰일 날까 봐 무서워요", "일을 못 나가게 될까 봐 걱정이에요"],
+        "concerns": ["숨이 막혀서 큰일 날까 봐 무서워요", {"text": "일을 못 나가게 될까 봐 걱정이에요", "occOnly": ["사무실", "현장", "parttime"]}],
         "expectations": ["숨 좀 편하게 쉬게 해주세요", "숨 쉬기 편해지는 약을 받고 싶어요"]
       },
       "iceHint": [
@@ -849,7 +849,7 @@
         ],
         "fhx": ["아버지 당뇨", "특이사항 없음"]
       },
-      "pairedVariations": [["insulin", "insulinChart"], ["dmHx", "dmChart"], ["dmHx", "insulin"]],
+      "pairedVariations": [["dmHx", "dmChart", "insulin", "insulinChart"]],
       "disclosure": {
         "spontaneous": [
           "숨이 가쁘고 기운이 없다는 것"

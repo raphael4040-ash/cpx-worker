@@ -158,7 +158,7 @@
       "occupationBias": ["student", "office", "nurse", "delivery", "teacher", "parttime"],
       "ice": {
         "ideas": ["뭘 잘못 먹고 탈이 난 것 같아요", "장염에 걸린 것 같아요"],
-        "concerns": ["물도 못 먹으니 탈수될까 봐 걱정돼요", "내일 일을 나가야 하는데 못 나갈까 봐요"],
+        "concerns": ["물도 못 먹으니 탈수될까 봐 걱정돼요", {"text": "내일 일을 나가야 하는데 못 나갈까 봐요", "occOnly": ["사무실", "현장", "parttime"]}],
         "expectations": ["수액 맞고 빨리 기운 차리고 싶어요", "토하고 설사하는 것 멎는 약을 받고 싶어요"]
       },
       "iceHint": ["work", "internet", "medicine"],

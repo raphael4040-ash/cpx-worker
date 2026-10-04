@@ -350,7 +350,7 @@
       "occupationBias": ["market", "cook", "office", "selfemp", "care"],
       "ice": {
         "ideas": ["염증이 생긴 것 같아요", "속옷에 쓸려서 덧난 건가 싶어요"],
-        "concerns": ["고름이 퍼질까 봐 걱정돼요", "일을 못 나가게 될까 봐 걱정이에요"],
+        "concerns": ["고름이 퍼질까 봐 걱정돼요", {"text": "일을 못 나가게 될까 봐 걱정이에요", "occOnly": ["사무실", "현장", "parttime"]}],
         "expectations": ["빨리 덜 아프게 해주세요", "약으로 나을 수 있는지 알고 싶어요"]
       },
       "iceHint": ["medicine", "work", "internet"],

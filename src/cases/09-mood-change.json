@@ -101,7 +101,7 @@
       "occupationBias": ["office", "student", "selfemp", "delivery", "cook"],
       "ice": {
         "ideas": ["요즘 일이 잘 안 풀려서 그런 것 같아요", "날씨 탓인지 몸이 처지는 것 같아요"],
-        "concerns": ["이 상태가 오래갈까 봐 걱정돼요", "학교나 일을 못 나가게 될까 봐요"],
+        "concerns": ["이 상태가 오래갈까 봐 걱정돼요", {"text": "학교나 일을 못 나가게 될까 봐요", "occOnly": ["학생", "사무실", "현장", "parttime"]}],
         "expectations": ["우울증 약을 받고 싶어요", "빨리 원래대로 돌아가고 싶어요"]
       },
       "iceHint": ["medicine", "repeat", "family"],
