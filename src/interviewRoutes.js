@@ -85,6 +85,8 @@ export function prepareInterview(body) {
     prompt: (phase) => buildSystemPrompt(resolvedCase, { ...flags, phase }),
     // 진찰 단계를 모델 없이 답할 때 쓴다 (aiRoutes.js · peMatch.js).
     pe: { vitals: (resolvedCase.pe || {}).vitals || null, findings: (resolvedCase.pe || {}).findings || null },
+    // 첫 대사 후보 — 내원 이유를 처음 물었을 때 모델 없이 쓴다 (aiLimits.js isOpeningTurn).
+    openings: Array.isArray((resolvedCase.scenario || {}).opening) ? resolvedCase.scenario.opening : [],
   };
 }
 

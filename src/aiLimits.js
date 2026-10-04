@@ -114,13 +114,47 @@ export function withNotYetEvalNote(messages) {
   return out;
 }
 
-/** 평가에 개선점이 빠졌을 때 다시 받는 요청 — "평가" 뒤에 안내를 붙인다 (기록엔 안 남음). */
-export function withMissingFeedbackNote(messages) {
-  const out = messages.slice();
-  const last = out[out.length - 1];
-  out[out.length - 1] = {
-    role: last.role,
-    text: `${last.text}\n\n(채점표 다음에 "잘한 점"과 "개선점" 2~3가지를 반드시 쓰고, 맨 끝에 cpx-record 블록을 붙이세요.)`,
-  };
-  return out;
+
+/**
+ * 평가에 개선점이 빠졌을 때 개선점만 따로 받는 요청. 예전에는 평가 프롬프트(평균 7,300자)와
+ * 대화 전체를 통째로 다시 보냈다. 개선점은 채점표 없이 대화만 보면 쓸 수 있으니, 짧은 지시와
+ * 대화 기록만 보낸다. 돌려받은 글은 insertFeedback 으로 평가문의 기록 블록 앞에 끼운다.
+ */
+export const FEEDBACK_SYSTEM =
+  "당신은 CPX(의사국가시험 실기) 채점자입니다. 아래 학생-환자 대화와 이미 쓴 채점표를 보고, " +
+  "'개선점' 제목 아래 2~3가지만 씁니다. 각 항목은 학생이 던졌어야 할 질문이나 했어야 할 말을 큰따옴표로 그대로 인용합니다. " +
+  "대화에 없는 일을 지어내지 않고, 채점표·점수·기록 블록은 다시 쓰지 않습니다. 굵은 글씨(**)는 쓰지 않습니다.";
+
+export function feedbackOnlyMessages(messages, evalReply) {
+  const transcript = messages
+    .slice(0, -1) // 마지막 "평가" 신호는 뺀다
+    .map((m) => `${m.role === "user" ? "학생" : "환자"}: ${m.text}`)
+    .join("\n");
+  const sheet = String(evalReply || "").split("```cpx-record")[0].trim();
+  return [{ role: "user", text: `[대화]\n${transcript}\n\n[채점표]\n${sheet}\n\n개선점만 쓰세요.` }];
+}
+
+/** 개선점 글을 평가문의 cpx-record 블록 바로 앞에 끼운다. 블록이 없으면 끝에 붙인다. */
+export function insertFeedback(evalReply, feedback) {
+  const fb = String(feedback || "").trim();
+  if (!fb) return evalReply;
+  const body = /개선점/.test(fb) ? fb : `개선점\n${fb}`;
+  const i = evalReply.indexOf("```cpx-record");
+  return i < 0 ? `${evalReply.trim()}\n\n${body}` : `${evalReply.slice(0, i).trimEnd()}\n\n${body}\n\n${evalReply.slice(i)}`;
+}
+
+// 내원 이유를 묻는 첫 질문. 이름·생년월일 확인과 섞여 있으면 그쪽 답이 먼저라 모델에 넘긴다.
+const OPENING_ASK = /(어디가?\s*(불편|아프)|어떻게\s*오셨|무슨\s*일로|어떤\s*일로|어디\s*편찮|무엇\s*때문에\s*오셨|왜\s*오셨)/;
+const ID_ASK = /(성함|이름|생년월일|연세|나이)/;
+
+/**
+ * 첫 대사를 모델 없이 낼 차례인가. 카드의 "첫 대사 후보"는 학생이 내원 이유를 처음 물었을 때
+ * 쓰는 고정 대사라 모델이 할 일이 없다. 아직 어떤 후보도 나온 적이 없고, 마지막 학생 말이
+ * 내원 이유만 묻는 경우에만 true.
+ */
+export function isOpeningTurn(messages, openings) {
+  if (!Array.isArray(openings) || !openings.length) return false;
+  const last = messages[messages.length - 1];
+  if (!last || last.role !== "user" || !OPENING_ASK.test(last.text) || ID_ASK.test(last.text)) return false;
+  return !messages.some((m) => m.role === "assistant" && openings.some((o) => m.text.includes(o)));
 }
