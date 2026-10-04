@@ -83,6 +83,8 @@ export function prepareInterview(body) {
   return {
     topic: resolvedCase.topic,
     prompt: (phase) => buildSystemPrompt(resolvedCase, { ...flags, phase }),
+    // 진찰 단계를 모델 없이 답할 때 쓴다 (aiRoutes.js · peMatch.js).
+    pe: { vitals: (resolvedCase.pe || {}).vitals || null, findings: (resolvedCase.pe || {}).findings || null },
   };
 }
 
