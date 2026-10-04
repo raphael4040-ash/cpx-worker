@@ -20,7 +20,7 @@
  */
 import { prepareInterview } from "./interviewRoutes.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, withMissingFeedbackNote } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -73,7 +73,7 @@ export async function handleAiStart(request, env, cfg, cors) {
   const sessionId = crypto.randomUUID();
   await kv.put(
     `ai:session:${sessionId}`,
-    JSON.stringify({ uid: user.uid, prompts, topic: prepared.topic, pe: prepared.pe }),
+    JSON.stringify({ uid: user.uid, prompts, topic: prepared.topic, pe: prepared.pe, openings: prepared.openings }),
     { expirationTtl: SESSION_TTL_SEC }
   );
   await kv.put(userKey, String(userSessions + 1), { expirationTtl: 2 * 86400 });
@@ -113,6 +113,14 @@ export async function handleAiChat(request, env, cfg, cors) {
   // 배포 직후 남아 있던 예전 세션(통짜 systemPrompt)도 그대로 돌게 한다.
   const systemPrompt = session.prompts ? session.prompts[phaseFor(messages)] : session.systemPrompt;
 
+  const sessionId = String(body.sessionId);
+  // 첫 대사는 카드에 고정돼 있다 — 내원 이유를 처음 물으면 모델 없이 후보 중 하나를 낸다.
+  if (phaseFor(messages) === "history" && isOpeningTurn(messages, session.openings)) {
+    const opening = session.openings[Math.floor(Math.random() * session.openings.length)];
+    const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true);
+    return json({ reply: opening, neurons: 0, usage }, 200, cors);
+  }
+
   // 진찰 단계는 소견이 이미 확정돼 있어서, 학생이 한 진찰 동작이 소견 이름과 확실히 맞으면
   // 모델 없이 바로 답한다 (뉴런 0). 애매하면 아래로 내려가 지금처럼 모델이 답한다.
   if (phaseFor(messages) === "pe" && session.pe) {
@@ -123,7 +131,10 @@ export async function handleAiChat(request, env, cfg, cors) {
       const hit = matchFindings(last, session.pe.findings);
       if (hit) local = findingsReply(hit, session.pe.vitals);
     }
-    if (local) return json({ reply: local, neurons: 0 }, 200, cors);
+    if (local) {
+      const usage = await recordUsage(kv, sessionId, session.topic, "pe", 0, true);
+      return json({ reply: local, neurons: 0, usage }, 200, cors);
+    }
   }
 
   const limits = readLimits(env);
@@ -136,9 +147,9 @@ export async function handleAiChat(request, env, cfg, cors) {
 
   const model = env.AI_MODEL || DEFAULT_AI_MODEL;
   const phase = phaseFor(messages);
-  const run = (msgs) =>
+  const run = (msgs, system = systemPrompt) =>
     env.AI.run(model, {
-      messages: [{ role: "system", content: systemPrompt }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
+      messages: [{ role: "system", content: system }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
       // 문진·진찰 답은 한두 문장이다. 상한을 낮춰 두면 장황한 답과 지연이 준다. 평가만 길다.
       max_completion_tokens: phase === "eval" ? MAX_OUTPUT_TOKENS : MAX_TURN_TOKENS,
       temperature: 0.8,
@@ -163,14 +174,14 @@ export async function handleAiChat(request, env, cfg, cors) {
       if (looksLikeEvaluation(reply)) reply = "(환자가 고개를 끄덕입니다.)";
     }
     // 평가에 개선점이 빠지는 일이 있었다 (Gemma 4 — 채점표와 기록 블록만 내고 잘한 점·개선점을 통째로 생략).
-    // 한 번만 다시 받고, 다시 받은 것에도 없으면 처음 것을 쓴다.
+    // 평가 프롬프트 전체를 다시 보내지 않고, 짧은 지시와 대화·채점표만 보내 개선점만 받아 끼운다.
     if (phase === "eval" && !/개선점/.test(reply)) {
       try {
-        const retry = withMissingFeedbackNote(turn);
-        const again = await run(retry);
+        const ask = feedbackOnlyMessages(messages, reply);
+        const again = await run(ask, FEEDBACK_SYSTEM);
         const text = extractReply(again);
-        spent += neuronsFor(model, again?.usage, systemPrompt, retry, text);
-        if (/개선점/.test(text) && /```cpx-record/.test(text)) reply = text;
+        spent += neuronsFor(model, again?.usage, FEEDBACK_SYSTEM, ask, text);
+        if (text) reply = insertFeedback(reply, text);
       } catch {
         /* 다시 받기가 실패해도 처음 평가는 그대로 돌려준다 */
       }
@@ -188,8 +199,55 @@ export async function handleAiChat(request, env, cfg, cors) {
   }
   await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
 
+  const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false);
   if (!reply) return json({ error: "empty_response" }, 502, cors);
-  return json({ reply, neurons: spent }, 200, cors);
+  return json({ reply, neurons: spent, usage }, 200, cors);
+}
+
+/**
+ * POST /interview/ai/usage — 관리자 전용. 오늘(UTC) 면담별 사용량.
+ * 하루 총량만으로는 면담 한 회에 실제로 얼마가 드는지, 모델 없이 답한 턴이 얼마나 되는지 알 수 없었다.
+ */
+export async function handleAiUsage(request, env, cfg, cors) {
+  const kv = env.RATE_LIMIT_KV;
+  if (!kv) return json({ error: "ai_not_configured" }, 503, cors);
+  const user = await authenticate(request, cfg);
+  if (user.error) return json({ error: user.error }, user.status, cors);
+  if (user.uid !== cfg.ownerUid) return json({ error: "forbidden" }, 403, cors);
+  const day = utcDay();
+  const list = await kv.list({ prefix: `ai:usage:${day}:` });
+  const sessions = [];
+  for (const k of list.keys) {
+    const v = await kv.get(k.name, "json");
+    if (v) sessions.push(v);
+  }
+  sessions.sort((a, b) => String(a.startedAt).localeCompare(String(b.startedAt)));
+  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), sessions }, 200, cors);
+}
+
+/** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
+async function recordUsage(kv, sessionId, topic, phase, neurons, local) {
+  const key = `ai:usage:${utcDay()}:${sessionId}`;
+  let u = null;
+  try {
+    u = await kv.get(key, "json");
+  } catch {
+    /* 기록 실패는 면담을 막지 않는다 */
+  }
+  u = u || { sessionId, topic, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, byPhase: {} };
+  u.neurons += neurons;
+  if (local) u.localTurns += 1;
+  else u.modelTurns += 1;
+  const p = (u.byPhase[phase] = u.byPhase[phase] || { neurons: 0, model: 0, local: 0 });
+  p.neurons += neurons;
+  p[local ? "local" : "model"] += 1;
+  u.updatedAt = new Date().toISOString();
+  try {
+    await kv.put(key, JSON.stringify(u), { expirationTtl: 3 * 86400 });
+  } catch {
+    /* 기록 실패는 면담을 막지 않는다 */
+  }
+  return { neurons: u.neurons, modelTurns: u.modelTurns, localTurns: u.localTurns };
 }
 
 /** GET 대신 POST /interview/ai/status — 오늘 남은 양 (설정 화면 안내용, 인증 불필요). */

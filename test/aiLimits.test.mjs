@@ -85,3 +85,42 @@ test("평가처럼 생긴 답을 가려낸다 — 환자 대사는 걸리지 않
   const out = withNotYetEvalNote([{ role: "user", text: "정리하면 …" }]);
   assert.match(out[0].text, /^정리하면 …\n\n\(아직 "평가" 신호가 아닙니다/);
 });
+
+import { feedbackOnlyMessages, insertFeedback, isOpeningTurn } from "../src/aiLimits.js";
+
+test("개선점 재요청은 대화와 채점표만 보내고 평가 신호는 뺀다", () => {
+  const msgs = [
+    { role: "user", text: "어디가 불편하세요?" },
+    { role: "assistant", text: "배가 아파요." },
+    { role: "user", text: "평가" },
+  ];
+  const [m] = feedbackOnlyMessages(msgs, "채점표 내용\n```cpx-record\n{}\n```");
+  assert.match(m.text, /학생: 어디가 불편하세요\?/);
+  assert.doesNotMatch(m.text, /학생: 평가/);
+  assert.doesNotMatch(m.text, /cpx-record/);
+});
+
+test("개선점은 기록 블록 앞에 끼운다", () => {
+  const out = insertFeedback("채점표\n```cpx-record\n{}\n```", "개선점\n1. \"언제부터요?\"");
+  assert.ok(out.indexOf("개선점") < out.indexOf("```cpx-record"));
+  assert.match(insertFeedback("채점표", "1. 질문"), /개선점\n1\. 질문$/);
+});
+
+test("첫 대사는 내원 이유만 처음 물었을 때 모델 없이 낸다", () => {
+  const op = ["배가 아파서 왔어요."];
+  assert.equal(isOpeningTurn([{ role: "user", text: "어디가 불편해서 오셨어요?" }], op), true);
+  assert.equal(isOpeningTurn([{ role: "user", text: "성함이랑 어디가 불편하신지 말씀해 주세요" }], op), false);
+  assert.equal(isOpeningTurn([{ role: "user", text: "안녕하세요" }], op), false);
+  assert.equal(
+    isOpeningTurn(
+      [
+        { role: "user", text: "어떻게 오셨어요?" },
+        { role: "assistant", text: "배가 아파서 왔어요." },
+        { role: "user", text: "어디가 아프세요?" },
+      ],
+      op
+    ),
+    false
+  );
+  assert.equal(isOpeningTurn([{ role: "user", text: "어떻게 오셨어요?" }], []), false);
+});

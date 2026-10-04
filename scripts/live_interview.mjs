@@ -5,6 +5,7 @@
 //   ... start "가슴통증"           새 면담 (주호소는 index.json 표기·별칭. 비우면 무작위)
 //   ... say "어떻게 오셨어요?"      학생 한 마디 → 환자 응답 출력
 //   ... log                        지금까지 대화 전체 출력
+//   ... usage                      오늘 면담별 사용량 (관리자 계정만)
 //
 // 대화 상태는 CPX_LIVE_STATE(기본 ./.live_interview.json)에 남는다. 연결 코드는 refresh token 을
 // 담은 자격증명이라 환경변수로만 받고 파일에 쓰지 않는다. 하루 뉴런 한도·1인 면담 수 한도를
@@ -64,10 +65,13 @@ if (cmd === "status") {
   messages.push({ role: "assistant", text: data.reply });
   save({ ...s, messages, neurons: s.neurons + (data.neurons || 0) });
   console.log(data.reply);
-  console.log(`\n[뉴런 ${data.neurons} · 누적 ${s.neurons + (data.neurons || 0)}]`);
+  const u = data.usage || {};
+  console.log(`\n[이번 턴 뉴런 ${data.neurons}${data.neurons === 0 ? " (모델 없이 답함)" : ""} · 이 면담 누적 ${u.neurons ?? "?"} · 모델 ${u.modelTurns ?? "?"}턴 / 서버 ${u.localTurns ?? "?"}턴]`);
+} else if (cmd === "usage") {
+  console.log(JSON.stringify(await call("/interview/ai/usage", {}), null, 2));
 } else if (cmd === "log") {
   const s = load();
   for (const m of s?.messages || []) console.log(`${m.role === "user" ? "학생" : "환자"}: ${m.text}\n`);
 } else {
-  console.log("사용법: status | start [주호소] | say <말> | log");
+  console.log("사용법: status | start [주호소] | say <말> | log | usage");
 }

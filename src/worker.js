@@ -12,7 +12,7 @@
  *   4. Firestore REST 로 records 문서 생성
  */
 import { handleInterviewStart } from "./interviewRoutes.js";
-import { handleAiStart, handleAiChat, handleAiStatus } from "./aiRoutes.js";
+import { handleAiStart, handleAiChat, handleAiStatus, handleAiUsage } from "./aiRoutes.js";
 
 // Cloudflare 대시보드에서 환경변수(FIREBASE_PROJECT_ID / FIREBASE_API_KEY)를 넣으면
 // 그 값이 우선하고, 안 넣으면 아래 기본값을 쓴다. 둘 다 웹앱에 그대로 노출되는
@@ -91,6 +91,7 @@ export default {
         if (url.pathname === "/interview/ai/status") return await handleAiStatus(env, CORS);
         if (url.pathname === "/interview/ai/start") return await handleAiStart(request, env, cfg, CORS);
         if (url.pathname === "/interview/ai/chat") return await handleAiChat(request, env, cfg, CORS);
+        if (url.pathname === "/interview/ai/usage") return await handleAiUsage(request, env, cfg, CORS);
       }
       return json({ error: "not_found" }, 404);
     } catch (err) {
