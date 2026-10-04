@@ -45,7 +45,7 @@
         "먹는 약이나 수면제": "{{medsSay}}",
         "다리가 근질거려 움직이고 싶은 느낌": "그런 건 없어요.",
         "체중이 줄거나 더위를 타나": "그런 건 없어요.",
-        "잠자리 환경이나 생활 리듬이 바뀌었나": "그대로예요. 다만 침대에서 휴대폰을 오래 봐요.",
+        "잠자리 환경이나 생활 리듬이 바뀌었나": "요즘은 따로 바뀐 건 없어요. 다만 침대에서 휴대폰을 오래 봐요.",
         "낮잠을 자나": "오후에 30분에서 한 시간 자요.",
         "밤에 아프거나 소변 때문에 깨거나 기침·가려움이 있나": "그런 건 없어요. 잠이 안 오거나 졸릴 뿐이에요."
       },
@@ -184,8 +184,8 @@
     {
       "id": "slp-shift-transient",
       "dx": "일과성 불면 (교대근무·수면환경 변화에 따른 적응성 수면장애)",
-      "constraints": { "ageRange": [22, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "notHeavy" },
-      "occupationBias": ["nurse", "delivery", "construct", "parttime", "welder"],
+      "constraints": { "ageRange": [22, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "notHeavy", "occupationOnly": ["nurse", "care", "soldier", "welder"] },
+      "occupationBias": ["nurse", "care", "soldier", "welder"],
       "ice": {
         "ideas": ["근무가 바뀌어서 몸이 아직 적응을 못 한 것 같아요", "요즘 체력이 떨어진 것 같아요"],
         "concerns": ["일하다 실수할까 봐 걱정돼요", "계속 이렇게 못 자면 몸이 상할까 봐 걱정돼요"],

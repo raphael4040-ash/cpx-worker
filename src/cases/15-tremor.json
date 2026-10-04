@@ -207,7 +207,7 @@
         "location": "양쪽 손, 가끔 목소리도 떨림",
         "radiation": "없음",
         "aggravating": "긴장할 때, 사람들 앞에서, 커피를 마신 뒤",
-        "relieving": "{{alcoholEffect}}",
+        "relieving": "술을 마시면 떨림이 줄어듦",
         "severity": "{{severity}}/10",
         "course": "여러 해에 걸쳐 아주 천천히 심해짐",
         "timing": "동작하거나 자세를 유지할 때"
@@ -691,7 +691,7 @@
         "location": "양쪽 손, 심하면 온몸",
         "radiation": "없음",
         "aggravating": "아침 공복, 술을 안 마신 지 반나절이 넘었을 때",
-        "relieving": "{{drinkRelief}}",
+        "relieving": "술을 마시면 떨림이 멎음",
         "severity": "{{severity}}/10",
         "course": "술을 끊은 뒤 하루 이틀 사이에 심해짐",
         "timing": "아침에 가장 심함"

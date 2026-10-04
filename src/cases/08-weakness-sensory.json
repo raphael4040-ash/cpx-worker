@@ -156,7 +156,7 @@
     {
       "id": "wks-stroke",
       "dx": "급성 뇌경색 (편측 위약)",
-      "constraints": { "ageRange": [55, 85], "sex": "any", "requiredRisk": ["고혈압", "당뇨병"], "requiredRiskMin": 2, "forbidden": [] },
+      "constraints": { "ageRange": [55, 85], "sex": "any", "requiredRisk": ["고혈압", "당뇨병"], "requiredRiskMin": 1, "forbidden": [] },
       "occupationBias": ["retired", "farmer", "market", "driver", "housewife"],
       "ice": {
         "ideas": ["자다가 팔을 깔고 자서 저린 줄 알았어요", "피곤해서 몸에 힘이 빠진 줄 알았어요"],
@@ -189,8 +189,8 @@
         "심장이 불규칙하다는 말을 들은 적 있나": "{{af}}",
         "혈압약·당뇨약을 잘 챙겨 먹나": "먹다 말다 했어요."
       },
-      "pmh": "고혈압과 당뇨병으로 약을 복용 중이나 복용이 불규칙함",
-      "meds": "혈압약과 당뇨약 (불규칙 복용)",
+      "pmh": "약을 처방받아 복용 중이나 복용이 불규칙함",
+      "meds": "처방약 불규칙 복용",
       "allergy": "없음",
       "fh": "형제 중에 뇌졸중으로 쓰러진 사람이 있음",
       "sh": "인물 카드를 따름",
@@ -328,7 +328,7 @@
         "등이나 허리가 아픈가": "허리는 괜찮아요."
       },
       "pmh": "당뇨병으로 여러 해 약을 복용 중이며 혈당 조절이 잘 되지 않음. 척추 수술이나 경추 외상 병력은 없음",
-      "meds": "당뇨약",
+      "meds": "그 외 복용 약 없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
       "sh": "인물 카드를 따름",

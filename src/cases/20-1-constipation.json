@@ -168,7 +168,7 @@
         "expectations": ["시원하게 좀 보게 해주세요", "관장이든 약이든 해주세요"]
       },
       "iceHint": ["medicine", "family", "denial"],
-      "opening": ["요즘 변을 통 못 봐요.", "일주일 넘게 변을 못 봤어요."],
+      "opening": ["요즘 변을 통 못 봐요.", "변을 시원하게 본 지가 오래됐어요."],
       "hpi": {
         "onset": "{{onsetWeeks}}주 전 {{drug}} 진통제를 먹기 시작하면서부터",
         "character": "변이 돌처럼 딱딱하고 나오다 만 느낌",

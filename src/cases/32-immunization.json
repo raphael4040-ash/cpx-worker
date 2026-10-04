@@ -365,7 +365,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": [],
+        "forbidden": ["htn", "dyslip", "gout"],
         "smoking": "notCurrent",
         "alcohol": "never"
       },

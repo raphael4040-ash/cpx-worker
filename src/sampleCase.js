@@ -38,10 +38,17 @@ function choice(arr) {
  * 셋 중 하나라도 비어 있으면 null — 그 시나리오는 인물 성향 ICE 를 그대로 쓴다.
  * sample_case.py 의 scenario_ice() 와 같은 형식이어야 한다.
  */
-function scenarioIce(scenario) {
+function scenarioIce(scenario, person) {
   const ice = scenario && scenario.ice;
   if (!ice) return null;
-  const pick = (k) => (Array.isArray(ice[k]) && ice[k].length ? choice(ice[k]) : null);
+  // 값이 {text, occOnly…} 이면 변주와 같은 조건을 본다. 주부·은퇴자가
+  // "일을 며칠 못 나갈까 봐" 걱정했다. 다 걸러지면 원래 목록을 쓴다.
+  const pick = (k) => {
+    if (!Array.isArray(ice[k]) || !ice[k].length) return null;
+    const ok = person ? ice[k].filter((o) => allowedVal(o, person)) : [];
+    const v = choice(ok.length ? ok : ice[k]);
+    return v && typeof v === "object" ? v.text : v;
+  };
   const idea = pick("ideas"), concern = pick("concerns"), expectation = pick("expectations");
   if (!idea || !concern || !expectation) return null;
   return { id: "scenario", idea: `생각(원인): ${idea} / 걱정: ${concern} / 기대: ${expectation}` };
@@ -279,7 +286,7 @@ function drawPerson(scenario, personas) {
     return bag.length ? choice(bag) : null;
   }
 
-  const bias = personas.occupations.filter(
+  let bias = personas.occupations.filter(
     (o) => (scenario.occupationBias || []).includes(o.id) && occupationOk(o, age)
   );
   let allowed_ = personas.occupations.filter((o) => occupationOk(o, age));
@@ -289,6 +296,11 @@ function drawPerson(scenario, personas) {
       return age < lo2 ? lo2 - age : age - hi2;
     };
     allowed_ = personas.occupations.slice().sort((a, b) => distance(a) - distance(b)).slice(0, 3);
+  }
+  // 카드 전체가 직업을 전제하면 occupationOnly 로 못박는다 (sample_case.py 와 같음).
+  if (c.occupationOnly && c.occupationOnly.length) {
+    const fixed = allowed_.filter((o) => c.occupationOnly.includes(o.id));
+    if (fixed.length) { bias = fixed; allowed_ = fixed; }
   }
   const occupation = bias.length && Math.random() < 0.6 ? bySex(bias) : bySex(allowed_);
 
@@ -405,9 +417,12 @@ function drawGuardian(scenario, person, personas, slots) {
     [lo, hi] = [age + 22, age + 40];
     gSex = Math.random() < 0.7 ? "female" : "male";
   }
+  // 손아래·손위 형제는 "같은 또래" 범위에서 방향만 정한다. 76세 환자의 여동생이 80세로 나왔다.
+  if (rel.includes("동생")) [lo, hi] = [age - 12, age - 1];
+  else if (["형", "누나", "언니", "오빠"].some((w) => rel.includes(w))) [lo, hi] = [age + 1, age + 12];
 
-  const FEMALE_REL = ["딸", "며느리", "어머니", "엄마", "아내", "누나", "언니", "할머니", "이모", "고모"];
-  const MALE_REL = ["아들", "사위", "아버지", "아빠", "남편", "형", "오빠", "할아버지", "삼촌"];
+  const FEMALE_REL = ["딸", "며느리", "여동생", "어머니", "엄마", "아내", "누나", "언니", "할머니", "이모", "고모"];
+  const MALE_REL = ["아들", "사위", "남동생", "아버지", "아빠", "남편", "형", "오빠", "할아버지", "삼촌"];
   if (FEMALE_REL.some((w) => rel.includes(w))) gSex = "female";
   else if (MALE_REL.some((w) => rel.includes(w))) gSex = "male";
   // 성별이 안 드러나는 관계 이름이라 추첨에 맡겼더니 여성 환자에게 여성 배우자가 나왔다.
@@ -459,6 +474,8 @@ function allowedVal(v, person) {
   }
   if (v.maxAge != null && person.age > v.maxAge) return false;
   if (v.minAge != null && person.age < v.minAge) return false;
+  // 술을 전제한 답. 비음주 인물이 "예전엔 더 드셨는데… 술은 안 드세요"라고 했다.
+  if (v.drinkerOnly && person.alcohol.id === "none") return false;
   return true;
 }
 
@@ -671,7 +688,7 @@ export function buildCase(topicFile, data, personas, scenarioId) {
   // 시나리오에 ICE(생각·걱정·기대)가 따로 있으면 인물 성향의 한 줄 ICE 대신 그것을 쓴다.
   // 성향 ICE 는 케이스와 무관한 한 문장이라 "가장 걱정되는 게?"에 어느 케이스든 같은 답이 나왔다.
   // 검증(validate)은 성향 ICE 로 끝낸 뒤에 바꾼다 — 상충 조합 규칙이 성향 id 를 보기 때문.
-  const sIce = scenarioIce(scenario);
+  const sIce = scenarioIce(scenario, person);
   if (sIce) person.ice = sIce;
 
   const { findings, rolled } = resolveFindings(scenario, slots);

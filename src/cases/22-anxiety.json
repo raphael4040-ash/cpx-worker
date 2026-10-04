@@ -164,10 +164,10 @@
       },
       "variations": {
         "onsetYears": [1, 2, 3],
-        "worseMonths": [2, 3, 6],
+        "worseMonths": [1, 2, 3],
         "severity": [5, 6, 7],
         "coffee": [1, 2, 3],
-        "protective": [{"text": "애들 생각하면 그런 생각 하면 안 되죠.", "minAge": 32}, "부모님이 계셔서요.", "교회 다니면서 마음을 붙잡아요."],
+        "protective": [{"text": "애들 생각하면 그런 생각 하면 안 되죠.", "minAge": 32}, {"text": "부모님이 계셔서요.", "maxAge": 50}, "교회 다니면서 마음을 붙잡아요."],
         "pmhVar": ["특이 병력 없음", "몇 년 전 위내시경에서 위염"],
         "medsVar": ["없음", "약국 소화제를 가끔 복용"], "medsSay": ["새로 먹는 약은 없어요.", "약국에서 산 소화제만 가끔 먹어요."],
         "fhVar": ["특이사항 없음", "어머니 불안 증상으로 약 복용"]
@@ -182,7 +182,7 @@
     {
       "id": "anx-ptsd",
       "dx": "외상후스트레스장애 (교통사고 후)",
-      "constraints": { "ageRange": [24, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [24, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "drinker" },
       "occupationBias": ["driver", "delivery", "office", "market", "selfemp"],
       "ice": {
         "ideas": ["시간이 지나면 괜찮아질 줄 알았는데 제가 약해서 그런 것 같아요", "그 일이 너무 충격이라 그런 것 같아요"],
@@ -223,7 +223,7 @@
       "meds": "없음",
       "allergy": "없음",
       "fh": "특이사항 없음",
-      "sh": "인물 카드를 따르되 사고 후 운전이나 차 타는 일을 피하고 있어 출퇴근과 일에 지장이 있음",
+      "sh": "인물 카드를 따르되 사고 후 운전이나 차 타는 일을 피하고 있어 일상과 일에 지장이 있음",
       "pe": {
         "vitals": { "sbp": [118, 140], "dbp": [72, 88], "hr": [90, 98], "rr": [16, 20], "temp": [36.3, 37.0], "spo2": [97, 99],
                     "invariant": "정상에서 경한 빈맥 범위를 유지한다. 발열은 없다." },
@@ -252,7 +252,7 @@
         "severity": [6, 7, 8],
         "nightmares": [2, 3, 4],
         "event": ["큰 교통사고를 당한", "운전하다 다른 차와 크게 부딪힌", "타고 가던 버스가 크게 사고 난"],
-        "protective": [{"text": "애들이 있어서 그럴 수는 없어요.", "minAge": 32}, "부모님 생각하면 못 하죠.", {"text": "{{spouse}}가 옆에서 챙겨줘요.", "minAge": 30}],
+        "protective": [{"text": "애들이 있어서 그럴 수는 없어요.", "minAge": 32}, {"text": "부모님 생각하면 못 하죠.", "maxAge": 50}, {"text": "{{spouse}}가 옆에서 챙겨줘요.", "minAge": 30}],
         "headInjury": ["의식을 잃은 적은 없고 머리도 안 다쳤어요.", "사고 때 잠깐 멍했지만 의식을 잃지는 않았어요."],
         "drinkChange": ["그 일 뒤로 술이 늘었어요. 잠들려고 마셔요.", "{{alcoholSay}} 늘지는 않았어요."],
         "impact": ["볼일 보러 갈 때 차를 못 타서 한참 돌아다녀요.", {"text": "운전을 못 하게 돼서 일을 바꿔야 할 상황이에요.", "occOnly": ["driver", "delivery"]}],
@@ -423,7 +423,7 @@
         "severity": [4, 5, 6],
         "coffee": [4, 5],
         "energy": [2, 3],
-        "trigger": [{"text": "시험을", "occOnly": ["학생"]}, "취업을", "자격증 시험을"]
+        "trigger": [{"text": "시험을", "occOnly": ["학생"]}, {"text": "취업을", "occOnly": ["학생", "jobless", "parttime"]}, "자격증 시험을"]
       },
       "disclosure": {
         "spontaneous": ["두근거리고 손이 떨린다는 것", "잠이 안 온다는 것"],

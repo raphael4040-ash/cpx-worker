@@ -135,7 +135,7 @@
     {
       "id": "dv-elder-neglect",
       "dx": "동거 가족에 의한 노인학대 (신체적 학대와 방임 동반)",
-      "constraints": { "ageRange": [72, 86], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "notHeavy" },
+      "constraints": { "ageRange": [72, 86], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [], "alcohol": "notHeavy" },
       "occupationBias": ["retired", "farmer", "housewife"],
       "ice": {
         "ideas": ["제가 조심을 안 해서 떨어진 거예요", "나이 들어서 뼈가 약해진 것 같아요"],
@@ -354,7 +354,7 @@
       "variations": {
         "severity": [6, 7, 8],
         "siblingText": ["위로 일곱 살 {{olderBro}}가 하나 있어요.", "둘째가 돌 지났어요."],
-        "caregiverText": ["제가 주로 봐요. 남편은 늦게 들어와요.", "낮에는 제가 보고 저녁에는 남편이 볼 때도 있어요."],
+        "caregiverText": ["제가 주로 봐요. 남편은 늦게 들어와요.", "거의 제가 혼자 봐요. 남편은 야간 근무라서요."],
         "priorText": ["반년쯤 전에 이마가 찢어져서 꿰맨 적 있어요.", "전에 한 번 다리를 삐어서 간 적 있어요."]
       },
       "disclosure": {
@@ -375,7 +375,7 @@
     {
       "id": "dv-coercive-control",
       "dx": "배우자에 의한 정서적·경제적 통제와 경미한 신체 폭력 (임신 중)",
-      "constraints": { "ageRange": [27, 40], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["고혈압"], "smoking": "never", "alcohol": "never" },
+      "constraints": { "ageRange": [27, 40], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["고혈압", "dyslip", "gout"], "smoking": "never", "alcohol": "never" },
       "occupationBias": ["housewife", "office", "selfemp", "parttime", "market"],
       "ice": {
         "ideas": ["요즘 신경 쓸 일이 많아서 그런 것 같아요", "임신해서 몸이 예민해진 것 같아요"],
@@ -383,7 +383,7 @@
         "expectations": ["두통약을 먹어도 되는지 알고 싶어요", "잠 좀 잘 수 있게 해주세요"]
       },
       "iceHint": ["denial", "medicine", "work"],
-      "opening": ["머리가 계속 아프고 잠을 못 자요.", "속이 자꾸 얹히고 잠을 못 자서 왔어요."],
+      "opening": ["머리가 계속 아프고 잠을 못 자요.", "속도 자꾸 얹히고요."],
       "coverStory": "손목의 자국은 '문에 부딪혔다'고 설명한다. 어느 쪽 문인지, 어떻게 부딪혔는지 물으면 말을 돌린다.",
       "inconsistency": [
         "문에 부딪혔다는 설명으로는 양쪽 손목에 대칭으로 생긴 띠 모양 자국을 설명할 수 없다 — 붙잡힌 자국의 양상이다",

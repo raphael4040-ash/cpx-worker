@@ -156,7 +156,7 @@
           40
         ],
         "trigger": [
-          "아침 조회 시간에 오래 서 있던",
+          "행사장에서 오래 서 있던",
           "채혈을 받던",
           "더운 지하철에서 서 있던",
           "화장실에서 힘을 주던"
@@ -217,7 +217,7 @@
       ],
       "opening": [
         "갑자기 픽 쓰러졌어요.",
-        "며칠 전에 쓰러져서 왔어요."
+        "갑자기 쓰러져서 왔어요."
       ],
       "hpi": {
         "onset": "{{onsetDays}}일 전, {{situation}} 중에 아무 전조 없이 갑자기",
@@ -570,7 +570,7 @@
         "denial"
       ],
       "opening": [
-        "아침에 정신을 잃고 쓰러졌어요.",
+        "정신을 잃고 쓰러졌어요.",
         "식은땀을 흘리면서 정신이 없었대요."
       ],
       "hpi": {
@@ -601,7 +601,7 @@
       },
       "redFlags": {
         "당뇨약이나 인슐린을 쓰나": "{{dmMed}}",
-        "식사를 거른 적": "그날 아침을 안 먹었어요.",
+        "식사를 거른 적": "{{skipMeal}}",
         "무엇을 하고 회복됐나": "{{treatment}}",
         "혈당을 재봤나": "{{glucose}}",
         "최근 약이 바뀌었나": "{{medChange}}",
@@ -684,6 +684,7 @@
           "아침 식사 전",
           "새벽"
         ],
+        "skipMeal": ["그날 아침을 늦게 먹으려고 미루고 있었어요.", "전날 저녁을 거의 못 먹고 잤어요."],
         "dmMed": ["당뇨약을 먹는데 최근에 용량을 올렸어요.", "인슐린을 아침저녁으로 맞아요."],
         "treatment": [
           "가족이 사탕을 물려줬어요.",
@@ -706,7 +707,7 @@
           "특별한 말은 없었어요."
         ]
       },
-      "pairedVariations": [["renal", "renalChart"], ["episodes", "episodesChart"], ["dmMed", "dmChart", "medChange"], ["treatment", "treatmentChart"]],
+      "pairedVariations": [["renal", "renalChart"], ["timing", "skipMeal"], ["episodes", "episodesChart"], ["dmMed", "dmChart", "medChange"], ["treatment", "treatmentChart"]],
       "disclosure": {
         "spontaneous": [
           "정신을 잃었다는 것"
