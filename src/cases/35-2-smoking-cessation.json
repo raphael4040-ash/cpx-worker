@@ -109,13 +109,13 @@
         "expectations": ["끊는 방법이 있으면 알고 싶어요", "도움을 받으면 끊을 수 있는지 알고 싶어요"]
       },
       "iceHint": ["family", "work", "medicine"],
-      "opening": ["담배를 끊어야 하나 싶어서요.", "애가 생기고 나서 고민이 돼서 왔어요."],
+      "opening": ["담배를 끊어야 하나 싶어서요.", "요즘 들어 끊을까 고민이 돼서 왔어요."],
       "hpi": {
         "onset": "{{onsetMonths}}개월 전부터 금연을 고민 중",
         "character": "끊고 싶은 마음과 못 끊을 것 같은 마음이 반반",
         "location": "해당 없음",
         "radiation": "해당 없음",
-        "aggravating": "스트레스 받을 때, 술자리, 동료들과 같이 나갈 때",
+        "aggravating": "스트레스 받을 때, 술자리, 주변 사람들이 같이 피울 때",
         "relieving": "해당 없음",
         "severity": "해당 없음",
         "course": "{{attemptChart}}",

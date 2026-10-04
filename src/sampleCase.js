@@ -279,7 +279,7 @@ function drawPerson(scenario, personas) {
     return bag.length ? choice(bag) : null;
   }
 
-  const bias = personas.occupations.filter(
+  let bias = personas.occupations.filter(
     (o) => (scenario.occupationBias || []).includes(o.id) && occupationOk(o, age)
   );
   let allowed_ = personas.occupations.filter((o) => occupationOk(o, age));
@@ -289,6 +289,11 @@ function drawPerson(scenario, personas) {
       return age < lo2 ? lo2 - age : age - hi2;
     };
     allowed_ = personas.occupations.slice().sort((a, b) => distance(a) - distance(b)).slice(0, 3);
+  }
+  // 카드 전체가 직업을 전제하면 occupationOnly 로 못박는다 (sample_case.py 와 같음).
+  if (c.occupationOnly && c.occupationOnly.length) {
+    const fixed = allowed_.filter((o) => c.occupationOnly.includes(o.id));
+    if (fixed.length) { bias = fixed; allowed_ = fixed; }
   }
   const occupation = bias.length && Math.random() < 0.6 ? bySex(bias) : bySex(allowed_);
 

@@ -543,7 +543,8 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": [],
+        "alcohol": "drinker"
       },
       "occupationBias": [
         "retired",
@@ -680,7 +681,7 @@
         "lossEvent": [
           "배우자가 세상을 떠난",
           "일을 그만두게 된",
-          "자식과 크게 다툰"
+          {"text": "자식과 크게 다툰", "minAge": 45}
         ],
         "suicide": [
           "가끔 그냥 없어지고 싶다는 생각은 해요. 실제로 뭘 하려던 건 아니에요.",

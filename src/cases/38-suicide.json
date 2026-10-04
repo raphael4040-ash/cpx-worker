@@ -365,7 +365,7 @@
     {
       "id": "sui-adolescent-selfharm",
       "dx": "청소년 자해와 자살사고 (학교 내 괴롭힘 관련)",
-      "constraints": { "ageRange": [15, 19], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [15, 18], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "occupationOnly": ["middleschool", "highschool"] },
       "occupationBias": ["highschool", "student"],
       "ice": {
         "ideas": ["그냥 체한 것 같아요", "아침을 안 먹어서 그런가 봐요"],
