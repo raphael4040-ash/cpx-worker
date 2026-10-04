@@ -19,6 +19,7 @@
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
 import { prepareInterview } from "./interviewRoutes.js";
+import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, withMissingFeedbackNote } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
@@ -33,6 +34,7 @@ const DEFAULT_SESSION_RESERVE = 2000;
 
 const SESSION_TTL_SEC = 3 * 60 * 60;
 const MAX_OUTPUT_TOKENS = 4096;
+const MAX_TURN_TOKENS = 512;
 
 // ---------------------------------------------------------------- 공개 핸들러
 
@@ -71,7 +73,7 @@ export async function handleAiStart(request, env, cfg, cors) {
   const sessionId = crypto.randomUUID();
   await kv.put(
     `ai:session:${sessionId}`,
-    JSON.stringify({ uid: user.uid, prompts, topic: prepared.topic }),
+    JSON.stringify({ uid: user.uid, prompts, topic: prepared.topic, pe: prepared.pe }),
     { expirationTtl: SESSION_TTL_SEC }
   );
   await kv.put(userKey, String(userSessions + 1), { expirationTtl: 2 * 86400 });
@@ -111,6 +113,19 @@ export async function handleAiChat(request, env, cfg, cors) {
   // 배포 직후 남아 있던 예전 세션(통짜 systemPrompt)도 그대로 돌게 한다.
   const systemPrompt = session.prompts ? session.prompts[phaseFor(messages)] : session.systemPrompt;
 
+  // 진찰 단계는 소견이 이미 확정돼 있어서, 학생이 한 진찰 동작이 소견 이름과 확실히 맞으면
+  // 모델 없이 바로 답한다 (뉴런 0). 애매하면 아래로 내려가 지금처럼 모델이 답한다.
+  if (phaseFor(messages) === "pe" && session.pe) {
+    const last = messages[messages.length - 1].text;
+    let local = null;
+    if (/^\s*진찰\s*$/.test(last)) local = vitalsReply(session.pe.vitals);
+    else {
+      const hit = matchFindings(last, session.pe.findings);
+      if (hit) local = findingsReply(hit, session.pe.vitals);
+    }
+    if (local) return json({ reply: local, neurons: 0 }, 200, cors);
+  }
+
   const limits = readLimits(env);
   const day = utcDay();
   const neuronKey = `ai:neurons:${day}`;
@@ -124,7 +139,8 @@ export async function handleAiChat(request, env, cfg, cors) {
   const run = (msgs) =>
     env.AI.run(model, {
       messages: [{ role: "system", content: systemPrompt }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
-      max_completion_tokens: MAX_OUTPUT_TOKENS,
+      // 문진·진찰 답은 한두 문장이다. 상한을 낮춰 두면 장황한 답과 지연이 준다. 평가만 길다.
+      max_completion_tokens: phase === "eval" ? MAX_OUTPUT_TOKENS : MAX_TURN_TOKENS,
       temperature: 0.8,
       // 사고(reasoning) 출력은 환자 대사에 필요 없고 출력 뉴런만 늘린다.
       chat_template_kwargs: { enable_thinking: false },
