@@ -35,6 +35,7 @@ const DEFAULT_SESSION_RESERVE = 2000;
 const SESSION_TTL_SEC = 3 * 60 * 60;
 const MAX_OUTPUT_TOKENS = 4096;
 const MAX_TURN_TOKENS = 512;
+const AI_CALL_TIMEOUT_MS = 40000;
 
 // ---------------------------------------------------------------- 공개 핸들러
 
@@ -147,8 +148,14 @@ export async function handleAiChat(request, env, cfg, cors) {
 
   const model = env.AI_MODEL || DEFAULT_AI_MODEL;
   const phase = phaseFor(messages);
-  const run = (msgs, system = systemPrompt) =>
-    env.AI.run(model, {
+  // Workers AI 호출이 응답 없이 걸리는 일이 실제로 있었다 (브라우저에는 입력 중 표시만 계속 돌았다).
+  // 한 번에 AI_CALL_TIMEOUT_MS 를 넘기면 포기하고 ai_timeout 으로 알린다. 호출 자체는 취소되지 않는다.
+  const run = (msgs, system = systemPrompt) => {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error("ai_timeout")), AI_CALL_TIMEOUT_MS);
+    });
+    const call = env.AI.run(model, {
       messages: [{ role: "system", content: system }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
       // 문진·진찰 답은 한두 문장이다. 상한을 낮춰 두면 장황한 답과 지연이 준다. 평가만 길다.
       max_completion_tokens: phase === "eval" ? MAX_OUTPUT_TOKENS : MAX_TURN_TOKENS,
@@ -156,6 +163,8 @@ export async function handleAiChat(request, env, cfg, cors) {
       // 사고(reasoning) 출력은 환자 대사에 필요 없고 출력 뉴런만 늘린다.
       chat_template_kwargs: { enable_thinking: false },
     });
+    return Promise.race([call, timeout]).finally(() => clearTimeout(timer));
+  };
 
   let spent = 0;
   let reply = "";
@@ -188,6 +197,10 @@ export async function handleAiChat(request, env, cfg, cors) {
     }
   } catch (err) {
     const msg = String((err && err.message) || err);
+    if (msg === "ai_timeout") {
+      if (spent) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
+      return json({ error: "ai_timeout" }, 504, cors);
+    }
     // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
     // 덜 셌던 경우다. 그날은 상한에 닿은 것으로 기록해 이후 요청을 미리 막는다.
     if (/neuron|daily|quota|limit|4006/i.test(msg)) {
