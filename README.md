@@ -153,6 +153,19 @@ Node 가 없어도 테스트가 실패하는 채로 배포되는 일은 이제 �
 id 로 배포를 깨뜨리지 않기 위한 안전한 기본값입니다. `deploy_multi.py`·`wrangler` 둘 다
 이 섹션을 자동으로 바인딩에 반영하므로, `id` 를 채우고 주석만 풀면 됩니다.
 
+`/interview/ai/start`("키 없이" 면담 시작)는 로그인이 필요하지만 계정을 여러 개 만들어 우회할 수
+있어서, 같은 KV 로 IP 당 10분에 30회도 따로 셉니다(`src/worker.js` 의 `AI_START_LIMIT`).
+학교처럼 한 IP 에 학생이 몰려도 되게 넉넉히 잡았습니다. 카운터는 경로별 접두사(`iv:`, `aiStart:`)로
+나뉘어 서로 한도를 갉아먹지 않습니다. 구현과 테스트는 `src/guards.js`, `test/guards.test.mjs`.
+
+## CORS (브라우저 접근 허용 목록)
+
+브라우저에서 이 워커를 부를 수 있는 사이트는 `src/guards.js` 의 허용 목록으로 제한됩니다
+(기본: `cpx-practice.github.io`, 옛 주소 `raphael4040-ash.github.io`, 로컬 개발 서버 `localhost:8123`).
+목록에 없는 사이트의 스크립트는 응답을 읽지 못합니다. 바꾸려면 `wrangler.toml` 의 `[vars]` 에
+`ALLOWED_ORIGINS`(쉼표 구분)를 적습니다 — **웹 기록판 주소를 옮길 때는 반드시 여기도 함께 고쳐야
+합니다**, 안 그러면 면담이 전부 막힙니다. 플러그인 훅은 `curl` 이라 `Origin` 헤더가 없어 영향이 없습니다.
+
 ## 엔드포인트
 
 | 경로 | 설명 |
