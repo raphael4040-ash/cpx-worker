@@ -20,7 +20,7 @@
  */
 import { prepareInterview } from "./interviewRoutes.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -150,21 +150,19 @@ export async function handleAiChat(request, env, cfg, cors) {
   const phase = phaseFor(messages);
   // Workers AI 호출이 응답 없이 걸리는 일이 실제로 있었다 (브라우저에는 입력 중 표시만 계속 돌았다).
   // 한 번에 AI_CALL_TIMEOUT_MS 를 넘기면 포기하고 ai_timeout 으로 알린다. 호출 자체는 취소되지 않는다.
-  const run = (msgs, system = systemPrompt) => {
-    let timer;
-    const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error("ai_timeout")), AI_CALL_TIMEOUT_MS);
-    });
-    const call = env.AI.run(model, {
-      messages: [{ role: "system", content: system }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
-      // 문진·진찰 답은 한두 문장이다. 상한을 낮춰 두면 장황한 답과 지연이 준다. 평가만 길다.
-      max_completion_tokens: phase === "eval" ? MAX_OUTPUT_TOKENS : MAX_TURN_TOKENS,
-      temperature: 0.8,
-      // 사고(reasoning) 출력은 환자 대사에 필요 없고 출력 뉴런만 늘린다.
-      chat_template_kwargs: { enable_thinking: false },
-    });
-    return Promise.race([call, timeout]).finally(() => clearTimeout(timer));
-  };
+  const callTimeoutMs = Number(env.AI_CALL_TIMEOUT_MS) || AI_CALL_TIMEOUT_MS;
+  const run = (msgs, system = systemPrompt) =>
+    withTimeout(
+      env.AI.run(model, {
+        messages: [{ role: "system", content: system }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
+        // 문진·진찰 답은 한두 문장이다. 상한을 낮춰 두면 장황한 답과 지연이 준다. 평가만 길다.
+        max_completion_tokens: phase === "eval" ? MAX_OUTPUT_TOKENS : MAX_TURN_TOKENS,
+        temperature: 0.8,
+        // 사고(reasoning) 출력은 환자 대사에 필요 없고 출력 뉴런만 늘린다.
+        chat_template_kwargs: { enable_thinking: false },
+      }),
+      callTimeoutMs
+    );
 
   let spent = 0;
   let reply = "";

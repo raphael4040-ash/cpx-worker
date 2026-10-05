@@ -17,7 +17,7 @@ const SYNONYMS = [
   [/폐|숨소리|호흡음/, ["폐음", "폐", "호흡음"]],
   [/갑상[선샘]/, ["갑상선", "갑상샘"]],
   [/목\s*(뒤|덜미)|뒷목/, ["경부", "목"]],
-  [/목|경부/, ["경부", "목"]],
+  [/목(?!구멍|\s*안)|경부/, ["경부", "목"]],
   [/다리|하지/, ["하지"]],
   [/종아리/, ["종아리", "하지"]],
   [/부었|부종|붓/, ["부종"]],
@@ -51,8 +51,10 @@ const SYNONYMS = [
   [/청진|들어\s*보|들어볼|소리/, ["청진"]],
   [/촉진|눌러|만져|눌러보/, ["촉진"]],
   [/타진|두드려|두드리/, ["타진"]],
-  [/시진|살펴|볼게|봐도|보겠/, ["시진"]],
+  [/시진|살펴/, ["시진"]],
 ];
+// "들어볼게요", "눌러 보겠습니다"의 "보겠/볼게"는 시진이 아니다 — 다른 동작 낱말이 없을 때만 시진으로 본다.
+const WEAK_INSPECT = /볼게|봐도|보겠/;
 
 // 소견 이름에서 떼어 볼 낱말 단위. "복부 촉진" → [복부, 촉진], "인지 — 지남력" → [인지, 지남력].
 function keyTokens(key) {
@@ -68,15 +70,22 @@ const ACTIONS = new Set(["청진", "촉진", "타진", "시진"]);
 // 했는데 다른 동작의 결과까지 드러난다. 이런 칸은 모델에 넘겨 해당 동작만 골라 말하게 한다.
 const BROAD = new Set(["복부", "목", "하지", "피부", "손", "얼굴", "눈", "머리", "사지", "흉곽", "척추", "유방", "부종", "림프절", "관절", "흉부"]);
 
-/** 학생 말에서 소견 이름 쪽 낱말 집합을 만든다. 소견 이름이 문장에 그대로 있으면 그것도 넣는다. */
-function concepts(text) {
-  const out = new Set();
-  for (const [re, words] of SYNONYMS) if (re.test(text)) words.forEach((w) => out.add(w));
-  // "들어볼게요", "눌러 보겠습니다"의 "보겠/볼게"는 시진이 아니다.
-  if (out.has("청진") || out.has("촉진") || out.has("타진")) out.delete("시진");
+/**
+ * 학생 말에서 낱말 묶음을 만든다. 묶음 하나는 학생이 한 말 하나(예: "폐", "목구멍")에 해당하는
+ * 소견 이름 쪽 낱말들이다 — 같은 말이 인두/인후처럼 여러 이름으로 불리기 때문에 묶어 둔다.
+ */
+function conceptGroups(text) {
+  const groups = SYNONYMS.filter(([re]) => re.test(text)).map(([, words]) => words);
+  const acted = groups.some((g) => g.some((w) => ["청진", "촉진", "타진"].includes(w)));
+  if (!acted && WEAK_INSPECT.test(text) && !groups.some((g) => g.includes("시진"))) groups.push(["시진"]);
   // 누르거나 두드려 보는 동작은 "…압통" 소견을 찾는 것이다("등 두드려 볼게요" → 늑골척추각 압통).
-  if (out.has("촉진") || out.has("타진")) out.add("압통");
-  return out;
+  if (groups.some((g) => g.includes("촉진") || g.includes("타진"))) groups.push(["압통"]);
+  return groups;
+}
+
+/** 학생 말에서 소견 이름 쪽 낱말 집합을 만든다. */
+function concepts(text) {
+  return new Set(conceptGroups(text).flat());
 }
 
 /** 학생이 진찰 동작이 아니라 허락을 구하거나 설명하는 말이면 환자 반응이 필요하다 — 모델에 넘긴다. */
@@ -85,22 +94,24 @@ const ASKING = /(될까요|괜찮으|괜찮을|해도 되|하셔도|동의|설�
 /**
  * 학생 말에 맞는 소견을 찾는다. 확실할 때만 [{key, text}] 를, 아니면 null 을 돌려준다.
  *   - 소견 이름이 학생 말에 그대로 있으면(예: "Murphy 징후", "늑골척추각 압통") 그것.
- *   - 아니면 소견 이름의 부위 낱말이 맞고, 동작 낱말이 있으면 그것도 맞는 소견.
+ *   - 소견 이름의 부위 낱말이 맞고, 동작 낱말이 있으면 그것도 맞는 소견 전부.
+ *     한 문장에 부위를 여럿 말하면("목구멍 시진하고 폐 청진") 각각의 소견을 모두 돌려준다.
  *   - 맞는 것이 너무 많으면(4개 이상) 무엇을 했는지 애매하다 — null.
+ *   - 학생이 말한 부위 중 하나라도 맞는 소견이 없으면 null — 일부만 답하면 나머지 진찰이
+ *     조용히 사라진다. 소견에 없는 진찰은 모델이 "특이소견 없음"으로 답한다.
  */
 export function matchFindings(text, findings) {
   if (!text || !findings || ASKING.test(text.trim())) return null;
   const keys = Object.keys(findings);
+  const matched = new Set();
   const direct = keys.filter((k) => {
     const base = k.replace(/\(.*?\)/g, "").trim();
     return base.length >= 3 && !BROAD.has(base) && text.includes(base);
   });
-  if (direct.length && direct.length <= 3) return direct.map((key) => ({ key, text: findings[key] }));
+  if (direct.length && direct.length <= 3) direct.forEach((k) => matched.add(k));
 
-  const have = concepts(text);
-  if (!have.size) return null;
-  let best = [];
-  let bestScore = 0;
+  const groups = conceptGroups(text);
+  const have = new Set(groups.flat());
   for (const key of keys) {
     const toks = keyTokens(key);
     const parts = toks.filter((t) => !ACTIONS.has(t));
@@ -110,14 +121,16 @@ export function matchFindings(text, findings) {
     if (!parts.every((t) => have.has(t))) continue;
     // 동작 낱말이 있으면 학생이 한 동작과 같아야 한다("복부 청진" ≠ "배를 눌러").
     if (acts.length && !acts.some((t) => have.has(t))) continue;
-    const score = parts.length + acts.length;
-    if (score > bestScore) {
-      best = [key];
-      bestScore = score;
-    } else if (score === bestScore) best.push(key);
+    matched.add(key);
   }
-  if (!best.length || best.length > 3) return null;
-  return best.map((key) => ({ key, text: findings[key] }));
+  if (!matched.size || matched.size > 4) return null;
+
+  // 학생이 말한 부위마다 맞춘 소견이 하나는 있어야 한다.
+  const covered = new Set([...matched].flatMap(keyTokens));
+  const isAction = (g) => g.every((w) => ACTIONS.has(w) || w === "압통");
+  const missed = groups.filter((g) => !isAction(g) && !g.some((w) => covered.has(w)));
+  if (missed.length) return null;
+  return [...matched].map((key) => ({ key, text: findings[key] }));
 }
 
 /** "진찰" 신호 직후 응답 — 활력징후만 괄호로 (프롬프트 "신체진찰 모드" 규칙과 같다). */

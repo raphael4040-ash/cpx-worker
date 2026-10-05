@@ -43,3 +43,38 @@ test("활력징후 응답과 양팔 혈압 차이 숫자 채우기", () => {
   const r = findingsReply([{ key: "양팔 혈압", text: "우측 수축기 혈압이 좌측보다 뚜렷하게 낮다(차이는 활력징후의 양팔 수축기압 차이 값)" }], v);
   assert.match(r, /차이 32 mmHg/);
 });
+
+// 발열 케이스(18-fever)의 실제 소견 이름. 목구멍 시진 + 폐 청진을 한 문장에 요청하면 폐음만 나오던 문제.
+const FEVER = {
+  "전신 외관": "아파 보인다",
+  "늑골척추각 압통": "오른쪽에서 두드리면 심한 통증",
+  "복부 촉진": "하복부에 경한 압통",
+  "복부 청진": "장음 정상",
+  "폐음 청진": "양측 정상",
+  "심음 청진": "규칙적",
+  "인후 시진": "정상",
+  "경부 림프절": "커진 것 없음",
+};
+
+const sorted = (m) => keys(m).sort();
+
+test("한 문장에 부위를 여럿 말하면 각각의 소견을 모두 준다", () => {
+  assert.deepEqual(sorted(matchFindings("(입을 벌리게 하고 목구멍을 시진하고, 양쪽 폐를 청진한다)", FEVER)), ["인후 시진", "폐음 청진"]);
+  assert.deepEqual(sorted(matchFindings("심장 소리와 폐 소리를 들어보겠습니다", FEVER)), ["심음 청진", "폐음 청진"]);
+});
+
+test("청진과 같이 말해도 시진은 지워지지 않고, 목구멍 시진 하나만 말해도 그대로 맞는다", () => {
+  assert.deepEqual(keys(matchFindings("(목구멍을 시진한다)", FEVER)), ["인후 시진"]);
+  assert.deepEqual(keys(matchFindings("(폐를 청진한다)", FEVER)), ["폐음 청진"]);
+});
+
+test("소견에 없는 진찰이 같이 섞이면 일부만 답하지 않고 모델에 넘긴다", () => {
+  assert.equal(matchFindings("(폐를 청진하고 무릎 반사를 확인한다)", FEVER), null);
+  assert.equal(matchFindings("(폐를 청진하고 갑상선을 촉진한다)", FEVER), null);
+});
+
+test("다른 동작 낱말이 없을 때의 '볼게요'만 시진으로 본다", () => {
+  assert.deepEqual(keys(matchFindings("목구멍 좀 볼게요", FEVER)), ["인후 시진"]);
+  // 청진 동작이 같이 있으면 "볼게요"는 시진이 아니다 — 목구멍 소견이 안 맞으니 일부만 답하지 않고 모델에 넘긴다.
+  assert.equal(matchFindings("폐 소리 들어볼게요 그리고 목구멍도 볼게요", FEVER), null);
+});

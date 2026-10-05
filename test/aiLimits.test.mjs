@@ -124,3 +124,14 @@ test("첫 대사는 내원 이유만 처음 물었을 때 모델 없이 낸다",
   );
   assert.equal(isOpeningTurn([{ role: "user", text: "어떻게 오셨어요?" }], []), false);
 });
+
+import { withTimeout } from "../src/aiLimits.js";
+
+test("withTimeout: 응답이 영영 안 오면 ai_timeout 으로 거절하고, 제때 오면 그대로 돌려준다", async () => {
+  const never = new Promise(() => {});
+  const t0 = Date.now();
+  await assert.rejects(withTimeout(never, 50), { message: "ai_timeout" });
+  assert.ok(Date.now() - t0 < 1000);
+  assert.equal(await withTimeout(Promise.resolve("ok"), 1000), "ok");
+  await assert.rejects(withTimeout(Promise.reject(new Error("boom")), 1000), { message: "boom" });
+});

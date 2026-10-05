@@ -158,3 +158,15 @@ export function isOpeningTurn(messages, openings) {
   if (!last || last.role !== "user" || !OPENING_ASK.test(last.text) || ID_ASK.test(last.text)) return false;
   return !messages.some((m) => m.role === "assistant" && openings.some((o) => m.text.includes(o)));
 }
+
+/**
+ * promise 가 ms 안에 끝나지 않으면 Error("ai_timeout") 으로 거절한다. 원래 호출은 취소되지 않는다.
+ * Workers AI 호출이 응답 없이 걸리는 일이 있어서(브라우저에 입력 중 표시만 계속 돌았다) 쓴다.
+ */
+export function withTimeout(promise, ms, message = "ai_timeout") {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}

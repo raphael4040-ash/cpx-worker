@@ -26,7 +26,7 @@ const DEFAULT_OWNER_UID = "S4b2Zqzff2XHNznL1Wcq6RiZVGv1";
 
 // 배포된 워커가 최신인지 밖에서 확인하기 위한 버전 문자열.
 // 이 파일을 고칠 때마다 함께 올린다 — 그래야 `curl .../health` 로 붙었는지 판별된다.
-const WORKER_VERSION = "2026-10-05.1";
+const WORKER_VERSION = "2026-10-05.2";
 
 const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여유
 const CORS = {
