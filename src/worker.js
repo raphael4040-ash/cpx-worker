@@ -13,6 +13,7 @@
  */
 import { handleInterviewStart } from "./interviewRoutes.js";
 import { handleAiStart, handleAiChat, handleAiStatus, handleAiUsage } from "./aiRoutes.js";
+import { corsFor, checkRateLimit } from "./guards.js";
 
 // Cloudflare 대시보드에서 환경변수(FIREBASE_PROJECT_ID / FIREBASE_API_KEY)를 넣으면
 // 그 값이 우선하고, 안 넣으면 아래 기본값을 쓴다. 둘 다 웹앱에 그대로 노출되는
@@ -26,80 +27,74 @@ const DEFAULT_OWNER_UID = "S4b2Zqzff2XHNznL1Wcq6RiZVGv1";
 
 // 배포된 워커가 최신인지 밖에서 확인하기 위한 버전 문자열.
 // 이 파일을 고칠 때마다 함께 올린다 — 그래야 `curl .../health` 로 붙었는지 판별된다.
-const WORKER_VERSION = "2026-10-05.2";
+const WORKER_VERSION = "2026-10-05.3";
 
 const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여유
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Authorization, Content-Type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+// CORS 헤더는 요청마다 guards.js 의 corsFor 가 만든다 (허용 목록에 있는 Origin 만 통과).
 
 // /interview/start 는 로그인·페어링 토큰이 필요 없다 — 학생 브라우저가 세션을
 // 시작하기 전부터 부르는 경로라서다. 그만큼 인증 없이 열려 있어, 외부에서 스크립트로
 // 반복 호출하면 Cloudflare 무료 한도(하루 10만 요청)를 실제 학생 몫까지 갉아먹을 수 있다.
 // env.RATE_LIMIT_KV 가 설정돼 있을 때만 IP 당 창 하나에 요청 수를 센다 — KV 바인딩을
 // 아직 안 만든 배포(로컬 dev 등)에서는 그냥 통과시킨다(가용성을 우선한다).
-const RATE_LIMIT_WINDOW_SEC = 600; // 10분
-const RATE_LIMIT_MAX = 20; // 창 하나당 IP 당 허용 요청 수 — 정상적인 면담 시작 재시도는 넉넉히 통과한다
+// 기본값(창 10분, IP 당 20회)은 guards.js 의 checkRateLimit 에 있다 — 정상적인 면담 시작 재시도는 넉넉히 통과한다.
 
-async function checkRateLimit(kv, ip) {
-  if (!kv || !ip) return true;
-  const key = `iv:${ip}`;
-  let count = 0;
-  try {
-    const raw = await kv.get(key);
-    count = raw ? parseInt(raw, 10) || 0 : 0;
-  } catch {
-    return true; // KV 읽기 실패로 정상 사용자를 막지 않는다
-  }
-  if (count >= RATE_LIMIT_MAX) return false;
-  try {
-    await kv.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW_SEC });
-  } catch {
-    /* 카운트 저장에 실패해도 이번 요청은 이미 허용됐다 */
-  }
-  return true;
-}
+// 키 없는 AI 면담 시작은 로그인이 필요하고 1인당 하루 횟수도 있지만, 계정을 여러 개 만들어 우회할 수 있다.
+// 그래서 IP 당으로도 센다. 학교처럼 한 IP 에 학생이 몰려도 되게 넉넉히 잡았다.
+const AI_START_LIMIT = { prefix: "aiStart", max: 30, windowSec: 600 };
 
 export default {
   async fetch(request, env) {
-    if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
-
-    const url = new URL(request.url);
-    if (url.pathname === "/health") return json({ ok: true, version: WORKER_VERSION });
-    if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-
-    try {
-      if (url.pathname === "/upload") return await handleUpload(request, env);
-      // 웹 면담 — 케이스 조합·프롬프트 생성만 여기서 하고, 실제 Gemini 호출은 브라우저가
-      // 직접 한다(Worker→Google 경로가 구글 지역 차단에 걸려서). 별도 파일(interviewRoutes.js).
-      if (url.pathname === "/interview/start") {
-        const ip = request.headers.get("CF-Connecting-IP") || "";
-        const allowed = await checkRateLimit(env.RATE_LIMIT_KV, ip);
-        if (!allowed) {
-          return json({ error: "rate_limited", hint: "요청이 너무 잦습니다. 잠시 후 다시 시도해주세요." }, 429);
-        }
-        return await handleInterviewStart(request, env, CORS);
-      }
-      // "키 없이 바로" 면담 — Workers AI 무료 한도 안에서만 돈다 (aiRoutes.js 참고).
-      if (url.pathname.startsWith("/interview/ai/")) {
-        const cfg = {
-          projectId: env.FIREBASE_PROJECT_ID || DEFAULT_PROJECT_ID,
-          ownerUid: env.OWNER_UID || DEFAULT_OWNER_UID,
-        };
-        if (url.pathname === "/interview/ai/status") return await handleAiStatus(env, CORS);
-        if (url.pathname === "/interview/ai/start") return await handleAiStart(request, env, cfg, CORS);
-        if (url.pathname === "/interview/ai/chat") return await handleAiChat(request, env, cfg, CORS);
-        if (url.pathname === "/interview/ai/usage") return await handleAiUsage(request, env, cfg, CORS);
-      }
-      return json({ error: "not_found" }, 404);
-    } catch (err) {
-      // 훅은 non-2xx 를 non-blocking error 로 취급하므로 세션을 막지 않는다.
-      return json({ error: "internal", detail: String(err && err.message || err) }, 500);
-    }
+    const CORS = corsFor(request, env);
+    // json() 은 CORS 를 모르는 곳에서도 쓰이므로, 응답이 나가기 직전에 한 번에 붙인다.
+    const res = await handle(request, env, CORS);
+    for (const [k, v] of Object.entries(CORS)) res.headers.set(k, v);
+    return res;
   },
 };
+
+async function handle(request, env, CORS) {
+  if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
+
+  const url = new URL(request.url);
+  if (url.pathname === "/health") return json({ ok: true, version: WORKER_VERSION });
+  if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+
+  try {
+    if (url.pathname === "/upload") return await handleUpload(request, env);
+    // 웹 면담 — 케이스 조합·프롬프트 생성만 여기서 하고, 실제 Gemini 호출은 브라우저가
+    // 직접 한다(Worker→Google 경로가 구글 지역 차단에 걸려서). 별도 파일(interviewRoutes.js).
+    if (url.pathname === "/interview/start") {
+      const ip = request.headers.get("CF-Connecting-IP") || "";
+      const allowed = await checkRateLimit(env.RATE_LIMIT_KV, ip);
+      if (!allowed) {
+        return json({ error: "rate_limited", hint: "요청이 너무 잦습니다. 잠시 후 다시 시도해주세요." }, 429);
+      }
+      return await handleInterviewStart(request, env, CORS);
+    }
+    // "키 없이 바로" 면담 — Workers AI 무료 한도 안에서만 돈다 (aiRoutes.js 참고).
+    if (url.pathname.startsWith("/interview/ai/")) {
+      const cfg = {
+        projectId: env.FIREBASE_PROJECT_ID || DEFAULT_PROJECT_ID,
+        ownerUid: env.OWNER_UID || DEFAULT_OWNER_UID,
+      };
+      if (url.pathname === "/interview/ai/status") return await handleAiStatus(env, CORS);
+      if (url.pathname === "/interview/ai/start") {
+        const ip = request.headers.get("CF-Connecting-IP") || "";
+        if (!(await checkRateLimit(env.RATE_LIMIT_KV, ip, AI_START_LIMIT))) {
+          return json({ error: "rate_limited", hint: "요청이 너무 잦습니다. 잠시 후 다시 시도해주세요." }, 429);
+        }
+        return await handleAiStart(request, env, cfg, CORS);
+      }
+      if (url.pathname === "/interview/ai/chat") return await handleAiChat(request, env, cfg, CORS);
+      if (url.pathname === "/interview/ai/usage") return await handleAiUsage(request, env, cfg, CORS);
+    }
+    return json({ error: "not_found" }, 404);
+  } catch (err) {
+    // 훅은 non-2xx 를 non-blocking error 로 취급하므로 세션을 막지 않는다.
+    return json({ error: "internal", detail: String(err && err.message || err) }, 500);
+  }
+}
 
 async function handleUpload(request, env) {
   const cfg = {
@@ -478,6 +473,6 @@ function int(v) {
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS },
+    headers: { "Content-Type": "application/json" }, // CORS 헤더는 fetch 진입점에서 붙인다
   });
 }
