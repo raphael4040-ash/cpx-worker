@@ -19,7 +19,7 @@ GEMINI_MODEL = "gemini-3.5-flash-lite"
 AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
 AI_DAILY_NEURON_CAP = "9000"      # 무료 10,000 중 이만큼만 쓴다 (KV 동시성 오차 여유)
 AI_USER_DAILY_SESSIONS = "2"      # 1인당 하루 면담 수 (관리자는 무제한)
-AI_SESSION_RESERVE = "2000"       # 남은 양이 이보다 적으면 새 면담을 시작시키지 않는다
+AI_SESSION_RESERVE = "500"        # 남은 양이 이보다 적으면 새 면담을 시작시키지 않는다 (면담 한 회 약 250~350뉴런. 2026-10-06 에 2000 → 500 으로 낮춤)
 # 아래 둘은 코드 기본값을 쓰므로 비워 둔다. 바꿀 때만 주석을 푼다 (deploy.sh 는 # 로 시작하는 줄을 무시한다).
 # ALLOWED_ORIGINS = "https://cpx-practice.github.io,https://raphael4040-ash.github.io"  # 브라우저에서 이 워커를 부를 수 있는 사이트 (쉼표 구분, src/guards.js)
 # AI_CALL_TIMEOUT_MS = "40000"    # Workers AI 호출 한 번의 대기 상한 (넘으면 504 ai_timeout, src/aiRoutes.js)
