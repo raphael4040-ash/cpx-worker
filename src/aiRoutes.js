@@ -21,7 +21,7 @@
 import { prepareInterview } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -166,19 +166,27 @@ export async function handleAiChat(request, env, cfg, cors) {
     );
 
   let spent = 0;
+  let tokIn = 0; // 이 요청에서 쓴 입력·출력 토큰 — 면담별 사용량(recordUsage)에 남긴다
+  let tokOut = 0;
+  const count = (usage, system, msgs, text) => {
+    const t = tokenCounts(usage, system, msgs, text);
+    tokIn += t.tin;
+    tokOut += t.tout;
+    return neuronsFor(model, usage, system, msgs, text);
+  };
   let reply = "";
   try {
     const turn = withTurnReminder(messages, systemPrompt);
     let result = await run(turn);
     reply = extractReply(result);
-    spent += neuronsFor(model, result?.usage, systemPrompt, turn, reply);
+    spent += count(result?.usage, systemPrompt, turn, reply);
     // "평가" 전인데 평가문을 쓴 경우 — 학생의 요약·마무리 말에서 실제로 있었다 (기록 블록 없이,
     // 환자 말풍선 안에). 한 번은 안내를 덧붙여 다시 받고, 그래도 평가면 중립 지문으로 대신한다.
     if (phase !== "eval" && looksLikeEvaluation(reply)) {
       const retry = withNotYetEvalNote(turn);
       result = await run(retry);
       reply = extractReply(result);
-      spent += neuronsFor(model, result?.usage, systemPrompt, retry, reply);
+      spent += count(result?.usage, systemPrompt, retry, reply);
       if (looksLikeEvaluation(reply)) reply = "(환자가 고개를 끄덕입니다.)";
     }
     // 평가에 개선점이 빠지는 일이 있었다 (Gemma 4 — 채점표와 기록 블록만 내고 잘한 점·개선점을 통째로 생략).
@@ -188,7 +196,7 @@ export async function handleAiChat(request, env, cfg, cors) {
         const ask = feedbackOnlyMessages(messages, reply);
         const again = await run(ask, FEEDBACK_SYSTEM);
         const text = extractReply(again);
-        spent += neuronsFor(model, again?.usage, FEEDBACK_SYSTEM, ask, text);
+        spent += count(again?.usage, FEEDBACK_SYSTEM, ask, text);
         if (text) reply = insertFeedback(reply, text);
       } catch {
         /* 다시 받기가 실패해도 처음 평가는 그대로 돌려준다 */
@@ -211,7 +219,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   }
   await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
 
-  const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false);
+  const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut });
   if (!reply) return json({ error: "empty_response" }, 502, cors);
   return json({ reply, neurons: spent, usage }, 200, cors);
 }
@@ -288,7 +296,7 @@ export async function handleAiUsage(request, env, cfg, cors) {
 }
 
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
-async function recordUsage(kv, sessionId, topic, phase, neurons, local) {
+async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens = { tin: 0, tout: 0 }) {
   const key = `ai:usage:${utcDay()}:${sessionId}`;
   let u = null;
   try {
@@ -296,12 +304,16 @@ async function recordUsage(kv, sessionId, topic, phase, neurons, local) {
   } catch {
     /* 기록 실패는 면담을 막지 않는다 */
   }
-  u = u || { sessionId, topic, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, byPhase: {} };
+  u = u || { sessionId, topic, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, tokensIn: 0, tokensOut: 0, byPhase: {} };
   u.neurons += neurons;
+  u.tokensIn = (u.tokensIn || 0) + tokens.tin; // 이 기능을 넣기 전의 기록에는 없으므로 || 0
+  u.tokensOut = (u.tokensOut || 0) + tokens.tout;
   if (local) u.localTurns += 1;
   else u.modelTurns += 1;
   const p = (u.byPhase[phase] = u.byPhase[phase] || { neurons: 0, model: 0, local: 0 });
   p.neurons += neurons;
+  p.tokensIn = (p.tokensIn || 0) + tokens.tin;
+  p.tokensOut = (p.tokensOut || 0) + tokens.tout;
   p[local ? "local" : "model"] += 1;
   u.updatedAt = new Date().toISOString();
   try {
@@ -309,7 +321,7 @@ async function recordUsage(kv, sessionId, topic, phase, neurons, local) {
   } catch {
     /* 기록 실패는 면담을 막지 않는다 */
   }
-  return { neurons: u.neurons, modelTurns: u.modelTurns, localTurns: u.localTurns };
+  return { neurons: u.neurons, modelTurns: u.modelTurns, localTurns: u.localTurns, tokensIn: u.tokensIn, tokensOut: u.tokensOut };
 }
 
 /** GET 대신 POST /interview/ai/status — 오늘 남은 양 (설정 화면 안내용, 인증 불필요). */

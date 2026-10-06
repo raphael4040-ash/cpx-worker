@@ -135,3 +135,16 @@ test("withTimeout: 응답이 영영 안 오면 ai_timeout 으로 거절하고, �
   assert.equal(await withTimeout(Promise.resolve("ok"), 1000), "ok");
   await assert.rejects(withTimeout(Promise.reject(new Error("boom")), 1000), { message: "boom" });
 });
+
+import { tokenCounts } from "../src/aiLimits.js";
+
+test("tokenCounts: usage 가 오면 그대로, 안 오면 글자 수로 추정한다", () => {
+  assert.deepEqual(tokenCounts({ prompt_tokens: 1200, completion_tokens: 80 }, "시스템", [{ text: "안녕" }], "답"), { tin: 1200, tout: 80 });
+  assert.deepEqual(tokenCounts(undefined, "시스템", [{ text: "안녕" }, { text: "하세요" }], "답변"), { tin: 3 + 2 + 3, tout: 2 });
+});
+
+test("neuronsFor 는 tokenCounts 와 같은 토큰 수로 계산한다 (리팩터링 전과 값이 같다)", () => {
+  const model = "@cf/google/gemma-4-26b-a4b-it"; // 입력 9091 · 출력 27273 뉴런/100만 토큰
+  assert.equal(neuronsFor(model, { prompt_tokens: 1000000, completion_tokens: 0 }, "", [], ""), 9091);
+  assert.equal(neuronsFor(model, { prompt_tokens: 0, completion_tokens: 1000000 }, "", [], ""), 27273);
+});

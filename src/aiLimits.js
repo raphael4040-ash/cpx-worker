@@ -34,13 +34,18 @@ export function sanitizeMessages(input) {
   return out;
 }
 
-/** usage 가 오면 그대로, 안 오면 글자 수로 보수적으로(한글 1자 ≈ 1토큰) 추정한다. */
-export function neuronsFor(model, usage, systemPrompt, messages, reply) {
-  const [rin, rout] = NEURON_RATES[model] || FALLBACK_RATE;
+/** 입력·출력 토큰 수. usage 가 오면 그대로, 안 오면 글자 수로 보수적으로(한글 1자 ≈ 1토큰) 추정한다. */
+export function tokenCounts(usage, systemPrompt, messages, reply) {
   let tin = usage?.prompt_tokens;
   let tout = usage?.completion_tokens;
   if (!Number.isFinite(tin)) tin = systemPrompt.length + messages.reduce((n, m) => n + m.text.length, 0);
   if (!Number.isFinite(tout)) tout = (reply || "").length;
+  return { tin, tout };
+}
+
+export function neuronsFor(model, usage, systemPrompt, messages, reply) {
+  const [rin, rout] = NEURON_RATES[model] || FALLBACK_RATE;
+  const { tin, tout } = tokenCounts(usage, systemPrompt, messages, reply);
   return Math.ceil((tin * rin + tout * rout) / 1e6);
 }
 
