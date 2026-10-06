@@ -139,12 +139,17 @@ export function vitalsReply(vitals) {
   return `(혈압 ${vitals.sbp}/${vitals.dbp} mmHg, 맥박 ${vitals.hr}회/분, 호흡 ${vitals.rr}회/분, 체온 ${vitals.temp}℃, 산소포화도 ${vitals.spo2}%)`;
 }
 
+// 카드 작성자가 소견 값 끝에 괄호로 적어 둔 메모("…(수치는 뽑은 활력징후에 맞춘다)", "…(값은 슬롯에서)").
+// 모델이 문장을 다시 쓸 때는 가려졌지만, 서버가 값을 그대로 읽어 주면 학생에게 그대로 보인다.
+const AUTHOR_NOTE = /\s*\([^()]*(?:맞춘다|맞춰|뽑은|슬롯|채운다|채워|작성자|모델이|프롬프트)[^()]*\)/g;
+
 /** 맞춘 소견을 서술자 톤으로 붙인다. 양팔 혈압 차이처럼 활력징후 값을 가리키는 소견은 숫자를 채운다. */
 export function findingsReply(matches, vitals) {
   return matches
     .map(({ key, text }) => {
       let t = String(text);
       if (vitals && "armDiff" in vitals && /양팔 수축기압 차이/.test(t)) t = t.replace(/\(차이는[^)]*\)/, `(차이 ${vitals.armDiff} mmHg)`);
+      t = t.replace(AUTHOR_NOTE, "").trim();
       return `(${key}: ${t})`;
     })
     .join("\n");
