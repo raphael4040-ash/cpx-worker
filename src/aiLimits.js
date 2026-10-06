@@ -175,3 +175,18 @@ export function withTimeout(promise, ms, message = "ai_timeout") {
   });
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
+
+// ---------------------------------------------------------------- 계정별 하루 면담 횟수
+
+export const MAX_USER_LIMIT = 20; // 관리자가 한 계정에 줄 수 있는 하루 면담 횟수의 상한 — 전체 무료 뉴런 한도가 따로 막지만 실수로 크게 주지 않게
+
+/** 하루 면담 횟수로 쓸 수 있는 값이면 정수로, 아니면 null (1 ~ MAX_USER_LIMIT). */
+export function parseUserLimit(v) {
+  const n = typeof v === "string" && v.trim() !== "" ? Number(v) : v;
+  return Number.isInteger(n) && n >= 1 && n <= MAX_USER_LIMIT ? n : null;
+}
+
+/** Firebase uid 모양인지 (KV 키에 들어가므로 엄격히). */
+export function validUid(s) {
+  return typeof s === "string" && /^[A-Za-z0-9_-]{6,128}$/.test(s);
+}

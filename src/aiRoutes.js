@@ -21,7 +21,7 @@
 import { prepareInterview } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -56,8 +56,10 @@ export async function handleAiStart(request, env, cfg, cors) {
   }
   const userKey = `ai:user:${day}:${user.uid}`;
   const userSessions = await getInt(kv, userKey);
-  if (user.uid !== cfg.ownerUid && userSessions >= limits.perUser) {
-    return json({ error: "user_daily_limit", limit: limits.perUser, resetsAt: nextResetIso() }, 429, cors);
+  // 관리자가 계정별로 정해 둔 하루 면담 횟수가 있으면 그것을, 없으면 기본값을 쓴다 (handleAiLimits).
+  const userLimit = (await getUserLimit(kv, user.uid)) ?? limits.perUser;
+  if (user.uid !== cfg.ownerUid && userSessions >= userLimit) {
+    return json({ error: "user_daily_limit", limit: userLimit, resetsAt: nextResetIso() }, 429, cors);
   }
 
   // 케이스 조합은 /interview/start 와 같은 함수를 쓴다 (같은 바디 형식).
@@ -86,7 +88,7 @@ export async function handleAiStart(request, env, cfg, cors) {
       topic: prepared.topic,
       model: env.AI_MODEL || DEFAULT_AI_MODEL,
       // 채점이 끝난 뒤 카드에 케이스 이름을 보여줄 때만 쓴다. 시스템 프롬프트는 내려주지 않는다.
-      remainingToday: Math.max(0, limits.perUser - userSessions - 1),
+      remainingToday: Math.max(0, userLimit - userSessions - 1),
     },
     200,
     cors
@@ -269,6 +271,57 @@ export async function handleAiKeys(request, env, cfg, cors) {
     const data = normalizePut(body);
     if (!data) return json({ error: "bad_keys" }, 400, cors);
     await kv.put(key, await seal({ ...data, updatedAt: new Date().toISOString() }, env.KEY_ENCRYPTION_SECRET, user.uid));
+    return json({ ok: true }, 200, cors);
+  }
+  return json({ error: "bad_action" }, 400, cors);
+}
+
+/** 관리자가 정해 둔 계정별 하루 면담 횟수. 없으면 null. */
+async function getUserLimit(kv, uid) {
+  try {
+    return parseUserLimit(await kv.get(`ai:limit:${uid}`));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * POST /interview/ai/limits — 관리자 전용. 계정별 하루 면담 횟수를 정한다 (전체 무료 뉴런 한도는 그대로 적용된다).
+ *   {action:"list"}                       → {defaultLimit, maxLimit, limits:{uid:n}}
+ *   {action:"set", uid, limit}            → {ok:true}   limit 이 null 이면 기본값으로 되돌린다
+ * 사용자 문서(Firestore)가 아니라 KV 에 두는 이유: 사용자가 자기 문서에 값을 넣을 수 있어서, 관리자만 쓸 수 있는 곳이 필요하다.
+ */
+export async function handleAiLimits(request, env, cfg, cors) {
+  const kv = env.RATE_LIMIT_KV;
+  if (!kv) return json({ error: "ai_not_configured" }, 503, cors);
+  const user = await authenticate(request, cfg);
+  if (user.error) return json({ error: user.error }, user.status, cors);
+  if (user.uid !== cfg.ownerUid) return json({ error: "forbidden" }, 403, cors);
+
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "bad_request" }, 400, cors);
+  }
+  if (body?.action === "list") {
+    const out = {};
+    const list = await kv.list({ prefix: "ai:limit:" });
+    for (const k of list.keys) {
+      const n = parseUserLimit(await kv.get(k.name));
+      if (n !== null) out[k.name.slice("ai:limit:".length)] = n;
+    }
+    return json({ defaultLimit: readLimits(env).perUser, maxLimit: MAX_USER_LIMIT, limits: out }, 200, cors);
+  }
+  if (body?.action === "set") {
+    if (!validUid(body.uid)) return json({ error: "bad_uid" }, 400, cors);
+    if (body.limit === null || body.limit === undefined) {
+      await kv.delete(`ai:limit:${body.uid}`);
+      return json({ ok: true }, 200, cors);
+    }
+    const n = parseUserLimit(body.limit);
+    if (n === null) return json({ error: "bad_limit", max: MAX_USER_LIMIT }, 400, cors);
+    await kv.put(`ai:limit:${body.uid}`, String(n));
     return json({ ok: true }, 200, cors);
   }
   return json({ error: "bad_action" }, 400, cors);

@@ -148,3 +148,17 @@ test("neuronsFor 는 tokenCounts 와 같은 토큰 수로 계산한다 (리팩�
   assert.equal(neuronsFor(model, { prompt_tokens: 1000000, completion_tokens: 0 }, "", [], ""), 9091);
   assert.equal(neuronsFor(model, { prompt_tokens: 0, completion_tokens: 1000000 }, "", [], ""), 27273);
 });
+
+import { parseUserLimit, validUid, MAX_USER_LIMIT } from "../src/aiLimits.js";
+
+test("계정별 면담 횟수: 1~상한의 정수만 받는다", () => {
+  assert.equal(parseUserLimit(5), 5);
+  assert.equal(parseUserLimit("5"), 5);
+  assert.equal(parseUserLimit(MAX_USER_LIMIT), MAX_USER_LIMIT);
+  for (const bad of [0, -1, MAX_USER_LIMIT + 1, 2.5, "", "abc", null, undefined, NaN, {}, [5]]) assert.equal(parseUserLimit(bad), null, String(bad));
+});
+
+test("uid 검증: KV 키에 안전한 모양만", () => {
+  assert.equal(validUid("S4b2Zqzff2XHNznL1Wcq6RiZVGv1"), true);
+  for (const bad of ["", "ab", "a b c d e f", "../x", "uid:evil", "x".repeat(200), 5, null]) assert.equal(validUid(bad), false, String(bad));
+});
