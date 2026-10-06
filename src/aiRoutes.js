@@ -19,6 +19,7 @@
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
 import { prepareInterview } from "./interviewRoutes.js";
+import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout } from "./aiLimits.js";
 
@@ -213,6 +214,56 @@ export async function handleAiChat(request, env, cfg, cors) {
   const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false);
   if (!reply) return json({ error: "empty_response" }, 502, cors);
   return json({ reply, neurons: spent, usage }, 200, cors);
+}
+
+/**
+ * POST /interview/ai/keys — 계정별 AI 키 보관 (면담 탭의 "내 계정에 키 저장").
+ *   {action:"get"}                                  → {aiKeys, aiModels, aiProvider} (저장된 게 없으면 {})
+ *   {action:"put", aiKeys, aiModels, aiProvider}    → {ok:true}
+ *   {action:"delete"}                               → {ok:true}
+ * 본인 토큰으로만 본인 것을 읽고 쓴다. 관리자도 다른 사람의 키를 이 경로로는 못 읽는다(uid 가 토큰에서 나온다).
+ * 검증·암호화는 aiKeyStore.js (KEY_ENCRYPTION_SECRET 이 있으면 암호화).
+ */
+export async function handleAiKeys(request, env, cfg, cors) {
+  const kv = env.RATE_LIMIT_KV;
+  if (!kv) return json({ error: "ai_not_configured" }, 503, cors);
+
+  const user = await authenticate(request, cfg);
+  if (user.error) return json({ error: user.error }, user.status, cors);
+
+  let text;
+  try {
+    text = await request.text();
+  } catch {
+    return json({ error: "bad_request" }, 400, cors);
+  }
+  if (text.length > MAX_BODY_CHARS) return json({ error: "too_large" }, 413, cors);
+  let body;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    return json({ error: "bad_request" }, 400, cors);
+  }
+
+  const key = `aikeys:${user.uid}`;
+  if (body?.action === "get") {
+    try {
+      return json((await openStored(await kv.get(key), env.KEY_ENCRYPTION_SECRET, user.uid)) || {}, 200, cors);
+    } catch {
+      return json({ error: "unreadable" }, 500, cors); // 암호화된 값인데 비밀값이 바뀌었거나 없는 경우
+    }
+  }
+  if (body?.action === "delete") {
+    await kv.delete(key);
+    return json({ ok: true }, 200, cors);
+  }
+  if (body?.action === "put") {
+    const data = normalizePut(body);
+    if (!data) return json({ error: "bad_keys" }, 400, cors);
+    await kv.put(key, await seal({ ...data, updatedAt: new Date().toISOString() }, env.KEY_ENCRYPTION_SECRET, user.uid));
+    return json({ ok: true }, 200, cors);
+  }
+  return json({ error: "bad_action" }, 400, cors);
 }
 
 /**

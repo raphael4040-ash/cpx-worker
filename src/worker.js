@@ -12,7 +12,7 @@
  *   4. Firestore REST 로 records 문서 생성
  */
 import { handleInterviewStart } from "./interviewRoutes.js";
-import { handleAiStart, handleAiChat, handleAiStatus, handleAiUsage } from "./aiRoutes.js";
+import { handleAiStart, handleAiChat, handleAiStatus, handleAiUsage, handleAiKeys } from "./aiRoutes.js";
 import { corsFor, checkRateLimit } from "./guards.js";
 
 // Cloudflare 대시보드에서 환경변수(FIREBASE_PROJECT_ID / FIREBASE_API_KEY)를 넣으면
@@ -27,7 +27,7 @@ const DEFAULT_OWNER_UID = "S4b2Zqzff2XHNznL1Wcq6RiZVGv1";
 
 // 배포된 워커가 최신인지 밖에서 확인하기 위한 버전 문자열.
 // 이 파일을 고칠 때마다 함께 올린다 — 그래야 `curl .../health` 로 붙었는지 판별된다.
-const WORKER_VERSION = "2026-10-06.3";
+const WORKER_VERSION = "2026-10-06.4";
 
 const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여유
 // CORS 헤더는 요청마다 guards.js 의 corsFor 가 만든다 (허용 목록에 있는 Origin 만 통과).
@@ -42,6 +42,8 @@ const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여�
 // 키 없는 AI 면담 시작은 로그인이 필요하고 1인당 하루 횟수도 있지만, 계정을 여러 개 만들어 우회할 수 있다.
 // 그래서 IP 당으로도 센다. 학교처럼 한 IP 에 학생이 몰려도 되게 넉넉히 잡았다.
 const AI_START_LIMIT = { prefix: "aiStart", max: 30, windowSec: 600 };
+// 계정별 키 보관(/interview/ai/keys) — 로그인 때 한 번 읽고 저장할 때 쓰므로 넉넉히 잡았다.
+const AI_KEYS_LIMIT = { prefix: "aiKeysIp", max: 120, windowSec: 600 };
 
 export default {
   async fetch(request, env) {
@@ -85,6 +87,13 @@ async function handle(request, env, CORS) {
           return json({ error: "rate_limited", hint: "요청이 너무 잦습니다. 잠시 후 다시 시도해주세요." }, 429);
         }
         return await handleAiStart(request, env, cfg, CORS);
+      }
+      if (url.pathname === "/interview/ai/keys") {
+        const ip = request.headers.get("CF-Connecting-IP") || "";
+        if (!(await checkRateLimit(env.RATE_LIMIT_KV, ip, AI_KEYS_LIMIT))) {
+          return json({ error: "rate_limited", hint: "요청이 너무 잦습니다. 잠시 후 다시 시도해주세요." }, 429);
+        }
+        return await handleAiKeys(request, env, cfg, CORS);
       }
       if (url.pathname === "/interview/ai/chat") return await handleAiChat(request, env, cfg, CORS);
       if (url.pathname === "/interview/ai/usage") return await handleAiUsage(request, env, cfg, CORS);
