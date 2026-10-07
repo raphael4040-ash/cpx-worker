@@ -52,12 +52,22 @@ export async function handleAiStart(request, env, cfg, cors) {
   const user = await authenticate(request, cfg);
   if (user.error) return json({ error: user.error }, user.status, cors);
 
+  // 케이스 조합은 /interview/start 와 같은 함수를 쓴다 (같은 바디 형식).
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    /* 빈 바디 허용 — 무작위 케이스 */
+  }
+
   const limits = readLimits(env);
   const day = utcDay();
   const used = await getInt(kv, `ai:neurons:${day}`);
   // 뉴런이 모자라면 운영자 Gemini 키가 있을 때만 그쪽으로 시작한다. 면담 도중에는 제공자를 바꾸지 않는다.
   let backend = "workers";
-  if (used + limits.reserve > limits.cap) {
+  // 관리자 점검용 — 뉴런이 남아 있어도 Gemini 로 시작해 본다 (본인 토큰이 관리자일 때만, 키가 있을 때만).
+  if (body?.forceGemini === true && user.uid === cfg.ownerUid && geminiConfigured(env)) backend = "gemini";
+  else if (used + limits.reserve > limits.cap) {
     if (!(await geminiHasRoom(kv, env, day))) {
       return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
     }
@@ -71,13 +81,6 @@ export async function handleAiStart(request, env, cfg, cors) {
     return json({ error: "user_daily_limit", limit: userLimit, resetsAt: nextResetIso() }, 429, cors);
   }
 
-  // 케이스 조합은 /interview/start 와 같은 함수를 쓴다 (같은 바디 형식).
-  let body = {};
-  try {
-    body = await request.json();
-  } catch {
-    /* 빈 바디 허용 — 무작위 케이스 */
-  }
   const prepared = prepareInterview(body);
   if (prepared.error) return json(prepared.error, prepared.status, cors);
   // 단계별 프롬프트를 미리 만들어 둔다 — 매 턴 그 단계에 필요한 만큼만 보낸다 (phaseFor 참고).
