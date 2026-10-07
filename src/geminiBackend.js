@@ -78,11 +78,11 @@ export function isGeminiQuotaError(msg) {
   return /^gemini_429/.test(String(msg));
 }
 
-/** 이 Worker 에서 Gemini 에 실제로 닿는지 확인한다 (모델 목록 조회 — 토큰을 쓰지 않는다). 관리자 진단용. */
+/** 이 Worker 에서 Gemini 에 실제로 닿는지 확인한다 (설정된 모델의 정보 조회 — 키와 모델명이 맞는지까지 보며 토큰은 쓰지 않는다). 관리자 진단용. */
 export async function probeGemini(env, fetchFn = fetch) {
   if (!geminiConfigured(env)) return { configured: false };
   try {
-    const res = await fetchFn(`${BASE}/models?pageSize=1`, { headers: { "x-goog-api-key": env.GEMINI_API_KEY } });
+    const res = await fetchFn(`${BASE}/models/${encodeURIComponent(geminiModel(env))}`, { headers: { "x-goog-api-key": env.GEMINI_API_KEY } });
     let detail = "";
     if (!res.ok) {
       try {
