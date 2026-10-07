@@ -20,6 +20,7 @@
  */
 import { prepareInterview } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
+import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, probeGemini } from "./geminiBackend.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
@@ -37,6 +38,9 @@ const SESSION_TTL_SEC = 3 * 60 * 60;
 const MAX_OUTPUT_TOKENS = 4096;
 const MAX_TURN_TOKENS = 512;
 const AI_CALL_TIMEOUT_MS = 40000;
+// Gemini 폴백 — 정확한 무료 한도는 모델마다 다르고 바뀐다. 코드 기본값은 보수적으로 두고 wrangler.toml 에서 맞춘다.
+const DEFAULT_GEMINI_SESSIONS = 6;
+const DEFAULT_GEMINI_REQUESTS = 150;
 
 // ---------------------------------------------------------------- 공개 핸들러
 
@@ -51,8 +55,13 @@ export async function handleAiStart(request, env, cfg, cors) {
   const limits = readLimits(env);
   const day = utcDay();
   const used = await getInt(kv, `ai:neurons:${day}`);
+  // 뉴런이 모자라면 운영자 Gemini 키가 있을 때만 그쪽으로 시작한다. 면담 도중에는 제공자를 바꾸지 않는다.
+  let backend = "workers";
   if (used + limits.reserve > limits.cap) {
-    return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+    if (!(await geminiHasRoom(kv, env, day))) {
+      return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+    }
+    backend = "gemini";
   }
   const userKey = `ai:user:${day}:${user.uid}`;
   const userSessions = await getInt(kv, userKey);
@@ -77,16 +86,19 @@ export async function handleAiStart(request, env, cfg, cors) {
   const sessionId = crypto.randomUUID();
   await kv.put(
     `ai:session:${sessionId}`,
-    JSON.stringify({ uid: user.uid, prompts, topic: prepared.topic, pe: prepared.pe, openings: prepared.openings }),
+    JSON.stringify({ uid: user.uid, backend, prompts, topic: prepared.topic, pe: prepared.pe, openings: prepared.openings }),
     { expirationTtl: SESSION_TTL_SEC }
   );
   await kv.put(userKey, String(userSessions + 1), { expirationTtl: 2 * 86400 });
+  if (backend === "gemini") {
+    await kv.put(`ai:gem:sessions:${day}`, String((await getInt(kv, `ai:gem:sessions:${day}`)) + 1), { expirationTtl: 2 * 86400 });
+  }
 
   return json(
     {
       sessionId,
       topic: prepared.topic,
-      model: env.AI_MODEL || DEFAULT_AI_MODEL,
+      model: backend === "gemini" ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL,
       // 채점이 끝난 뒤 카드에 케이스 이름을 보여줄 때만 쓴다. 시스템 프롬프트는 내려주지 않는다.
       remainingToday: Math.max(0, userLimit - userSessions - 1),
     },
@@ -121,7 +133,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   // 첫 대사는 카드에 고정돼 있다 — 내원 이유를 처음 물으면 모델 없이 후보 중 하나를 낸다.
   if (phaseFor(messages) === "history" && isOpeningTurn(messages, session.openings)) {
     const opening = session.openings[Math.floor(Math.random() * session.openings.length)];
-    const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true);
+    const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true, undefined, session.backend);
     return json({ reply: opening, neurons: 0, usage }, 200, cors);
   }
 
@@ -136,7 +148,7 @@ export async function handleAiChat(request, env, cfg, cors) {
       if (hit) local = findingsReply(hit, session.pe.vitals);
     }
     if (local) {
-      const usage = await recordUsage(kv, sessionId, session.topic, "pe", 0, true);
+      const usage = await recordUsage(kv, sessionId, session.topic, "pe", 0, true, undefined, session.backend);
       return json({ reply: local, neurons: 0, usage }, 200, cors);
     }
   }
@@ -145,17 +157,35 @@ export async function handleAiChat(request, env, cfg, cors) {
   const day = utcDay();
   const neuronKey = `ai:neurons:${day}`;
   const used = await getInt(kv, neuronKey);
-  if (used >= limits.cap) {
+  const gemini = session.backend === "gemini";
+  const gemReqKey = `ai:gem:req:${day}`;
+  if (gemini) {
+    if ((await getInt(kv, gemReqKey)) >= geminiLimits(env).maxRequests || !geminiConfigured(env)) {
+      return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+    }
+  } else if (used >= limits.cap) {
     return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
   }
 
-  const model = env.AI_MODEL || DEFAULT_AI_MODEL;
+  const model = gemini ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL;
   const phase = phaseFor(messages);
   // Workers AI 호출이 응답 없이 걸리는 일이 실제로 있었다 (브라우저에는 입력 중 표시만 계속 돌았다).
   // 한 번에 AI_CALL_TIMEOUT_MS 를 넘기면 포기하고 ai_timeout 으로 알린다. 호출 자체는 취소되지 않는다.
   const callTimeoutMs = Number(env.AI_CALL_TIMEOUT_MS) || AI_CALL_TIMEOUT_MS;
+  let gemCalls = 0;
   const run = (msgs, system = systemPrompt) =>
-    withTimeout(
+    gemini
+      ? (gemCalls++,
+        withTimeout(
+          callGemini(env, {
+            system,
+            msgs,
+            maxTokens: phase === "eval" ? MAX_OUTPUT_TOKENS : MAX_TURN_TOKENS,
+            temperature: 0.8,
+          }),
+          callTimeoutMs
+        ))
+      : withTimeout(
       env.AI.run(model, {
         messages: [{ role: "system", content: system }, ...msgs.map((m) => ({ role: m.role, content: m.text }))],
         // 문진·진찰 답은 한두 문장이다. 상한을 낮춰 두면 장황한 답과 지연이 준다. 평가만 길다.
@@ -174,7 +204,11 @@ export async function handleAiChat(request, env, cfg, cors) {
     const t = tokenCounts(usage, system, msgs, text);
     tokIn += t.tin;
     tokOut += t.tout;
-    return neuronsFor(model, usage, system, msgs, text);
+    return gemini ? 0 : neuronsFor(model, usage, system, msgs, text); // Gemini 는 뉴런을 쓰지 않는다
+  };
+  const saveCounters = async () => {
+    if (spent) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
+    if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
   };
   let reply = "";
   try {
@@ -207,21 +241,26 @@ export async function handleAiChat(request, env, cfg, cors) {
   } catch (err) {
     const msg = String((err && err.message) || err);
     if (msg === "ai_timeout") {
-      if (spent) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
+      await saveCounters();
       return json({ error: "ai_timeout" }, 504, cors);
+    }
+    if (gemini && isGeminiQuotaError(msg)) {
+      await kv.put(gemReqKey, String(Math.max(gemCalls + (await getInt(kv, gemReqKey)), geminiLimits(env).maxRequests)), { expirationTtl: 2 * 86400 });
+      return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
     }
     // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
     // 덜 셌던 경우다. 그날은 상한에 닿은 것으로 기록해 이후 요청을 미리 막는다.
-    if (/neuron|daily|quota|limit|4006/i.test(msg)) {
+    if (!gemini && /neuron|daily|quota|limit|4006/i.test(msg)) {
       await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
       return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
     }
-    if (spent) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
+    await saveCounters();
     return json({ error: "ai_error", detail: msg.slice(0, 300) }, 502, cors);
   }
   await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
+  if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
 
-  const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut });
+  const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers");
   if (!reply) return json({ error: "empty_response" }, 502, cors);
   return json({ reply, neurons: spent, usage }, 200, cors);
 }
@@ -338,6 +377,13 @@ export async function handleAiUsage(request, env, cfg, cors) {
   if (user.error) return json({ error: user.error }, user.status, cors);
   if (user.uid !== cfg.ownerUid) return json({ error: "forbidden" }, 403, cors);
   const day = utcDay();
+  let probe;
+  try {
+    const b = await request.clone().json();
+    if (b && b.probe) probe = await probeGemini(env);
+  } catch {
+    /* 바디 없음 */
+  }
   const list = await kv.list({ prefix: `ai:usage:${day}:` });
   const sessions = [];
   for (const k of list.keys) {
@@ -345,11 +391,18 @@ export async function handleAiUsage(request, env, cfg, cors) {
     if (v) sessions.push(v);
   }
   sessions.sort((a, b) => String(a.startedAt).localeCompare(String(b.startedAt)));
-  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), sessions }, 200, cors);
+  const gem = {
+    configured: geminiConfigured(env),
+    model: geminiModel(env),
+    sessions: await getInt(kv, `ai:gem:sessions:${day}`),
+    requests: await getInt(kv, `ai:gem:req:${day}`),
+    ...geminiLimits(env),
+  };
+  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), gemini: gem, probe, sessions }, 200, cors);
 }
 
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
-async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens = { tin: 0, tout: 0 }) {
+async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens = { tin: 0, tout: 0 }, backend = "workers") {
   const key = `ai:usage:${utcDay()}:${sessionId}`;
   let u = null;
   try {
@@ -357,7 +410,7 @@ async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens =
   } catch {
     /* 기록 실패는 면담을 막지 않는다 */
   }
-  u = u || { sessionId, topic, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, tokensIn: 0, tokensOut: 0, byPhase: {} };
+  u = u || { sessionId, topic, backend, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, tokensIn: 0, tokensOut: 0, byPhase: {} };
   u.neurons += neurons;
   u.tokensIn = (u.tokensIn || 0) + tokens.tin; // 이 기능을 넣기 전의 기록에는 없으므로 || 0
   u.tokensOut = (u.tokensOut || 0) + tokens.tout;
@@ -389,7 +442,7 @@ export async function handleAiStatus(env, cors) {
       model: env.AI_MODEL || DEFAULT_AI_MODEL,
       usedNeurons: used,
       capNeurons: limits.cap,
-      canStart: used + limits.reserve <= limits.cap,
+      canStart: used + limits.reserve <= limits.cap || (await geminiHasRoom(kv, env, utcDay())),
       perUserDaily: limits.perUser,
       resetsAt: nextResetIso(),
     },
@@ -448,6 +501,22 @@ function readLimits(env) {
     perUser: num(env.AI_USER_DAILY_SESSIONS, DEFAULT_USER_DAILY_SESSIONS),
     reserve: num(env.AI_SESSION_RESERVE, DEFAULT_SESSION_RESERVE),
   };
+}
+
+function geminiLimits(env) {
+  const num = (v, d) => (Number.isFinite(parseInt(v, 10)) ? parseInt(v, 10) : d);
+  return {
+    maxSessions: num(env.GEMINI_DAILY_SESSIONS, DEFAULT_GEMINI_SESSIONS),
+    maxRequests: num(env.GEMINI_DAILY_REQUESTS, DEFAULT_GEMINI_REQUESTS),
+  };
+}
+
+/** Gemini 폴백으로 새 면담을 시작할 여유가 있는지 (키가 있고, 하루 면담 수·요청 수가 남았을 때). */
+async function geminiHasRoom(kv, env, day) {
+  if (!geminiConfigured(env)) return false;
+  const lim = geminiLimits(env);
+  const [sessions, reqs] = await Promise.all([getInt(kv, `ai:gem:sessions:${day}`), getInt(kv, `ai:gem:req:${day}`)]);
+  return sessions < lim.maxSessions && reqs + 25 <= lim.maxRequests; // 면담 한 회 약 25~30회 호출
 }
 
 async function getInt(kv, key) {
