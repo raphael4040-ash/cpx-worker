@@ -20,7 +20,7 @@
  */
 import { prepareInterview } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
-import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, probeGemini } from "./geminiBackend.js";
+import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, probeGemini } from "./geminiBackend.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
@@ -38,9 +38,10 @@ const SESSION_TTL_SEC = 3 * 60 * 60;
 const MAX_OUTPUT_TOKENS = 4096;
 const MAX_TURN_TOKENS = 512;
 const AI_CALL_TIMEOUT_MS = 40000;
-// Gemini 폴백 — 정확한 무료 한도는 모델마다 다르고 바뀐다. 코드 기본값은 보수적으로 두고 wrangler.toml 에서 맞춘다.
-const DEFAULT_GEMINI_SESSIONS = 6;
-const DEFAULT_GEMINI_REQUESTS = 150;
+// Gemini 폴백 — 무료 한도는 모델마다 다르고 바뀐다. 우리 쪽 상한은 사실상 풀어 두고(wrangler.toml 로 줄일 수 있다),
+// 실제 한도는 구글이 돌려주는 429(PerDay)로 알아낸다 — 그날은 `ai:gem:dead:{day}` 로 표시해 새 면담을 막는다.
+const DEFAULT_GEMINI_SESSIONS = 1000;
+const DEFAULT_GEMINI_REQUESTS = 100000;
 
 // ---------------------------------------------------------------- 공개 핸들러
 
@@ -163,7 +164,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   const gemini = session.backend === "gemini";
   const gemReqKey = `ai:gem:req:${day}`;
   if (gemini) {
-    if ((await getInt(kv, gemReqKey)) >= geminiLimits(env).maxRequests || !geminiConfigured(env)) {
+    if ((await getInt(kv, gemReqKey)) >= geminiLimits(env).maxRequests || !geminiConfigured(env) || (await getInt(kv, `ai:gem:dead:${day}`))) {
       return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
     }
   } else if (used >= limits.cap) {
@@ -248,8 +249,13 @@ export async function handleAiChat(request, env, cfg, cors) {
       return json({ error: "ai_timeout" }, 504, cors);
     }
     if (gemini && isGeminiQuotaError(msg)) {
-      await kv.put(gemReqKey, String(Math.max(gemCalls + (await getInt(kv, gemReqKey)), geminiLimits(env).maxRequests)), { expirationTtl: 2 * 86400 });
-      return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+      await saveCounters();
+      // 하루 한도가 찼으면 그날은 Gemini 로 새 면담을 시작하지 않는다. 분당 한도면 잠깐 뒤 다시 하면 되므로 503(클라이언트가 재시도)로 알린다.
+      if (isGeminiDayQuota(msg)) {
+        await kv.put(`ai:gem:dead:${day}`, "1", { expirationTtl: 2 * 86400 });
+        return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+      }
+      return json({ error: "ai_busy" }, 503, cors);
     }
     // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
     // 덜 셌던 경우다. 그날은 상한에 닿은 것으로 기록해 이후 요청을 미리 막는다.
@@ -399,6 +405,7 @@ export async function handleAiUsage(request, env, cfg, cors) {
     model: geminiModel(env),
     sessions: await getInt(kv, `ai:gem:sessions:${day}`),
     requests: await getInt(kv, `ai:gem:req:${day}`),
+    exhausted: (await getInt(kv, `ai:gem:dead:${day}`)) === 1,
     ...geminiLimits(env),
   };
   return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), gemini: gem, probe, sessions }, 200, cors);
@@ -518,6 +525,7 @@ function geminiLimits(env) {
 async function geminiHasRoom(kv, env, day) {
   if (!geminiConfigured(env)) return false;
   const lim = geminiLimits(env);
+  if (await getInt(kv, `ai:gem:dead:${day}`)) return false;
   const [sessions, reqs] = await Promise.all([getInt(kv, `ai:gem:sessions:${day}`), getInt(kv, `ai:gem:req:${day}`)]);
   return sessions < lim.maxSessions && reqs + 25 <= lim.maxRequests; // 면담 한 회 약 25~30회 호출
 }

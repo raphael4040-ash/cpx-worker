@@ -41,3 +41,12 @@ test("probeGemini: 미설정·차단·네트워크 오류", async () => {
   const net = await probeGemini({ GEMINI_API_KEY: "k".repeat(20) }, async () => { throw new Error("boom"); });
   assert.equal(net.status, 0);
 });
+
+test("429: 하루 한도(PerDay)와 분당 한도를 구분한다", async () => {
+  const { isGeminiDayQuota } = await import("../src/geminiBackend.js");
+  const mk = (details) => async () => ({ ok: false, status: 429, json: async () => ({ error: { message: "exhausted", details } }) });
+  const env = { GEMINI_API_KEY: "k".repeat(20) };
+  const arg = { system: "s", msgs: [], maxTokens: 5, temperature: 0 };
+  await assert.rejects(callGemini(env, arg, mk([{ violations: [{ quotaId: "GenerateRequestsPerDayPerProjectPerModel-FreeTier" }] }])), (e) => isGeminiQuotaError(e.message) && isGeminiDayQuota(e.message));
+  await assert.rejects(callGemini(env, arg, mk([{ violations: [{ quotaId: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier" }] }])), (e) => isGeminiQuotaError(e.message) && !isGeminiDayQuota(e.message));
+});

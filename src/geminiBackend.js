@@ -63,12 +63,17 @@ export async function callGemini(env, { system, msgs, maxTokens, temperature }, 
   });
   if (!res.ok) {
     let detail = "";
+    let raw = "";
     try {
-      detail = (await res.json())?.error?.message || "";
+      const j = await res.json();
+      detail = j?.error?.message || "";
+      raw = JSON.stringify(j?.error?.details || "");
     } catch {
       /* 본문이 JSON 이 아니면 상태 코드만 쓴다 */
     }
-    throw new Error(`gemini_${res.status}: ${String(detail).replace(/key=[^\s&]+/g, "key=***").slice(0, 200)}`);
+    // 429 는 분당(잠깐 기다리면 풀림)과 하루(그날은 끝) 두 종류다. 구글은 어느 쪽인지 quotaId 에 "PerDay" 로 알려 준다.
+    const tag = res.status === 429 && /PerDay/i.test(`${detail} ${raw}`) ? "_day" : "";
+    throw new Error(`gemini_${res.status}${tag}: ${String(detail).replace(/key=[^\s&]+/g, "key=***").slice(0, 200)}`);
   }
   return fromGeminiResponse(await res.json());
 }
@@ -76,6 +81,11 @@ export async function callGemini(env, { system, msgs, maxTokens, temperature }, 
 /** 오류가 한도 소진(429)인지. */
 export function isGeminiQuotaError(msg) {
   return /^gemini_429/.test(String(msg));
+}
+
+/** 429 중에서도 "하루 한도"가 다 찬 경우. 분당 한도(잠깐 뒤 재시도로 풀림)와 구분한다. */
+export function isGeminiDayQuota(msg) {
+  return /^gemini_429_day/.test(String(msg));
 }
 
 /** 이 Worker 에서 Gemini 에 실제로 닿는지 확인한다 (설정된 모델의 정보 조회 — 키와 모델명이 맞는지까지 보며 토큰은 쓰지 않는다). 관리자 진단용. */

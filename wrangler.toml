@@ -22,8 +22,8 @@ AI_USER_DAILY_SESSIONS = "2"      # 1인당 하루 면담 수 (관리자는 무�
 AI_SESSION_RESERVE = "500"        # 남은 양이 이보다 적으면 새 면담을 시작시키지 않는다 (면담 한 회 약 250~350뉴런. 2026-10-06 에 2000 → 500 으로 낮춤)
 # 아래 둘은 코드 기본값을 쓰므로 비워 둔다. 바꿀 때만 주석을 푼다 (deploy.sh 는 # 로 시작하는 줄을 무시한다).
 # ALLOWED_ORIGINS = "https://cpx-practice.github.io,https://raphael4040-ash.github.io"  # 브라우저에서 이 워커를 부를 수 있는 사이트 (쉼표 구분, src/guards.js)
-# GEMINI_DAILY_SESSIONS = "6"     # Workers AI 뉴런이 떨어졌을 때 Gemini 로 시작할 수 있는 하루 면담 수 (src/geminiBackend.js — 시크릿 GEMINI_API_KEY 가 있을 때만 켜진다)
-# GEMINI_DAILY_REQUESTS = "150"   # 위 폴백의 하루 Gemini 호출 수 상한 (무료 한도는 모델마다 달라 AI Studio 에서 확인해 맞춘다)
+# GEMINI_DAILY_SESSIONS = "1000"  # Gemini 폴백으로 시작할 수 있는 하루 면담 수 상한 (기본은 사실상 무제한 — 실제 한도는 구글의 429 로 알아낸다, src/aiRoutes.js)
+# GEMINI_DAILY_REQUESTS = "100000" # 하루 Gemini 호출 수 상한 (위와 같음. 줄이고 싶을 때만 푼다)
 # AI_CALL_TIMEOUT_MS = "40000"    # Workers AI 호출 한 번의 대기 상한 (넘으면 504 ai_timeout, src/aiRoutes.js)
 
 # 예전엔 여기 [[kv_namespaces]] 로 면담 세션을 저장했다. Cloudflare Worker 에서
