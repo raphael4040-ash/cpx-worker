@@ -12,7 +12,7 @@
  *   4. Firestore REST 로 records 문서 생성
  */
 import { handleInterviewStart } from "./interviewRoutes.js";
-import { handleAiStart, handleAiChat, handleAiStatus, handleAiUsage, handleAiKeys, handleAiLimits } from "./aiRoutes.js";
+import { handleAiStart, handleAiChat, handleAiHandoff, handleAiStatus, handleAiUsage, handleAiKeys, handleAiLimits } from "./aiRoutes.js";
 import { corsFor, checkRateLimit } from "./guards.js";
 
 // Cloudflare 대시보드에서 환경변수(FIREBASE_PROJECT_ID / FIREBASE_API_KEY)를 넣으면
@@ -27,7 +27,7 @@ const DEFAULT_OWNER_UID = "S4b2Zqzff2XHNznL1Wcq6RiZVGv1";
 
 // 배포된 워커가 최신인지 밖에서 확인하기 위한 버전 문자열.
 // 이 파일을 고칠 때마다 함께 올린다 — 그래야 `curl .../health` 로 붙었는지 판별된다.
-const WORKER_VERSION = "2026-10-06.8";
+const WORKER_VERSION = "2026-10-07.1";
 
 const MAX_TRANSCRIPT_CHARS = 700000; // Firestore 문서 상한 1MiB 대비 여유
 // CORS 헤더는 요청마다 guards.js 의 corsFor 가 만든다 (허용 목록에 있는 Origin 만 통과).
@@ -96,6 +96,7 @@ async function handle(request, env, CORS) {
         return await handleAiKeys(request, env, cfg, CORS);
       }
       if (url.pathname === "/interview/ai/chat") return await handleAiChat(request, env, cfg, CORS);
+      if (url.pathname === "/interview/ai/handoff") return await handleAiHandoff(request, env, cfg, CORS);
       if (url.pathname === "/interview/ai/usage") return await handleAiUsage(request, env, cfg, CORS);
       if (url.pathname === "/interview/ai/limits") return await handleAiLimits(request, env, cfg, CORS);
     }

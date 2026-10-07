@@ -86,6 +86,8 @@ export async function handleAiStart(request, env, cfg, cors) {
   if (prepared.error) return json(prepared.error, prepared.status, cors);
   // 단계별 프롬프트를 미리 만들어 둔다 — 매 턴 그 단계에 필요한 만큼만 보낸다 (phaseFor 참고).
   const prompts = { history: prepared.prompt("history"), pe: prepared.prompt("pe"), eval: prepared.prompt("eval") };
+  // 두 AI 가 모두 소진됐을 때 학생 본인 키로 이어가려면(handleAiHandoff) 단계 구분 없는 전체 프롬프트가 필요하다.
+  prompts.all = prepared.prompt("all");
 
   const sessionId = crypto.randomUUID();
   await kv.put(
@@ -161,17 +163,32 @@ export async function handleAiChat(request, env, cfg, cors) {
   const day = utcDay();
   const neuronKey = `ai:neurons:${day}`;
   const used = await getInt(kv, neuronKey);
-  const gemini = session.backend === "gemini";
+  let gemini = session.backend === "gemini";
+  let model = gemini ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL;
   const gemReqKey = `ai:gem:req:${day}`;
-  if (gemini) {
-    if ((await getInt(kv, gemReqKey)) >= geminiLimits(env).maxRequests || !geminiConfigured(env) || (await getInt(kv, `ai:gem:dead:${day}`))) {
-      return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+  const gemDeadKey = `ai:gem:dead:${day}`;
+  const gemOk = async () => geminiConfigured(env) && !(await getInt(kv, gemDeadKey)) && (await getInt(kv, gemReqKey)) < geminiLimits(env).maxRequests;
+  let workersOk = used < limits.cap;
+  const exhausted = () => json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+  // 진행 중인 면담도 한쪽이 소진되면 다른 쪽으로 넘긴다 (대화 전체를 매번 보내는 구조라 이어서 할 수 있다). 둘 다 소진돼야 막힌다.
+  const switchTo = async (toGemini) => {
+    gemini = toGemini;
+    model = gemini ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL;
+    session.backend = gemini ? "gemini" : "workers";
+    try {
+      await kv.put(`ai:session:${sessionId}`, JSON.stringify(session), { expirationTtl: SESSION_TTL_SEC });
+    } catch {
+      /* 저장 실패해도 이번 요청은 그대로 진행 */
     }
-  } else if (used >= limits.cap) {
-    return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+  };
+  if (gemini && !(await gemOk())) {
+    if (!workersOk) return exhausted();
+    await switchTo(false);
+  } else if (!gemini && !workersOk) {
+    if (!(await gemOk())) return exhausted();
+    await switchTo(true);
   }
 
-  const model = gemini ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL;
   const phase = phaseFor(messages);
   // Workers AI 호출이 응답 없이 걸리는 일이 실제로 있었다 (브라우저에는 입력 중 표시만 계속 돌았다).
   // 한 번에 AI_CALL_TIMEOUT_MS 를 넘기면 포기하고 ai_timeout 으로 알린다. 호출 자체는 취소되지 않는다.
@@ -215,7 +232,8 @@ export async function handleAiChat(request, env, cfg, cors) {
     if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
   };
   let reply = "";
-  try {
+  let capped = false; // 이번 요청에서 Workers AI 카운터를 상한으로 못박았는가 (아래 마지막 저장이 덮어쓰지 않게)
+  const attempt = async () => {
     const turn = withTurnReminder(messages, systemPrompt);
     let result = await run(turn);
     reply = extractReply(result);
@@ -242,36 +260,83 @@ export async function handleAiChat(request, env, cfg, cors) {
         /* 다시 받기가 실패해도 처음 평가는 그대로 돌려준다 */
       }
     }
-  } catch (err) {
-    const msg = String((err && err.message) || err);
-    if (msg === "ai_timeout") {
-      await saveCounters();
-      return json({ error: "ai_timeout" }, 504, cors);
-    }
-    if (gemini && isGeminiQuotaError(msg)) {
-      await saveCounters();
-      // 하루 한도가 찼으면 그날은 Gemini 로 새 면담을 시작하지 않는다. 분당 한도면 잠깐 뒤 다시 하면 되므로 503(클라이언트가 재시도)로 알린다.
-      if (isGeminiDayQuota(msg)) {
-        await kv.put(`ai:gem:dead:${day}`, "1", { expirationTtl: 2 * 86400 });
-        return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
+  };
+  for (let pass = 0; ; pass++) {
+    try {
+      await attempt();
+      break;
+    } catch (err) {
+      const msg = String((err && err.message) || err);
+      if (msg === "ai_timeout") {
+        await saveCounters();
+        return json({ error: "ai_timeout" }, 504, cors);
       }
-      return json({ error: "ai_busy" }, 503, cors);
+      if (gemini && isGeminiQuotaError(msg)) {
+        await saveCounters();
+        // 하루 한도가 찼으면 그날은 Gemini 로 새 면담을 시작하지 않고, Workers AI 에 여유가 있으면 이 면담을 거기서 이어간다.
+        // 분당 한도면 잠깐 뒤 다시 하면 되므로 503(클라이언트가 재시도)로 알린다.
+        if (isGeminiDayQuota(msg)) {
+          await kv.put(gemDeadKey, "1", { expirationTtl: 2 * 86400 });
+          if (pass === 0 && workersOk) {
+            await switchTo(false);
+            gemCalls = 0;
+            continue;
+          }
+          return exhausted();
+        }
+        return json({ error: "ai_busy" }, 503, cors);
+      }
+      // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
+      // 덜 셌던 경우다. 그날은 상한에 닿은 것으로 기록해 이후 요청을 미리 막고, Gemini 에 여유가 있으면 거기서 이어간다.
+      if (!gemini && /neuron|daily|quota|limit|4006/i.test(msg)) {
+        await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
+        capped = true;
+        workersOk = false;
+        if (pass === 0 && (await gemOk())) {
+          await switchTo(true);
+          spent = 0;
+          continue;
+        }
+        return exhausted();
+      }
+      await saveCounters();
+      return json({ error: "ai_error", detail: msg.slice(0, 300) }, 502, cors);
     }
-    // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
-    // 덜 셌던 경우다. 그날은 상한에 닿은 것으로 기록해 이후 요청을 미리 막는다.
-    if (!gemini && /neuron|daily|quota|limit|4006/i.test(msg)) {
-      await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
-      return json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
-    }
-    await saveCounters();
-    return json({ error: "ai_error", detail: msg.slice(0, 300) }, 502, cors);
   }
-  await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
+  if (spent && !capped) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
   if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
 
   const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers");
   if (!reply) return json({ error: "empty_response" }, 502, cors);
   return json({ reply, neurons: spent, usage }, 200, cors);
+}
+
+/**
+ * POST /interview/ai/handoff — {sessionId}. 두 AI(Workers AI·운영자 Gemini)가 모두 소진돼 면담이 끊기게 됐을 때,
+ * 학생이 본인 키로 같은 면담을 이어갈 수 있게 전체 시스템 프롬프트를 내려준다. 평소에는 내려주지 않는다
+ * (소진이 확인된 경우에만, 그리고 그 세션의 주인에게만).
+ */
+export async function handleAiHandoff(request, env, cfg, cors) {
+  const kv = env.RATE_LIMIT_KV;
+  if (!kv) return json({ error: "ai_not_configured" }, 503, cors);
+  const user = await authenticate(request, cfg);
+  if (user.error) return json({ error: user.error }, user.status, cors);
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "bad_request" }, 400, cors);
+  }
+  const session = await kv.get(`ai:session:${String(body?.sessionId || "")}`, "json");
+  if (!session || session.uid !== user.uid) return json({ error: "session_expired" }, 404, cors);
+  const day = utcDay();
+  const limits = readLimits(env);
+  const workersDone = (await getInt(kv, `ai:neurons:${day}`)) >= limits.cap;
+  const gemDone =
+    !geminiConfigured(env) || !!(await getInt(kv, `ai:gem:dead:${day}`)) || (await getInt(kv, `ai:gem:req:${day}`)) >= geminiLimits(env).maxRequests;
+  if (!(workersDone && gemDone)) return json({ error: "not_exhausted" }, 409, cors);
+  if (!session.prompts?.all) return json({ error: "no_handoff" }, 409, cors);
+  return json({ systemPrompt: session.prompts.all, topic: session.topic }, 200, cors);
 }
 
 /**
