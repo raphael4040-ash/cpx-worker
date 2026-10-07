@@ -22,7 +22,7 @@ const DEFAULT_MODEL = "gemini-flash-latest";
 // 물질오남용·자살·성폭력·가정폭력 같은 카드는 임상 실습 목적의 정상적인 대화인데도
 // 기본 안전 임계값에 걸려 응답이 통째로 비는 경우가 있었다. 명백히 고위험(HIGH)인
 // 것만 막는다. 브라우저가 Gemini 를 직접 호출하므로 이 설정도 함께 내려준다.
-const SAFETY_SETTINGS = [
+export const SAFETY_SETTINGS = [
   "HARM_CATEGORY_HARASSMENT",
   "HARM_CATEGORY_HATE_SPEECH",
   "HARM_CATEGORY_SEXUALLY_EXPLICIT",

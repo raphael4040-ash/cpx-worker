@@ -18,7 +18,7 @@
  * 상한을 10,000 이 아니라 9,000 으로 잡았다. 무료 플랜 계정이면 10,000 을 넘는 순간
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
-import { prepareInterview } from "./interviewRoutes.js";
+import { prepareInterview, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, probeGemini } from "./geminiBackend.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
@@ -336,7 +336,7 @@ export async function handleAiHandoff(request, env, cfg, cors) {
     !geminiConfigured(env) || !!(await getInt(kv, `ai:gem:dead:${day}`)) || (await getInt(kv, `ai:gem:req:${day}`)) >= geminiLimits(env).maxRequests;
   if (!(workersDone && gemDone)) return json({ error: "not_exhausted" }, 409, cors);
   if (!session.prompts?.all) return json({ error: "no_handoff" }, 409, cors);
-  return json({ systemPrompt: session.prompts.all, topic: session.topic }, 200, cors);
+  return json({ systemPrompt: session.prompts.all, topic: session.topic, safetySettings: SAFETY_SETTINGS }, 200, cors);
 }
 
 /**
