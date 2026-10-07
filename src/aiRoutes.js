@@ -139,7 +139,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   // 첫 대사는 카드에 고정돼 있다 — 내원 이유를 처음 물으면 모델 없이 후보 중 하나를 낸다.
   if (phaseFor(messages) === "history" && isOpeningTurn(messages, session.openings)) {
     const opening = session.openings[Math.floor(Math.random() * session.openings.length)];
-    const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true, undefined, session.backend);
+    const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true, undefined, session.backend, session.uid);
     return json({ reply: opening, neurons: 0, usage }, 200, cors);
   }
 
@@ -154,7 +154,7 @@ export async function handleAiChat(request, env, cfg, cors) {
       if (hit) local = findingsReply(hit, session.pe.vitals);
     }
     if (local) {
-      const usage = await recordUsage(kv, sessionId, session.topic, "pe", 0, true, undefined, session.backend);
+      const usage = await recordUsage(kv, sessionId, session.topic, "pe", 0, true, undefined, session.backend, session.uid);
       return json({ reply: local, neurons: 0, usage }, 200, cors);
     }
   }
@@ -306,7 +306,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   if (spent && !capped) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
   if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
 
-  const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers");
+  const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers", session.uid);
   if (!reply) return json({ error: "empty_response" }, 502, cors);
   return json({ reply, neurons: spent, usage }, 200, cors);
 }
@@ -477,7 +477,7 @@ export async function handleAiUsage(request, env, cfg, cors) {
 }
 
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
-async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens = { tin: 0, tout: 0 }, backend = "workers") {
+async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens = { tin: 0, tout: 0 }, backend = "workers", uid = "") {
   const key = `ai:usage:${utcDay()}:${sessionId}`;
   let u = null;
   try {
@@ -485,7 +485,7 @@ async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens =
   } catch {
     /* 기록 실패는 면담을 막지 않는다 */
   }
-  u = u || { sessionId, topic, backend, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, tokensIn: 0, tokensOut: 0, byPhase: {} };
+  u = u || { sessionId, topic, backend, uid, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, tokensIn: 0, tokensOut: 0, byPhase: {} };
   u.neurons += neurons;
   u.tokensIn = (u.tokensIn || 0) + tokens.tin; // 이 기능을 넣기 전의 기록에는 없으므로 || 0
   u.tokensOut = (u.tokensOut || 0) + tokens.tout;
