@@ -6,6 +6,8 @@
 // 웹 기록판이 서비스되는 주소. 새 주소와, 이미 공유된 링크용 옛 주소, 로컬 개발 서버(.claude/launch.json 의 8123).
 // 바꾸려면 wrangler.toml 의 ALLOWED_ORIGINS(쉼표로 구분)에 적는다.
 const DEFAULT_ORIGINS = [
+  "https://cpxpert.web.app",
+  "https://cpxpert.firebaseapp.com",
   "https://cpx-practice.github.io",
   "https://raphael4040-ash.github.io",
   "http://localhost:8123",
