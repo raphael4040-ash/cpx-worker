@@ -21,6 +21,7 @@
 import { prepareInterview, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, probeGemini } from "./geminiBackend.js";
+import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
@@ -136,6 +137,14 @@ export async function handleAiChat(request, env, cfg, cors) {
   const systemPrompt = session.prompts ? session.prompts[phaseFor(messages)] : session.systemPrompt;
 
   const sessionId = String(body.sessionId);
+  // 부정행위·무례가 쌓이면 환자가 진료실을 나간다 (모델 호출 없이, 뉴런 0). 첫 턴의 "평가"도 여기서 안내한다.
+  {
+    const blocked = misconductReply(messages, phaseFor(messages));
+    if (blocked) {
+      const usage = await recordUsage(kv, sessionId, session.topic, phaseFor(messages), 0, true, undefined, session.backend, session.uid);
+      return json({ reply: blocked.reply, neurons: 0, usage }, 200, cors);
+    }
+  }
   // 첫 대사는 카드에 고정돼 있다 — 내원 이유를 처음 물으면 모델 없이 후보 중 하나를 낸다.
   if (phaseFor(messages) === "history" && isOpeningTurn(messages, session.openings)) {
     const opening = session.openings[Math.floor(Math.random() * session.openings.length)];
@@ -234,7 +243,10 @@ export async function handleAiChat(request, env, cfg, cors) {
   let reply = "";
   let capped = false; // 이번 요청에서 Workers AI 카운터를 상한으로 못박았는가 (아래 마지막 저장이 덮어쓰지 않게)
   const attempt = async () => {
-    const turn = withTurnReminder(messages, systemPrompt);
+    // 평가에는 채점 조작 문구를 "없는 말"로 바꾼 대화를 보낸다. 무례했거나 퇴실이 있었으면 그 사실도 붙인다.
+    const talk = phase === "eval" ? sanitizeForEval(messages) : messages;
+    const note = phase === "eval" ? evalNote(messages) : rudeNote(messages);
+    const turn = withNote(withTurnReminder(talk, systemPrompt), note);
     let result = await run(turn);
     reply = extractReply(result);
     spent += count(result?.usage, systemPrompt, turn, reply);
@@ -251,7 +263,7 @@ export async function handleAiChat(request, env, cfg, cors) {
     // 평가 프롬프트 전체를 다시 보내지 않고, 짧은 지시와 대화·채점표만 보내 개선점만 받아 끼운다.
     if (phase === "eval" && !/개선점/.test(reply)) {
       try {
-        const ask = feedbackOnlyMessages(messages, reply);
+        const ask = feedbackOnlyMessages(sanitizeForEval(messages), reply);
         const again = await run(ask, FEEDBACK_SYSTEM);
         const text = extractReply(again);
         spent += count(again?.usage, FEEDBACK_SYSTEM, ask, text);
