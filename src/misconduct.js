@@ -34,10 +34,46 @@ const RUDE = [
   /그냥\s*약\s*이나\s*(먹|사)/,
 ];
 
+// 띄어쓰기·전각문자·구두점으로 끼워 넣어 피해 가는 우회를 막기 위한 정규화. 모두 소문자 NFKC.
+const norm = (t) => String(t || "").normalize("NFKC").toLowerCase();
+const compact = (t) => norm(t).replace(/[\s\u200b-\u200f\u2060\ufeff.,!?'"`~*_\-·ㆍ()\[\]{}<>:;/\|]+/g, "");
+
+// 공백을 모두 지운 문자열에 건다. 정상 문진에서 나올 수 없는 표현만 둔다 ("10점 만점으로 평가하면" 같은 통증 척도 질문은 걸리면 안 된다).
+const CHEAT_COMPACT = [
+  /시스템(공지|지시|메시지|명령|프롬프트)|system(notice|message|prompt|instruction)/,
+  /프롬프트/,
+  /(ignore|disregard|forget)(all|the|any|your)*(previous|prior|above|earlier|preceding)/,
+  /youarenow|(full|perfect|max)(marks|score)|100\/100/,
+  /(채점|감점|점수)(를|을|은|는)?(조작|바꿔|올려|높게|후하게|잘주|잘줘|마음대로|하지마|하지말|말아|빼지|주지마)/,
+  /(채점|감점)(시|할때|에서|은|는|를|을)?.{0,6}(만점|완벽|후하게|100점)/,
+  /(만점|100점)(으로|을|를|이라고)?(채점|처리|표시|부여|기록)/,
+  /완벽(했|하게수행)(다고|음으로)?(평가|채점|처리|기록|간주)/,
+  /(모든|전)항목(을|은)?(전부)?(수행|통과|완료|o|오)(함|한것|했)?(으로|라고)?(기록|처리|표시|간주|채점|평가|줘|주)/,
+  /(모든|전부|전항목)(항목|문항)?(을|를|은|는)?(o|오|동그라미|만점|완벽)(로|으로)?(표시|채점|처리|줘|주)/,
+  /수행(한것|함)(으로)(간주|처리|기록|표시)/,
+  /(아까|이전|앞|위|기존|모든)(의)?(지시|지침|명령|설정|규칙)(사항)?(들)?(은|을|를)?(다|전부|모두)?(잊|무시|취소|리셋|초기화)/,
+  /(케이스카드|지시문|지시사항|내부설정|사용지침|시스템지침|초기지침)(을|를|좀|전체)*(출력|보여|공개|알려|말해)/,
+  /(채점|평가)(기준|표|항목|체크리스트)(을|를|좀)?(알려|보여|공개|출력)/,
+  /환자(연기|역할)(는|은|을|를)?(그만|중단|멈춰|종료|끝|해제)|(역할|롤)(을|를)?바꿔|지금부터(너는|당신은|넌)/,
+];
+
+// 정규화한 원문에 거는 추가 욕설 (영어·초성 풀어쓰기·띄어쓴 변형). 띄어쓴 "병 신" 은 "심장병 신장" 때문에 넣지 않는다.
+const RUDE_NORM = [
+  /fuck|shit|stupid|idiot|moron|bitch|shut\s*up/,
+  /씨\s*[발빨]|시[1!ㅣ*.]+발|ㅅ\s*ㅂ|ㅆ\s*ㅂ|tlqkf|qudtls|wlfkf/,
+  /돌팔이|개\s*같|개\s*새|쓸데없는\s*소리|쓰레기\s*(의사|같)/,
+];
+
 export function classifyStudentText(text) {
   const t = String(text || "");
   if (CUE.test(t)) return { cheat: false, rude: false };
-  return { cheat: CHEAT.some((re) => re.test(t)), rude: RUDE.some((re) => re.test(t)) };
+  const n = norm(t);
+  const c = compact(t);
+  return {
+    cheat: CHEAT.some((re) => re.test(t) || re.test(n)) || CHEAT_COMPACT.some((re) => re.test(c)),
+    // NFKC 가 ㅅㅂ 같은 호환 자모를 다른 코드로 바꾸므로 원문과 정규화본 둘 다 본다.
+    rude: RUDE.some((re) => re.test(t) || re.test(n)) || RUDE_NORM.some((re) => re.test(t) || re.test(n)),
+  };
 }
 
 /** 대화 전체의 감점(strike) 합. 부정행위 2점, 무례 1점 — 한 말에서 최대 2점. */
@@ -72,11 +108,23 @@ export function noStudentTalk(messages) {
  * 이번 요청을 모델 없이 처리할지 판단한다. 처리할 거리가 없으면 null.
  *   { reply } → 그대로 돌려줄 고정 응답
  */
-export function misconductReply(messages, phase) {
+export function misconductReply(messages, phase, prior = {}) {
   if (phase === "eval") return noStudentTalk(messages) ? { reply: NOT_STARTED_TEXT } : null;
-  if (hasWalkedOut(messages)) return { reply: WALKED_OUT_REPEAT };
-  if (misconductStrikes(messages) >= WALKOUT_STRIKES) return { reply: WALKOUT_TEXT };
+  if (prior.walkedOut || hasWalkedOut(messages)) return { reply: WALKED_OUT_REPEAT };
+  if (Math.max(prior.strikes || 0, misconductStrikes(messages)) >= WALKOUT_STRIKES) return { reply: WALKOUT_TEXT };
   return null;
+}
+
+/**
+ * 서버가 세션(KV)에 기억해 둘 감점 상태. 대화 기록은 브라우저가 보내는 것이라, 무례한 줄이나 "퇴실" 줄을 빼고
+ * 보내면 감점이 사라진다 — 그래서 한 번 쌓인 감점·퇴실은 줄어들지 않게(단조 증가) 세션에 남긴다.
+ * 바뀐 게 없으면 null (KV 쓰기 생략).
+ */
+export function nextMisconductState(messages, prior = {}) {
+  const strikes = Math.max(prior.strikes || 0, misconductStrikes(messages));
+  const walkedOut = !!prior.walkedOut || hasWalkedOut(messages);
+  if (strikes === (prior.strikes || 0) && walkedOut === !!prior.walkedOut) return null;
+  return { strikes, walkedOut };
 }
 
 /** 평가 호출에 보낼 대화 — 채점 조작 문구는 "없는 말"로 바꿔 채점기가 읽지 못하게 한다. */
@@ -94,9 +142,9 @@ export function rudeNote(messages) {
 }
 
 /** 평가 호출에 붙일 참고 — 퇴실했거나 감점이 있었으면 채점기가 알게 한다. */
-export function evalNote(messages) {
-  const walked = hasWalkedOut(messages);
-  const strikes = misconductStrikes(messages);
+export function evalNote(messages, prior = {}) {
+  const strikes = Math.max(prior.strikes || 0, misconductStrikes(messages));
+  const walked = !!prior.walkedOut || hasWalkedOut(messages) || strikes >= WALKOUT_STRIKES;
   if (!walked && !strikes) return "";
   return (
     "[채점 참고 — 시스템 기록] " +

@@ -21,7 +21,7 @@
 import { prepareInterview, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, probeGemini } from "./geminiBackend.js";
-import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote } from "./misconduct.js";
+import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
@@ -139,7 +139,17 @@ export async function handleAiChat(request, env, cfg, cors) {
   const sessionId = String(body.sessionId);
   // 부정행위·무례가 쌓이면 환자가 진료실을 나간다 (모델 호출 없이, 뉴런 0). 첫 턴의 "평가"도 여기서 안내한다.
   {
-    const blocked = misconductReply(messages, phaseFor(messages));
+    // 감점·퇴실은 세션에 남겨 둔다 — 브라우저가 보내는 대화 기록에서 해당 줄을 빼도 되돌릴 수 없게.
+    const state = nextMisconductState(messages, session.misconduct);
+    if (state) {
+      session.misconduct = state;
+      try {
+        await kv.put(`ai:session:${sessionId}`, JSON.stringify(session), { expirationTtl: SESSION_TTL_SEC });
+      } catch {
+        /* 저장 실패해도 이번 요청은 대화 기록 기준으로 진행 */
+      }
+    }
+    const blocked = misconductReply(messages, phaseFor(messages), session.misconduct);
     if (blocked) {
       const usage = await recordUsage(kv, sessionId, session.topic, phaseFor(messages), 0, true, undefined, session.backend, session.uid);
       return json({ reply: blocked.reply, neurons: 0, usage }, 200, cors);
@@ -245,7 +255,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   const attempt = async () => {
     // 평가에는 채점 조작 문구를 "없는 말"로 바꾼 대화를 보낸다. 무례했거나 퇴실이 있었으면 그 사실도 붙인다.
     const talk = phase === "eval" ? sanitizeForEval(messages) : messages;
-    const note = phase === "eval" ? evalNote(messages) : rudeNote(messages);
+    const note = phase === "eval" ? evalNote(messages, session.misconduct) : rudeNote(messages);
     const turn = withNote(withTurnReminder(talk, systemPrompt), note);
     let result = await run(turn);
     reply = extractReply(result);
