@@ -58,6 +58,11 @@ function scenarioBlock(resolved) {
   lines.push(`알레르기: ${s.allergy || "없음"}`);
   lines.push(`가족력(fh): ${s.fh || "특이사항 없음"}`);
   lines.push(`사회력(sh): ${s.sh || ""}`);
+  // 산부인과력 — 월경이상·월경통·질 분비물 카드에만 있다. 빠지면 산과력·마지막 월경일·피임·검진력을 물어도 답이 없어 모델이 지어낸다.
+  if (s.gynHx) {
+    lines.push("산부인과력(gynHx; 해당 질문을 받으면 아래대로만 답하고, 묻지 않으면 말하지 않음):");
+    for (const [q, a] of Object.entries(s.gynHx)) if (a) lines.push(`  Q: ${q} -> A: ${a}`);
+  }
   if (s.disclosure) {
     lines.push(`먼저 말해도 되는 것(spontaneous): ${(s.disclosure.spontaneous || []).join(", ")}`);
     lines.push(`반드시 물어야 나오는 것(onlyIfAsked): ${(s.disclosure.onlyIfAsked || []).join(", ")}`);
