@@ -88,3 +88,25 @@ test("소견 값 끝의 작성자 메모 괄호는 학생에게 읽어 주지 �
   const dis = [{ key: "양팔 혈압", text: "우측 수축기 혈압이 좌측보다 뚜렷하게 낮다(차이는 활력징후의 양팔 수축기압 차이 값)" }];
   assert.equal(findingsReply(dis, { armDiff: 32 }), "(양팔 혈압: 우측 수축기 혈압이 좌측보다 뚜렷하게 낮다(차이 32 mmHg))");
 });
+
+test("자궁과 부속기를 같이 촉진했다면 부속기만 답하지 않고 모델에 넘긴다 (자궁 소견이 사라지던 문제)", () => {
+  const PELVIC = {
+    "골반 진찰(질경)": "자궁경부는 매끈하다",
+    "골반 진찰(양손 진찰)": "자궁이 약간 크고 부드럽다",
+    "부속기": "양측 종괴나 압통 없음",
+    "자궁경부 운동 압통": "없음",
+  };
+  assert.equal(matchFindings("양손으로 자궁과 부속기를 촉진하겠습니다.", PELVIC), null);
+  assert.equal(matchFindings("자궁을 촉진하겠습니다.", PELVIC), null);
+  // 부속기만 말하면 지금처럼 바로 답한다
+  assert.deepEqual(keys(matchFindings("부속기를 촉진하겠습니다.", PELVIC)), ["부속기"]);
+  // 골반 진찰이라고만 하면 두 소견을 다 준다
+  assert.deepEqual(keys(matchFindings("골반 진찰을 하겠습니다.", PELVIC)).sort(), ["골반 진찰(양손 진찰)", "골반 진찰(질경)"].sort());
+  // 자궁경부 운동 압통은 직접 이름으로 맞는다
+  assert.deepEqual(keys(matchFindings("자궁경부 운동 압통이 있는지 확인하겠습니다.", PELVIC)), ["자궁경부 운동 압통"]);
+});
+
+test("산전 진찰의 자궁저 높이는 새 사전에 걸리지 않는다", () => {
+  const OB = { "자궁저 높이": "배꼽 위 두 손가락", "태아 심음": "분당 140회" };
+  assert.deepEqual(keys(matchFindings("자궁저 높이를 재겠습니다.", OB)), ["자궁저 높이"]);
+});
