@@ -132,7 +132,11 @@ export async function handleAiChat(request, env, cfg, cors) {
   if (!messages) return json({ error: "bad_messages" }, 400, cors);
 
   const session = await kv.get(`ai:session:${String(body.sessionId || "")}`, "json");
-  if (!session || session.uid !== user.uid) return json({ error: "session_expired" }, 404, cors);
+  if (!session || session.uid !== user.uid) {
+    // 세션 TTL 은 3시간인데 몇 분 만에 만료로 보고된 적이 있다 — KV 조회가 비었는지, 주인이 다른 건지 가른다.
+    console.warn(JSON.stringify({ evt: "session_expired", where: "chat", sessionId: String(body.sessionId || "").slice(0, 8), found: !!session, ownerMismatch: !!session && session.uid !== user.uid }));
+    return json({ error: "session_expired" }, 404, cors);
+  }
   // 배포 직후 남아 있던 예전 세션(통짜 systemPrompt)도 그대로 돌게 한다.
   const systemPrompt = session.prompts ? session.prompts[phaseFor(messages)] : session.systemPrompt;
 
@@ -290,6 +294,7 @@ export async function handleAiChat(request, env, cfg, cors) {
     } catch (err) {
       const msg = String((err && err.message) || err);
       if (msg === "ai_timeout") {
+        console.warn(JSON.stringify({ evt: "ai_timeout", sessionId: sessionId.slice(0, 8), phase, backend: gemini ? "gemini" : "workers", ms: callTimeoutMs }));
         await saveCounters();
         return json({ error: "ai_timeout" }, 504, cors);
       }
@@ -321,6 +326,7 @@ export async function handleAiChat(request, env, cfg, cors) {
         }
         return exhausted();
       }
+      console.error(JSON.stringify({ evt: "ai_error", sessionId: sessionId.slice(0, 8), phase, backend: gemini ? "gemini" : "workers", detail: msg.slice(0, 300) }));
       await saveCounters();
       return json({ error: "ai_error", detail: msg.slice(0, 300) }, 502, cors);
     }
@@ -329,7 +335,10 @@ export async function handleAiChat(request, env, cfg, cors) {
   if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
 
   const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers", session.uid);
-  if (!reply) return json({ error: "empty_response" }, 502, cors);
+  if (!reply) {
+    console.warn(JSON.stringify({ evt: "empty_response", sessionId: sessionId.slice(0, 8), phase, backend: gemini ? "gemini" : "workers" }));
+    return json({ error: "empty_response" }, 502, cors);
+  }
   return json({ reply, neurons: spent, usage }, 200, cors);
 }
 

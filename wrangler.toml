@@ -52,3 +52,9 @@ id = "f1d9024ee97a4598a079e63b65788845"
 # 한도 관리는 aiRoutes.js 상단 주석 참고. 숫자는 문자열로 넣어도 된다.
 [ai]
 binding = "AI"
+
+# Workers Logs — Cloudflare 대시보드 > Workers & Pages > 이 워커 > Logs 에서 console.log/error 를 볼 수 있다.
+# 면담 중 "환자 응답을 받지 못했습니다"·세션 만료가 간헐적으로 났는데(2026-11-05) 서버에 기록이 없어 원인을 못 찾았다.
+# aiRoutes.js 는 오류 경로에서만 sessionId·단계·오류 이름을 남긴다(대화 내용·프롬프트는 남기지 않는다).
+[observability]
+enabled = true
