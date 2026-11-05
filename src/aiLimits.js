@@ -168,6 +168,11 @@ export function isOpeningTurn(messages, openings) {
  * promise 가 ms 안에 끝나지 않으면 Error("ai_timeout") 으로 거절한다. 원래 호출은 취소되지 않는다.
  * Workers AI 호출이 응답 없이 걸리는 일이 있어서(브라우저에 입력 중 표시만 계속 돌았다) 쓴다.
  */
+/** Workers AI 의 일시적 용량 초과 오류인가 ("3040: Capacity temporarily exceeded, please try again."). 다시 부르면 되는 오류다. */
+export function isCapacityError(msg) {
+  return /3040|capacity temporarily exceeded/i.test(String(msg || ""));
+}
+
 export function withTimeout(promise, ms, message = "ai_timeout") {
   let timer;
   const timeout = new Promise((_, reject) => {

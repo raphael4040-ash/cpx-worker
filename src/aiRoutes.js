@@ -23,7 +23,7 @@ import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyS
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, probeGemini } from "./geminiBackend.js";
 import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -312,6 +312,18 @@ export async function handleAiChat(request, env, cfg, cors) {
           return exhausted();
         }
         return json({ error: "ai_busy" }, 503, cors);
+      }
+      // Workers AI 가 "3040: Capacity temporarily exceeded" 로 일시적 용량 초과를 알려 올 때가 있다 (2026-11-05 면담 점검 중
+      // 진찰 단계에서 실제로 나왔다). 잠깐 뒤 다시 하면 되는 오류라 서버에서 두 번까지 다시 불러 학생에게는 안 보이게 한다.
+      // 그래도 안 되면 502 ai_error 대신 503 ai_busy 로 알려 화면이 "잠시 후 다시" 안내와 함께 보낸 말을 입력창에 돌려준다.
+      if (!gemini && isCapacityError(msg)) {
+        console.warn(JSON.stringify({ evt: "ai_capacity", sessionId: sessionId.slice(0, 8), phase, pass }));
+        if (pass < 2) {
+          await new Promise((r) => setTimeout(r, 1000 * (pass + 1)));
+          continue;
+        }
+        await saveCounters();
+        return json({ error: "ai_busy", detail: msg.slice(0, 120) }, 503, cors);
       }
       // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
       // 덜 셌던 경우다. 그날은 상한에 닿은 것으로 기록해 이후 요청을 미리 막고, Gemini 에 여유가 있으면 거기서 이어간다.

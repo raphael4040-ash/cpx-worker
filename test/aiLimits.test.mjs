@@ -162,3 +162,11 @@ test("uid 검증: KV 키에 안전한 모양만", () => {
   assert.equal(validUid("S4b2Zqzff2XHNznL1Wcq6RiZVGv1"), true);
   for (const bad of ["", "ab", "a b c d e f", "../x", "uid:evil", "x".repeat(200), 5, null]) assert.equal(validUid(bad), false, String(bad));
 });
+
+test("Workers AI 용량 초과(3040)만 재시도 대상으로 본다", async () => {
+  const { isCapacityError } = await import("../src/aiLimits.js");
+  assert.equal(isCapacityError("3040: Capacity temporarily exceeded, please try again."), true);
+  assert.equal(isCapacityError("AiError: 3040: capacity temporarily exceeded"), true);
+  for (const m of ["ai_timeout", "4006: daily free allocation of 10,000 neurons exceeded", "InferenceUpstreamError: bad request", "", null, undefined])
+    assert.equal(isCapacityError(m), false, String(m));
+});
