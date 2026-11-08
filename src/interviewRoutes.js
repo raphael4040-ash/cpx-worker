@@ -14,6 +14,7 @@
 import { buildCase, caseToPrompt } from "./sampleCase.js";
 import { buildSystemPrompt } from "./interviewPrompt.js";
 import indexData from "./cases/index.json";
+import { pickScenarioId, scenarioList } from "./scenarioPick.js";
 import personas from "./cases/personas.json";
 import { CASES } from "./cases/manifest.js";
 
@@ -57,7 +58,7 @@ export async function handleInterviewStart(request, env, cors) {
  * /interview/start(전체 프롬프트를 브라우저에 줌)와 /interview/ai/start(단계별로 KV 에 저장)가 같이 쓴다.
  * 실패면 { error: {...}, status }.
  */
-export function prepareInterview(body) {
+export function prepareInterview(body, { admin = false } = {}) {
   const resolved = resolveTopic(body && body.topic);
   if (!resolved) {
     return { error: { error: "unknown_topic", hint: "topics.js 의 표기와 일치해야 합니다" }, status: 400 };
@@ -74,7 +75,11 @@ export function prepareInterview(body) {
   const data = CASES[fileKey];
   if (!data) return { error: { error: "case_not_bundled", file: resolved.file }, status: 500 };
 
-  const kase = buildCase(fileKey, data, personas);
+  // 시나리오 지정은 관리자 점검용이다. 관리자가 아니면 값이 와도 무시하고 무작위로 뽑는다(정답을 골라 연습하는 것을 막는다).
+  const pick = pickScenarioId(body, admin, data.scenarios);
+  if (pick.error) return { error: pick.error, status: 400 };
+  const scenarioId = pick.scenarioId;
+  const kase = buildCase(fileKey, data, personas, scenarioId);
   if (kase.problems && kase.problems.length) {
     console.log("case build problems:", resolved.topicName, kase.problems);
   }
@@ -88,6 +93,15 @@ export function prepareInterview(body) {
     // 첫 대사 후보 — 내원 이유를 처음 물었을 때 모델 없이 쓴다 (aiLimits.js isOpeningTurn).
     openings: Array.isArray((resolvedCase.scenario || {}).opening) ? resolvedCase.scenario.opening : [],
   };
+}
+
+/** 관리자 점검용 — 주제의 시나리오 목록 [{id, dx}]. 주제를 못 찾으면 null. */
+export function listScenarios(topic) {
+  const resolved = resolveTopic(topic || null);
+  if (!topic || !resolved) return null;
+  const data = CASES[resolved.file.replace(/\.json$/, "")];
+  if (!data || !Array.isArray(data.scenarios)) return null;
+  return scenarioList(data.scenarios);
 }
 
 // ---------------------------------------------------------------- helpers

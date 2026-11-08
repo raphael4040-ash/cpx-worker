@@ -18,7 +18,7 @@
  * 상한을 10,000 이 아니라 9,000 으로 잡았다. 무료 플랜 계정이면 10,000 을 넘는 순간
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
-import { prepareInterview, SAFETY_SETTINGS } from "./interviewRoutes.js";
+import { prepareInterview, listScenarios, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, probeGemini } from "./geminiBackend.js";
 import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
@@ -83,7 +83,7 @@ export async function handleAiStart(request, env, cfg, cors) {
     return json({ error: "user_daily_limit", limit: userLimit, resetsAt: nextResetIso() }, 429, cors);
   }
 
-  const prepared = prepareInterview(body);
+  const prepared = prepareInterview(body, { admin: user.uid === cfg.ownerUid });
   if (prepared.error) return json(prepared.error, prepared.status, cors);
   // 단계별 프롬프트를 미리 만들어 둔다 — 매 턴 그 단계에 필요한 만큼만 보낸다 (phaseFor 참고).
   const prompts = { history: prepared.prompt("history"), pe: prepared.prompt("pe"), eval: prepared.prompt("eval") };
@@ -481,6 +481,22 @@ export async function handleAiLimits(request, env, cfg, cors) {
     return json({ ok: true }, 200, cors);
   }
   return json({ error: "bad_action" }, 400, cors);
+}
+
+/** POST /interview/ai/scenarios — 관리자 전용. {topic} → {scenarios:[{id, dx}]} (점검용 시나리오 선택). */
+export async function handleAiScenarios(request, env, cfg, cors) {
+  const user = await authenticate(request, cfg);
+  if (user.error) return json({ error: user.error }, user.status, cors);
+  if (user.uid !== cfg.ownerUid) return json({ error: "forbidden" }, 403, cors);
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    /* 빈 바디 */
+  }
+  const list = listScenarios(body && body.topic);
+  if (!list) return json({ error: "unknown_topic" }, 400, cors);
+  return json({ scenarios: list }, 200, cors);
 }
 
 /**
