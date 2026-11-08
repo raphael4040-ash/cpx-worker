@@ -17,6 +17,7 @@ test("묶음 질문은 항목마다 카드대로 답하라는 규칙이 모든 �
     assert.match(prompt, /뭉뚱그려 빼먹지 않는다/, phase);
     assert.match(prompt, /묶음 끝에 "다른 증상은요\?"/, phase);
     assert.match(prompt, /중간 항목만 건너뛰지 않는다/, phase);
+    assert.match(prompt, /"다른 건 없어요"라고 단정하지 말고/, phase);
   }
 });
 
