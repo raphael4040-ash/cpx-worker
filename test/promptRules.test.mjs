@@ -17,3 +17,12 @@ test("묶음 질문은 항목마다 카드대로 답하라는 규칙이 모든 �
     assert.match(prompt, /뭉뚱그려 빼먹지 않는다/, phase);
   }
 });
+
+test("요약·마무리 확인에서는 증상을 다시 나열하거나 묻지 않은 것을 덧붙이지 않는다는 규칙이 있다", () => {
+  const data = read("01-chest-pain.json");
+  const kase = buildCase("01-chest-pain", data, read("personas.json"));
+  const hist = buildSystemPrompt(caseToPrompt(kase), { noPE: false, procedure: false, phase: "history" });
+  assert.match(hist, /요약을\s+확인받을 때는 "네, 맞아요\."/);
+  const pe = buildSystemPrompt(caseToPrompt(kase), { noPE: false, procedure: false, phase: "pe" });
+  assert.match(pe, /새 걱정·증상·질문을 덧붙이지 않는다/);
+});
