@@ -532,9 +532,16 @@ export async function handleAiUsage(request, env, cfg, cors) {
   if (user.uid !== cfg.ownerUid) return json({ error: "forbidden" }, 403, cors);
   const day = utcDay();
   let probe;
+  let geminiReset = false;
   try {
     const b = await request.clone().json();
-    if (b && b.probe) probe = await probeGemini(env);
+    if (b && (b.probe || b.resetGemini)) probe = await probeGemini(env);
+    // 관리자 점검용 — Gemini 가 지금 닿는 것이 확인되면 오늘의 "죽음 표시"(지역 차단·하루 한도로 켜진 것)를 푼다.
+    // 접속 확인이 실패한 상태에서는 풀지 않는다.
+    if (b && b.resetGemini && probe && probe.ok) {
+      await kv.delete(`ai:gem:dead:${day}`);
+      geminiReset = true;
+    }
   } catch {
     /* 바디 없음 */
   }
@@ -553,7 +560,7 @@ export async function handleAiUsage(request, env, cfg, cors) {
     exhausted: (await getInt(kv, `ai:gem:dead:${day}`)) === 1,
     ...geminiLimits(env),
   };
-  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), gemini: gem, probe, sessions }, 200, cors);
+  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), gemini: gem, probe, geminiReset, sessions }, 200, cors);
 }
 
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
