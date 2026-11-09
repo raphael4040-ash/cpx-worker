@@ -53,6 +53,13 @@ id = "f1d9024ee97a4598a079e63b65788845"
 [ai]
 binding = "AI"
 
+# 2026-11-09: 워커가 도는 서버에 따라 구글이 Gemini 를 받아 주지 않는다("User location is not supported", 01:32~01:40 에는 성공, 01:48 배포 직후부터 실패).
+# 한도가 찬 뒤의 Gemini 대체 경로가 그때마다 막힌다. 실행 위치를 미국 GCP 지역 근처로 고정해 본다
+# (placement hint, https://developers.cloudflare.com/workers/configuration/placement/).
+# 효과가 없거나 응답이 느려지면 이 세 줄을 지우면 원래대로 돌아간다. 확인은 관리자 /interview/ai/usage 에 {"probe":true} 로 부른 gemini 접속 확인.
+[placement]
+region = "gcp:us-east4"
+
 # Workers Logs — Cloudflare 대시보드 > Workers & Pages > 이 워커 > Logs 에서 console.log/error 를 볼 수 있다.
 # 면담 중 "환자 응답을 받지 못했습니다"·세션 만료가 간헐적으로 났는데(2026-11-05) 서버에 기록이 없어 원인을 못 찾았다.
 # aiRoutes.js 는 오류 경로에서만 sessionId·단계·오류 이름을 남긴다(대화 내용·프롬프트는 남기지 않는다).
