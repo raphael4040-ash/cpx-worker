@@ -39,6 +39,7 @@ const SESSION_TTL_SEC = 3 * 60 * 60;
 const MAX_OUTPUT_TOKENS = 4096;
 const MAX_TURN_TOKENS = 512;
 const AI_CALL_TIMEOUT_MS = 40000;
+const TURN_CALL_TIMEOUT_MS = 20000; // 문진·진찰 턴의 호출 상한 — 넘으면 한 번 다시 부른다
 // Gemini 폴백 — 무료 한도는 모델마다 다르고 바뀐다. 우리 쪽 상한은 사실상 풀어 두고(wrangler.toml 로 줄일 수 있다),
 // 실제 한도는 구글이 돌려주는 429(PerDay)로 알아낸다 — 그날은 `ai:gem:dead:{day}` 로 표시해 새 면담을 막는다.
 const DEFAULT_GEMINI_SESSIONS = 1000;
@@ -215,7 +216,9 @@ export async function handleAiChat(request, env, cfg, cors) {
   const phase = phaseFor(messages);
   // Workers AI 호출이 응답 없이 걸리는 일이 실제로 있었다 (브라우저에는 입력 중 표시만 계속 돌았다).
   // 한 번에 AI_CALL_TIMEOUT_MS 를 넘기면 포기하고 ai_timeout 으로 알린다. 호출 자체는 취소되지 않는다.
-  const callTimeoutMs = Number(env.AI_CALL_TIMEOUT_MS) || AI_CALL_TIMEOUT_MS;
+  // 문진·진찰 한 턴은 보통 1~3초에 끝난다. 20초 넘게 걸리면 걸린 것으로 보고 한 번 다시 부른다 (아래 ai_timeout 처리).
+  // 평가는 길어서 기존 상한(40초)을 그대로 쓰고 다시 부르지 않는다. 브라우저는 90초까지 기다린다.
+  const callTimeoutMs = Number(env.AI_CALL_TIMEOUT_MS) || (phase === "eval" ? AI_CALL_TIMEOUT_MS : TURN_CALL_TIMEOUT_MS);
   let gemCalls = 0;
   const run = (msgs, system = systemPrompt) =>
     gemini
@@ -294,6 +297,11 @@ export async function handleAiChat(request, env, cfg, cors) {
     } catch (err) {
       const msg = String((err && err.message) || err);
       if (msg === "ai_timeout") {
+        // 가끔 호출이 응답 없이 걸린다 (약 60개 면담 중 2번). 다시 부르면 대개 바로 돌아오므로 문진·진찰 턴은 한 번 더 시도한다.
+        if (pass === 0 && phase !== "eval") {
+          console.warn(JSON.stringify({ evt: "ai_timeout_retry", sessionId: sessionId.slice(0, 8), phase, backend: gemini ? "gemini" : "workers", ms: callTimeoutMs }));
+          continue;
+        }
         console.warn(JSON.stringify({ evt: "ai_timeout", sessionId: sessionId.slice(0, 8), phase, backend: gemini ? "gemini" : "workers", ms: callTimeoutMs }));
         await saveCounters();
         return json({ error: "ai_timeout" }, 504, cors);
