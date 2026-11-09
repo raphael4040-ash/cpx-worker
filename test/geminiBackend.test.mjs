@@ -50,3 +50,13 @@ test("429: 하루 한도(PerDay)와 분당 한도를 구분한다", async () => 
   await assert.rejects(callGemini(env, arg, mk([{ violations: [{ quotaId: "GenerateRequestsPerDayPerProjectPerModel-FreeTier" }] }])), (e) => isGeminiQuotaError(e.message) && isGeminiDayQuota(e.message));
   await assert.rejects(callGemini(env, arg, mk([{ violations: [{ quotaId: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier" }] }])), (e) => isGeminiQuotaError(e.message) && !isGeminiDayQuota(e.message));
 });
+
+test("지역 차단(400 User location is not supported)을 알아본다 — 한도나 키 문제와 구분", async () => {
+  const { isGeminiRegionBlocked } = await import("../src/geminiBackend.js");
+  const env = { GEMINI_API_KEY: "k".repeat(20) };
+  const arg = { system: "s", msgs: [], maxTokens: 5, temperature: 0 };
+  const fail = (status, message) => async () => ({ ok: false, status, json: async () => ({ error: { message } }) });
+  await assert.rejects(callGemini(env, arg, fail(400, "User location is not supported for the API use.")), (e) => isGeminiRegionBlocked(e.message));
+  await assert.rejects(callGemini(env, arg, fail(400, "API key not valid")), (e) => !isGeminiRegionBlocked(e.message));
+  await assert.rejects(callGemini(env, arg, fail(429, "exhausted")), (e) => !isGeminiRegionBlocked(e.message));
+});

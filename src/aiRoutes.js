@@ -20,7 +20,7 @@
  */
 import { prepareInterview, listScenarios, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
-import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, probeGemini } from "./geminiBackend.js";
+import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, isGeminiRegionBlocked, probeGemini } from "./geminiBackend.js";
 import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
@@ -312,6 +312,19 @@ export async function handleAiChat(request, env, cfg, cors) {
           return exhausted();
         }
         return json({ error: "ai_busy" }, 503, cors);
+      }
+      // 이 Worker 의 실행 지역에서는 구글이 Gemini 를 받아 주지 않는다 (2026-11-09 Workers AI 하루 한도가 찬 뒤 대체 경로가 이 오류로 계속 실패했다).
+      // 그날은 Gemini 를 못 쓰는 것으로 표시해, 새 면담이 이 경로로 시작되지 않고 "한도 소진" 안내(내 키로 계속하기 포함)로 넘어가게 한다.
+      if (gemini && isGeminiRegionBlocked(msg)) {
+        console.warn(JSON.stringify({ evt: "gemini_region_blocked", sessionId: sessionId.slice(0, 8), phase }));
+        await kv.put(gemDeadKey, "1", { expirationTtl: 2 * 86400 });
+        await saveCounters();
+        if (pass === 0 && workersOk) {
+          await switchTo(false);
+          gemCalls = 0;
+          continue;
+        }
+        return exhausted();
       }
       // Workers AI 가 "3040: Capacity temporarily exceeded" 로 일시적 용량 초과를 알려 올 때가 있다 (2026-11-05 면담 점검 중
       // 진찰 단계에서 실제로 나왔다). 잠깐 뒤 다시 하면 되는 오류라 서버에서 두 번까지 다시 불러 학생에게는 안 보이게 한다.

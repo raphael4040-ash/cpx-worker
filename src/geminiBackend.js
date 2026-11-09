@@ -83,6 +83,14 @@ export function isGeminiQuotaError(msg) {
   return /^gemini_429/.test(String(msg));
 }
 
+/**
+ * 이 Worker 가 도는 지역에서는 Gemini API 를 쓸 수 없다는 구글의 거절 ("gemini_400: User location is not supported …").
+ * 키나 한도 문제가 아니라 그날 계속 실패하므로 한도 소진과 같이 "Gemini 는 오늘 못 쓴다"로 취급한다 (aiRoutes.js).
+ */
+export function isGeminiRegionBlocked(msg) {
+  return /^gemini_400\b.*location is not supported/i.test(String(msg));
+}
+
 /** 429 중에서도 "하루 한도"가 다 찬 경우. 분당 한도(잠깐 뒤 재시도로 풀림)와 구분한다. */
 export function isGeminiDayQuota(msg) {
   return /^gemini_429_day/.test(String(msg));
