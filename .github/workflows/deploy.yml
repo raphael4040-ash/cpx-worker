@@ -33,3 +33,5 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # [placement] region 힌트(2026-01 추가)는 wrangler 3.x 가 모른다 — "placement.mode is a required field" 로 배포가 실패했다 (2026-11-09).
+          wranglerVersion: "4"
