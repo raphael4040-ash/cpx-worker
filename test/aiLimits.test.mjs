@@ -170,3 +170,18 @@ test("Workers AI 용량 초과(3040)만 재시도 대상으로 본다", async ()
   for (const m of ["ai_timeout", "4006: daily free allocation of 10,000 neurons exceeded", "InferenceUpstreamError: bad request", "", null, undefined])
     assert.equal(isCapacityError(m), false, String(m));
 });
+
+test("턴 리마인더: 묶음 질문·'다른 증상' 질문일 때만 해당 한 줄이 붙는다", async () => {
+  const { turnHints, withTurnReminder } = await import("../src/aiLimits.js");
+  assert.equal(turnHints("열은 나세요?"), "");
+  assert.equal(turnHints("마지막 생리는 언제였나요?"), "");
+  assert.match(turnHints("두통이나 시야 이상, 젖이 나오는 증상은 없으세요?"), /하나도 빼지 않고/);
+  assert.match(turnHints("체중 변화나 다른 증상은요?"), /하나도 빼지 않고/);
+  assert.match(turnHints("체중 변화나 다른 증상은요?"), /다른 증상/);
+  assert.match(turnHints("그 외에 다른 증상은 없으세요?"), /그런 건 없어요/);
+  assert.doesNotMatch(turnHints("그 외에 다른 증상은 없으세요?"), /하나도 빼지 않고/);
+  const sp = "…\n반드시 물어야 나오는 것(onlyIfAsked): 가족력\n…";
+  const out = withTurnReminder([{ role: "user", text: "그 외에 다른 증상은 없으세요?" }], sp);
+  assert.match(out[0].text, /아까도 말했지만/);
+  assert.match(out[0].text, /학생: 그 외에 다른 증상은 없으세요\?$/);
+});

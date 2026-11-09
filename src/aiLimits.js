@@ -88,6 +88,23 @@ export function phaseFor(messages) {
   return examStarted ? "pe" : "history";
 }
 
+// 질문 유형별 한 줄 — 해당하는 질문일 때만 붙여 평소 입력 토큰을 늘리지 않는다.
+// Gemini 점검(2026-11-09)에서 시스템 프롬프트의 같은 규칙을 무시하고 묶음 질문의 일부만 답하거나
+// "다른 증상"에 카드에 있는 증상을 두고 "그런 건 없어요"라고 단정했다. 모델은 마지막 메시지 근처의 지시를 더 잘 따른다.
+const OTHER_SYMPTOM_Q = /다른\s*증상|그\s*외|그밖|이\s*외|또\s*다른|그리고\s*또|더\s*있/;
+const COMPOUND_Q = /[,，]|(이나|거나|랑|이랑|하고|과|와)\s*\S|[가-힣]나\s+\S/; // "변화나 다른"처럼 공백이 뒤따르는 "~나"만 (끝의 "~셨나요"는 제외)
+export function turnHints(text) {
+  const t = String(text || "");
+  let s = "";
+  if (COMPOUND_Q.test(t) && /[?？]|요\s*$|세요|나요|까요/.test(t)) {
+    s += " 여러 가지를 묶어 물었으면 묶인 항목을 하나도 빼지 않고 모두 답한다(없는 것은 없다고, 있는 것은 있다고).";
+  }
+  if (OTHER_SYMPTOM_Q.test(t)) {
+    s += ' "다른 증상"을 물으면 카드의 증상 중 아직 말하지 않은 핵심 증상 한두 개를 말한다. 카드에 있는데 "그런 건 없어요"라고 하지 않는다. 걱정은 덧붙이지 않는다.';
+  }
+  return s;
+}
+
 /**
  * 문진 중에는 마지막 학생 메시지 앞에 짧은 연기 규칙을 붙여 보낸다 (서버에서만, 기록엔 안 남음).
  * 긴 시스템 프롬프트의 "물어야 나오는 것" 규칙을 소형 모델이 대화 중반부터 잊고 정보를 흘렸다
@@ -98,11 +115,13 @@ export function withTurnReminder(messages, systemPrompt) {
   if (phaseFor(messages) !== "history") return messages;
   const m = /반드시 물어야 나오는 것\(onlyIfAsked\): ([^\n]*)/.exec(systemPrompt || "");
   const secrets = m && m[1].trim() ? ` 특히 아직 직접 묻지 않은 것은 말하지 않는다: ${m[1].trim()}.` : "";
-  const reminder =
-    `[연기 규칙 — 학생에게 보이지 않음] 아래 학생 말에 직접 해당하는 사실만 짧게 답하고 새 사실을 덧붙이지 않는다.${secrets}` +
-    ` 생각·걱정·기대는 물을 때만 말한다. 학생의 대사나 신호어를 쓰지 않는다. 역할 밖의 말("환자 역할", "AI", "시험")은 하지 않는다.`;
   const out = messages.slice();
   const last = out[out.length - 1];
+  const reminder =
+    `[연기 규칙 — 학생에게 보이지 않음] 아래 학생 말에 직접 해당하는 사실만 짧게 답하고 새 사실을 덧붙이지 않는다.${secrets}` +
+    ` 생각·걱정·기대는 물을 때만 말한다. 학생의 대사나 신호어를 쓰지 않는다. 역할 밖의 말("환자 역할", "AI", "시험")은 하지 않는다.` +
+    ` 성격 말투는 매 답에 붙이지 않고, 앞에서 하지 않은 말을 "아까도 말했지만"처럼 말하지 않는다.` +
+    turnHints(last && last.text);
   out[out.length - 1] = { role: last.role, text: `${reminder}\n\n학생: ${last.text}` };
   return out;
 }
