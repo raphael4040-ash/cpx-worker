@@ -80,8 +80,10 @@ function yearsIn(label) {
   return m.length ? Math.max(...m) : 0;
 }
 
-function ageOk(item, age) {
-  return age >= parseInt(item.minAge ?? 0, 10);
+/** 나이 하한. femaleMinAge 가 있으면 여성에게는 그 값을 쓴다 (예: 통풍은 폐경 전 여성에게 드물다). sample_case.py 와 같음. */
+function ageOk(item, age, sex) {
+  const floor = sex === "female" && item.femaleMinAge != null ? item.femaleMinAge : item.minAge ?? 0;
+  return age >= parseInt(floor, 10);
 }
 
 function occupationOk(occ, age) {
@@ -141,7 +143,7 @@ function validate(person, scenario, personas, problems) {
 
   for (const key of ["smoking", "alcohol", "illness"]) {
     const item = person[key];
-    if (!ageOk(item, age)) {
+    if (!ageOk(item, age, person.sex)) {
       problems.push(`${key}-나이: ${item.label} / ${age}세 (minAge ${item.minAge})`);
     }
   }
@@ -313,13 +315,13 @@ function drawPerson(scenario, personas) {
   let ice = choice(iceCandidates);
 
   function pickAged(key) {
-    const pool = personas[key].filter((x) => ageOk(x, age));
+    const pool = personas[key].filter((x) => ageOk(x, age, sex));
     return weighted(pool.length ? pool : [personas[key][0]]);
   }
 
   const banned = new Set(c.forbidden || []);
   const illPool = personas.backgroundIllness.filter(
-    (x) => ageOk(x, age) && !banned.has(x.id) && !banned.has(x.label)
+    (x) => ageOk(x, age, sex) && !banned.has(x.id) && !banned.has(x.label)
   );
   let illness = illPool.length ? weighted(illPool) : pickAged("backgroundIllness");
   let smoking = pickAged("smoking");

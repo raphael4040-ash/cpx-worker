@@ -663,7 +663,8 @@
       "meds": [
         "알로푸리놀"
       ],
-      "minAge": 30
+      "minAge": 30,
+      "femaleMinAge": 55
     },
     {
       "id": "depress",
