@@ -185,3 +185,13 @@ test("턴 리마인더: 묶음 질문·'다른 증상' 질문일 때만 해당 �
   assert.match(out[0].text, /아까도 말했지만/);
   assert.match(out[0].text, /학생: 그 외에 다른 증상은 없으세요\?$/);
 });
+
+test("턴 리마인더: 약을 물으면 약국 약까지 빠짐없이 말하라는 줄이 붙는다", async () => {
+  const { turnHints } = await import("../src/aiLimits.js");
+  for (const q of ["복용 중인 약이 있으세요?", "평소 드시는 약은요?", "복용 중인 약이나 과거 병력, 술은 어떠세요?", "진통제나 영양제 드세요?"]) {
+    assert.match(turnHints(q), /약국에서 사 먹는 약/, q);
+  }
+  for (const q of ["열은 나세요?", "언제부터 그러셨나요?", "약간 어지러우세요?", "약속이 있으신가요?"]) {
+    assert.doesNotMatch(turnHints(q), /약국에서 사 먹는 약/, q);
+  }
+});
