@@ -110,3 +110,57 @@ test("산전 진찰의 자궁저 높이는 새 사전에 걸리지 않는다", (
   const OB = { "자궁저 높이": "배꼽 위 두 손가락", "태아 심음": "분당 140회" };
   assert.deepEqual(keys(matchFindings("자궁저 높이를 재겠습니다.", OB)), ["자궁저 높이"]);
 });
+
+// ---- 2026-11-12 전 카드 진찰 매칭 점검에서 나온 것 ----
+{
+  const { readFileSync } = await import("node:fs");
+  const { matchFindings: mf } = await import("../src/peMatch.js");
+  const card = (f) => JSON.parse(readFileSync(new URL(`../src/cases/${f}.json`, import.meta.url), "utf8"));
+  const fnd = (f, id) => card(f).scenarios.find((s) => s.id === id).pe.findings;
+  const keys = (r) => (r ? r.map((x) => x.key) : null);
+
+  test("유방덩이: '유방을 촉진'에 반대쪽 정상 소견만 돌려주지 않는다 (덩이 소견은 다른 이름이라 모델에 넘긴다)", () => {
+    for (const id of ["bm-fibroadenoma", "bm-cancer", "bm-abscess"]) {
+      assert.equal(mf("유방을 촉진하겠습니다.", fnd("34-2-breast-mass", id)), null, id);
+      // 반대쪽을 짚어 말하면 그 소견을 준다
+      assert.deepEqual(keys(mf("반대쪽 유방도 촉진하겠습니다.", fnd("34-2-breast-mass", id))), ["유방 촉진(반대쪽)"], id);
+    }
+    // 환측·반대쪽이 둘 다 있는 카드는 그대로 둘 다 준다
+    assert.deepEqual(keys(mf("유방을 촉진하겠습니다.", fnd("34-1-breast-pain", "bp-cancer"))), ["유방 촉진(환측)", "유방 촉진(반대쪽)"]);
+  });
+
+  test("손목·발목·목소리는 목 진찰이 아니다", () => {
+    const f = { "목 시진": "정상", "경부 림프절": "없음", "팔·손목 시진": "흉터 없음" };
+    assert.equal(mf("손목을 움직여 보겠습니다.", f), null);
+    assert.equal(mf("발목을 만져보겠습니다.", f), null);
+    assert.deepEqual(keys(mf("팔·손목 시진 확인하겠습니다.", f)), ["팔·손목 시진"]);
+    assert.deepEqual(keys(mf("목을 시진하겠습니다.", f)), ["목 시진"]);
+  });
+
+  test("반발통: 손을 떼는 동작만 — '청진기를 떼겠습니다'는 아니고, '손을 뗄 때'는 맞다", () => {
+    const f = { "복부 시진": "편평", "복부 촉진": "우하복부 압통", "반발통": "있음" };
+    assert.equal(mf("청진기를 떼겠습니다.", f), null);
+    assert.deepEqual(keys(mf("배에서 손을 뗄 때 아픈지 보겠습니다.", f)), ["반발통"]);
+    assert.deepEqual(keys(mf("반발통이 있는지 확인하겠습니다.", f)), ["반발통"]);
+  });
+
+  test("'힘을 빼세요'·'힘드시면'은 근력 검사가 아니다", () => {
+    const f = { "하지 근력": "정상", "복부 촉진": "부드러움" };
+    assert.equal(mf("힘을 빼고 편하게 계세요.", f), null);
+    assert.equal(mf("힘드시면 말씀하세요", f), null);
+    assert.deepEqual(keys(mf("다리 힘을 확인하겠습니다.", f)), ["하지 근력"]);
+  });
+
+  test("청력 확인은 이경검사가 아니다", () => {
+    const f = { "이경검사": "고막 정상" };
+    assert.equal(mf("귀가 잘 들리는지 확인하겠습니다.", f), null);
+    assert.deepEqual(keys(mf("귀를 들여다보겠습니다.", f)), ["이경검사"]);
+  });
+
+  test("태아 심음을 들으면 산모의 심장 청진 소견이 딸려 나오지 않는다", () => {
+    for (const id of ["pre-normal-2nd", "pre-preeclampsia", "pre-gdm"]) {
+      assert.deepEqual(keys(mf("태아 심음을 들어보겠습니다.", fnd("24-prenatal-care", id))), ["태아 심음"], id);
+    }
+    assert.deepEqual(keys(mf("심장 소리를 들어보겠습니다.", fnd("24-prenatal-care", "pre-normal-2nd"))), ["심장 청진"]);
+  });
+}
