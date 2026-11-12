@@ -195,3 +195,14 @@ test("턴 리마인더: 약을 물으면 약국 약까지 빠짐없이 말하라
     assert.doesNotMatch(turnHints(q), /약국에서 사 먹는 약/, q);
   }
 });
+
+test("턴 리마인더: 과거 병력을 물으면 카드의 과거력까지 말하라는 줄이 붙는다", async () => {
+  const { turnHints } = await import("../src/aiLimits.js");
+  for (const q of ["과거 병력은 있으세요?", "복용 중인 약이나 과거 병력, 담배와 술은 어떠세요?", "예전에 앓았던 병이 있나요?", "수술이나 입원하신 적은요?", "진단받은 병이 있으세요?"]) {
+    assert.match(turnHints(q), /카드의 과거력/, q);
+  }
+  for (const q of ["열은 나세요?", "언제부터 그러셨나요?", "가래 색은 어떤가요?"]) {
+    assert.doesNotMatch(turnHints(q), /카드의 과거력/, q);
+  }
+  assert.match(turnHints("평소 쓰시는 약 있으세요?"), /흡입기/);
+});
