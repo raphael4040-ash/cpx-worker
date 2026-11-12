@@ -24,7 +24,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["갑상선기능저하증"]
       },
       "occupationBias": [
         "office",
@@ -422,7 +422,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["갑상선기능저하증"]
       },
       "occupationBias": [
         "housewife",
@@ -823,7 +823,7 @@
           "당뇨병"
         ],
         "requiredRiskMin": 1,
-        "forbidden": []
+        "forbidden": ["갑상선기능저하증"]
       },
       "occupationBias": [
         "housewife",
@@ -1499,7 +1499,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["갑상선기능저하증"]
       },
       "occupationBias": [
         "housewife",

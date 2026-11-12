@@ -12,7 +12,7 @@
     {
       "id": "joint-septic",
       "dx": "패혈성 관절염 (무릎)",
-      "constraints": { "ageRange": [45, 78], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [45, 78], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": ["통풍"] },
       "occupationBias": ["farmer", "construct", "market", "retired", "care"],
       "ice": {
         "ideas": ["무리해서 관절염이 도진 것 같아요", "어디 부딪혀서 그런가 싶어요"],
@@ -151,7 +151,7 @@
     {
       "id": "joint-ra",
       "dx": "류마티스 관절염",
-      "constraints": { "ageRange": [30, 60], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [30, 60], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["통풍"] },
       "occupationBias": ["housewife", "office", "market", "care", "teacher"],
       "ice": {
         "ideas": ["손을 많이 써서 그런 것 같아요", "나이 들어서 관절염이 온 건가 싶어요"],
@@ -223,7 +223,7 @@
     {
       "id": "joint-oa",
       "dx": "무릎 골관절염",
-      "constraints": { "ageRange": [58, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [58, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["통풍"] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "care"],
       "ice": {
         "ideas": ["나이 들어서 연골이 닳은 것 같아요", "젊을 때 무릎을 많이 써서 그런가 싶어요"],
@@ -288,7 +288,7 @@
     {
       "id": "joint-meniscus",
       "dx": "외상성 반월상 연골 파열 (무릎)",
-      "constraints": { "ageRange": [20, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [20, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["통풍"] },
       "occupationBias": ["soldier", "delivery", "student", "construct", "office"],
       "ice": {
         "ideas": ["인대가 늘어난 것 같아요", "그냥 삔 거라 쉬면 나을 줄 알았어요"],

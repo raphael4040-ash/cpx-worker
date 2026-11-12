@@ -23,7 +23,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "student",
@@ -197,7 +197,7 @@
           "고혈압"
         ],
         "requiredRiskMin": 1,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "retired",
@@ -380,7 +380,7 @@
           "고혈압"
         ],
         "requiredRiskMin": 1,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "retired",
@@ -733,7 +733,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "retired",

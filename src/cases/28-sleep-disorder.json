@@ -12,7 +12,7 @@
     {
       "id": "slp-chronic-insomnia",
       "dx": "만성 불면장애 (일차성, 수면위생 불량 동반)",
-      "constraints": { "ageRange": [35, 68], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "저녁에 한두 잔" },
+      "constraints": { "ageRange": [35, 68], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"], "alcoholLabel": "저녁에 한두 잔" },
       "occupationBias": ["housewife", "office", "selfemp", "retired", "market"],
       "ice": {
         "ideas": ["나이 들어서 잠이 줄어든 것 같아요", "신경 쓸 일이 많아서 그런 것 같아요"],
@@ -99,7 +99,7 @@
     {
       "id": "slp-osa",
       "dx": "폐쇄성 수면무호흡",
-      "constraints": { "ageRange": [40, 66], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [], "alcoholLabel": "주 {{drinkPerWeek}}회" },
+      "constraints": { "ageRange": [40, 66], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["우울증"], "alcoholLabel": "주 {{drinkPerWeek}}회" },
       "occupationBias": ["driver", "selfemp", "office", "construct", "market"],
       "ice": {
         "ideas": ["일이 고돼서 피곤한 것 같아요", "나이 들어서 체력이 떨어진 것 같아요"],
@@ -184,7 +184,7 @@
     {
       "id": "slp-shift-transient",
       "dx": "일과성 불면 (교대근무·수면환경 변화에 따른 적응성 수면장애)",
-      "constraints": { "ageRange": [22, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "notHeavy", "occupationOnly": ["nurse", "care", "soldier", "welder"] },
+      "constraints": { "ageRange": [22, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"], "alcohol": "notHeavy", "occupationOnly": ["nurse", "care", "soldier", "welder"] },
       "occupationBias": ["nurse", "care", "soldier", "welder"],
       "ice": {
         "ideas": ["근무가 바뀌어서 몸이 아직 적응을 못 한 것 같아요", "요즘 체력이 떨어진 것 같아요"],
@@ -351,7 +351,7 @@
     {
       "id": "slp-narcolepsy",
       "dx": "기면병 (탈력발작 동반)",
-      "constraints": { "ageRange": [16, 30], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "notHeavy" },
+      "constraints": { "ageRange": [16, 30], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"], "alcohol": "notHeavy" },
       "occupationBias": ["highschool", "student", "parttime", "office", "delivery"],
       "ice": {
         "ideas": ["제가 게을러서 그런가 싶기도 해요", "체력이 약해서 그런 것 같아요"],

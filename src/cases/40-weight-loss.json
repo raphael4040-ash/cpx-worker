@@ -25,7 +25,7 @@
           "흡연"
         ],
         "requiredRiskMin": 1,
-        "forbidden": []
+        "forbidden": ["당뇨병", "갑상선기능저하증", "우울증"]
       },
       "occupationBias": [
         "farmer",
@@ -197,7 +197,7 @@
         "requiredRisk": [],
         "requiredRiskMin": 0,
         "forbidden": [
-          "갑상선기능저하증"
+          "갑상선기능저하증", "당뇨병", "우울증"
         ]
       },
       "occupationBias": [
@@ -371,7 +371,7 @@
         "requiredRisk": [],
         "requiredRiskMin": 0,
         "forbidden": [
-          "당뇨병"
+          "당뇨병", "갑상선기능저하증", "우울증"
         ]
       },
       "occupationBias": [
@@ -543,7 +543,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": [],
+        "forbidden": ["당뇨병", "갑상선기능저하증"],
         "alcohol": "drinker"
       },
       "occupationBias": [
@@ -714,7 +714,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": [],
+        "forbidden": ["당뇨병", "갑상선기능저하증", "우울증"],
         "smoking": "never",
         "alcohol": "never"
       },

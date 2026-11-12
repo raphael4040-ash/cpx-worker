@@ -13,7 +13,7 @@
     {
       "id": "con-colon-cancer",
       "dx": "좌측 결장암 (기질성 변비)",
-      "constraints": { "ageRange": [54, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [54, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["retired", "farmer", "market", "selfemp", "housewife"],
       "ice": {
         "ideas": ["나이 들어서 장이 약해진 것 같아요", "앉아서 지내는 시간이 많아서 그런가 싶어요"],
@@ -89,7 +89,7 @@
     {
       "id": "con-functional",
       "dx": "기능성 변비 (식생활·활동량 관련)",
-      "constraints": { "ageRange": [20, 46], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [20, 46], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["office", "student", "nurse", "teacher", "driver"],
       "ice": {
         "ideas": ["생활이 바뀌어서 장이 예민해진 것 같아요", "체질적으로 장이 약한 것 같아요"],
@@ -160,7 +160,7 @@
     {
       "id": "con-opioid",
       "dx": "약물 유발 변비 (마약성 진통제)",
-      "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "jobless"],
       "ice": {
         "ideas": ["요즘 통 못 움직여서 그런 것 같아요", "나이 들어서 장이 굳은 건가 싶어요"],
@@ -302,7 +302,7 @@
     {
       "id": "con-parkinson",
       "dx": "파킨슨병에 동반된 변비 (신경성)",
-      "constraints": { "ageRange": [62, 82], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [62, 82], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["retired", "farmer", "housewife", "jobless", "market"],
       "ice": {
         "ideas": ["나이 들어서 장이 느려진 것 같아요", "물을 덜 마셔서 그런가 싶어요"],

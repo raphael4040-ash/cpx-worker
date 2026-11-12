@@ -356,7 +356,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["고혈압"]
       },
       "occupationBias": [
         "construct",

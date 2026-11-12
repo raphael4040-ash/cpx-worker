@@ -22,7 +22,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["갑상선기능저하증"]
       },
       "occupationBias": [
         "retired",
@@ -177,7 +177,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": [], "alcohol": "drinker"
+        "forbidden": ["갑상선기능저하증"], "alcohol": "drinker"
       },
       "occupationBias": [
         "office",
@@ -508,7 +508,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["갑상선기능저하증"]
       },
       "occupationBias": [
         "retired",
@@ -662,7 +662,7 @@
           "음주"
         ],
         "requiredRiskMin": 1,
-        "forbidden": [], "alcoholLabel": "거의 매일 소주 1병 이상" },
+        "forbidden": ["갑상선기능저하증"], "alcoholLabel": "거의 매일 소주 1병 이상" },
       "occupationBias": [
         "construct",
         "driver",

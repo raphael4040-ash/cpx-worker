@@ -21,7 +21,7 @@
         "실현 가능한 목표 하나를 환자와 함께 정하기",
         "재검 시점과 다음 단계 안내"
       ],
-      "constraints": { "ageRange": [42, 60], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["당뇨병", "이상지질혈증"] },
+      "constraints": { "ageRange": [42, 60], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["당뇨병", "이상지질혈증", "갑상선기능저하증"] },
       "occupationBias": ["office", "driver", "selfemp", "market", "teacher"],
       "ice": {
         "ideas": ["나이 들면 다들 조금씩 높아지는 거 아닌가 싶어요", "요즘 기름진 걸 많이 먹어서 그런 것 같아요"],
@@ -188,7 +188,7 @@
         "지질약을 바로 시작하지 않는 근거 설명",
         "갑상선 기능 검사와 재평가 계획 안내"
       ],
-      "constraints": { "ageRange": [38, 66], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "이상지질혈증"] },
+      "constraints": { "ageRange": [38, 66], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "이상지질혈증", "당뇨병"] },
       "occupationBias": ["housewife", "office", "teacher", "market", "care"],
       "ice": {
         "ideas": ["나이가 들어서 콜레스테롤이 오른 것 같아요", "요즘 운동을 안 해서 그런가 싶어요"],
@@ -272,7 +272,7 @@
         "당장 바꿀 것 한두 가지를 구체적으로 합의",
         "복통이 생기면 즉시 오라는 안전 안내"
       ],
-      "constraints": { "ageRange": [35, 58], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": [], "alcoholLabel": "주 {{drinkDays}}회 이상" },
+      "constraints": { "ageRange": [35, 58], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증"], "alcoholLabel": "주 {{drinkDays}}회 이상" },
       "occupationBias": ["selfemp", "driver", "construct", "cook", "market"],
       "ice": {
         "ideas": ["요즘 기름진 걸 많이 먹어서 그런 것 같아요", "살이 쪄서 그런가 싶어요"],
@@ -354,7 +354,7 @@
         "용량 조정이나 다른 약으로의 변경 같은 대안 제시",
         "환자가 받아들일 수 있는 계획으로 합의하고 추적 일정 잡기"
       ],
-      "constraints": { "ageRange": [58, 78], "sex": "any", "requiredRisk": ["고혈압", "당뇨병", "흡연"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [58, 78], "sex": "any", "requiredRisk": ["고혈압", "당뇨병", "흡연"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["retired", "market", "farmer", "driver", "housewife"],
       "ice": {
         "ideas": ["약을 오래 먹으면 몸에 안 좋다고 들었어요", "요즘은 괜찮은 것 같아서 안 먹어도 될 줄 알았어요"],

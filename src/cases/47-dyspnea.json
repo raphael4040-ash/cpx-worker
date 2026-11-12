@@ -23,7 +23,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": [],
+        "forbidden": ["당뇨병"],
         "smoking": "notCurrent"
       },
       "occupationBias": [
@@ -352,7 +352,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "student",
@@ -520,7 +520,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "housewife",

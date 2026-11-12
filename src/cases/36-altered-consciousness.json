@@ -229,7 +229,7 @@
         "sex": "any",
         "requiredRisk": ["고혈압"],
         "requiredRiskMin": 1,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "retired",
@@ -434,7 +434,7 @@
           "음주"
         ],
         "requiredRiskMin": 1,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "retired",
@@ -639,7 +639,7 @@
           "음주"
         ],
         "requiredRiskMin": 1,
-        "forbidden": [], "alcohol": "heavy" },
+        "forbidden": ["당뇨병"], "alcohol": "heavy" },
       "occupationBias": [
         "construct",
         "market",
@@ -838,7 +838,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": [], "alcohol": "drinker"
+        "forbidden": ["당뇨병"], "alcohol": "drinker"
       },
       "occupationBias": [
         "office",

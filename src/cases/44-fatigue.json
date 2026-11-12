@@ -12,7 +12,7 @@
     {
       "id": "fat-hypothyroid",
       "dx": "갑상선기능저하증",
-      "constraints": { "ageRange": [35, 68], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [35, 68], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["housewife", "office", "market", "care", "teacher"],
       "ice": {
         "ideas": ["나이 들어서 기력이 떨어진 것 같아요", "요즘 신경 쓸 일이 많아서 그런가 싶어요"],
@@ -162,7 +162,7 @@
     {
       "id": "fat-lymphoma",
       "dx": "호지킨림프종",
-      "constraints": { "ageRange": [20, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "drinker" },
+      "constraints": { "ageRange": [20, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"], "alcohol": "drinker" },
       "occupationBias": ["office", "student", "teacher", "selfemp", "parttime"],
       "ice": {
         "ideas": ["요즘 일이 많아서 지친 것 같아요", "몸살 기운이 오래가는 것 같아요"],
@@ -239,7 +239,7 @@
     {
       "id": "fat-drug-induced",
       "dx": "약물 유발 피로 (베타차단제·항히스타민제)",
-      "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [55, 80], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "jobless"],
       "ice": {
         "ideas": ["나이 들어서 기력이 떨어진 것 같아요", "날이 바뀌어서 몸이 처지는 것 같아요"],
@@ -312,7 +312,7 @@
     {
       "id": "fat-cfs",
       "dx": "만성피로증후군",
-      "constraints": { "ageRange": [25, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [25, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["office", "teacher", "nurse", "selfemp", "parttime"],
       "ice": {
         "ideas": ["몸이 원래 약해진 것 같아요", "아직 회복이 덜 된 건가 싶어요"],

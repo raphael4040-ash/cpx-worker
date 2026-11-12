@@ -103,7 +103,7 @@
     {
       "id": "sui-alcohol-impulsive",
       "dx": "알코올사용장애를 동반한 충동적 자살시도 직후",
-      "constraints": { "ageRange": [30, 58], "sex": "any", "requiredRisk": ["음주"], "requiredRiskMin": 1, "forbidden": [], "alcoholLabel": "매일 소주 {{bottles}}병" },
+      "constraints": { "ageRange": [30, 58], "sex": "any", "requiredRisk": ["음주"], "requiredRiskMin": 1, "forbidden": ["우울증"], "alcoholLabel": "매일 소주 {{bottles}}병" },
       "occupationBias": ["construct", "driver", "selfemp", "cook", "jobless"],
       "ice": {
         "ideas": ["그날 술을 너무 마셔서 그랬던 것 같아요", "요즘 일이 안 풀려서 예민했나 봐요"],
@@ -193,7 +193,7 @@
     {
       "id": "sui-social-crisis",
       "dx": "사회적 위기(실직·부채)에 따른 자살사고 (적응장애, 중등도 위험)",
-      "constraints": { "ageRange": [38, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [38, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"] },
       "occupationBias": ["selfemp", "jobless", "market", "construct", "office"],
       "ice": {
         "ideas": ["돈 문제로 스트레스를 너무 받아서 그런 것 같아요", "화병이 생긴 것 같아요"],
@@ -278,7 +278,7 @@
     {
       "id": "sui-chronic-pain-elderly",
       "dx": "만성 통증과 사회적 고립을 동반한 노인 자살사고 (고위험)",
-      "constraints": { "ageRange": [68, 85], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [68, 85], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"] },
       "occupationBias": ["retired", "farmer", "housewife", "market", "jobless"],
       "ice": {
         "ideas": ["오래 일해서 허리가 다 망가진 것 같아요", "나이 들어서 어쩔 수 없는 것 같아요"],
@@ -365,7 +365,7 @@
     {
       "id": "sui-adolescent-selfharm",
       "dx": "청소년 자해와 자살사고 (학교 내 괴롭힘 관련)",
-      "constraints": { "ageRange": [15, 18], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "occupationOnly": ["middleschool", "highschool"] },
+      "constraints": { "ageRange": [15, 18], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"], "occupationOnly": ["middleschool", "highschool"] },
       "occupationBias": ["highschool", "student"],
       "ice": {
         "ideas": ["그냥 체한 것 같아요", "아침을 안 먹어서 그런가 봐요"],

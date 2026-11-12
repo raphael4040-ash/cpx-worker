@@ -12,7 +12,7 @@
     {
       "id": "ob-lifestyle",
       "dx": "단순 비만 (에너지 섭취 증가와 활동량 감소) — 대사증후군 동반",
-      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["office", "driver", "selfemp", "delivery", "housewife"],
       "ice": {
         "ideas": ["나이 들면서 살이 잘 안 빠지는 체질이 된 것 같아요", "운동을 안 해서 그런 것 같아요"],
@@ -185,7 +185,7 @@
     {
       "id": "ob-cushing",
       "dx": "쿠싱증후군에 의한 체중 증가",
-      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["office", "housewife", "teacher", "selfemp", "care"],
       "ice": {
         "ideas": ["나잇살이 붙는 것 같아요", "운동을 못 해서 그런 것 같아요"],
@@ -275,7 +275,7 @@
     {
       "id": "ob-nephrotic",
       "dx": "신증후군에 의한 부종 (비만으로 오인된 체중 증가)",
-      "constraints": { "ageRange": [25, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [25, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["office", "construct", "market", "housewife", "driver"],
       "ice": {
         "ideas": ["짜게 먹어서 부은 것 같아요", "갑자기 살이 찐 건가 싶어요"],
@@ -364,7 +364,7 @@
     {
       "id": "ob-drug",
       "dx": "약물(항정신병약) 관련 체중 증가",
-      "constraints": { "ageRange": [20, 50], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "never" },
+      "constraints": { "ageRange": [20, 50], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"], "alcohol": "never" },
       "occupationBias": ["office", "student", "parttime", "jobless", "selfemp"],
       "ice": {
         "ideas": ["제가 너무 많이 먹어서 그런 것 같아요", "운동을 안 해서 그런가 싶어요"],

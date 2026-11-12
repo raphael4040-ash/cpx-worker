@@ -319,7 +319,7 @@
     {
       "id": "pu-diuretic",
       "dx": "이뇨제(티아지드) 복용에 의한 다뇨",
-      "constraints": { "ageRange": [55, 78], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": [] },
+      "constraints": { "ageRange": [55, 78], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["당뇨병"] },
       "occupationBias": ["retired", "housewife", "farmer", "market", "selfemp", "driver"],
       "ice": {
         "ideas": ["나이 들어서 방광이 약해진 것 같아요", "물을 잘못 마셔서 그런가 싶어요"],

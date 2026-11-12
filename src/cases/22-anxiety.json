@@ -12,7 +12,7 @@
     {
       "id": "anx-panic",
       "dx": "공황장애 (광장공포 동반)",
-      "constraints": { "ageRange": [22, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [22, 48], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["office", "student", "nurse", "delivery", "selfemp"],
       "ice": {
         "ideas": ["심장에 문제가 있는 것 같아요", "검사에서 못 찾은 무슨 병이 있는 것 같아요"],
@@ -96,7 +96,7 @@
     {
       "id": "anx-gad",
       "dx": "범불안장애",
-      "constraints": { "ageRange": [28, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [28, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["housewife", "office", "teacher", "selfemp", "care"],
       "ice": {
         "ideas": ["원래 성격이 예민해서 그런 것 같아요", "나이 들면서 걱정이 많아진 것 같아요"],
@@ -182,7 +182,7 @@
     {
       "id": "anx-ptsd",
       "dx": "외상후스트레스장애 (교통사고 후)",
-      "constraints": { "ageRange": [24, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcohol": "drinker" },
+      "constraints": { "ageRange": [24, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"], "alcohol": "drinker" },
       "occupationBias": ["driver", "delivery", "office", "market", "selfemp"],
       "ice": {
         "ideas": ["시간이 지나면 괜찮아질 줄 알았는데 제가 약해서 그런 것 같아요", "그 일이 너무 충격이라 그런 것 같아요"],
@@ -268,7 +268,7 @@
     {
       "id": "anx-hyperthyroid",
       "dx": "갑상선기능항진증에 의한 불안",
-      "constraints": { "ageRange": [25, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [25, 55], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["office", "housewife", "teacher", "nurse", "market"],
       "ice": {
         "ideas": ["신경을 많이 써서 예민해진 것 같아요", "기력이 많이 떨어진 것 같아요"],
@@ -353,7 +353,7 @@
     {
       "id": "anx-caffeine",
       "dx": "카페인 유발 불안 (물질 유발 불안)",
-      "constraints": { "ageRange": [19, 38], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [19, 38], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
       "occupationBias": ["student", "office", "highschool", "delivery", "parttime"],
       "ice": {
         "ideas": ["요즘 준비하는 일 때문에 신경을 많이 써서 그런 것 같아요", "잠을 못 자서 몸이 예민해진 것 같아요"],
