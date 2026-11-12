@@ -349,6 +349,9 @@ export async function handleAiChat(request, env, cfg, cors) {
       // 무료 플랜에서 10,000 뉴런을 넘기면 Cloudflare 가 에러를 낸다 — 우리 카운터가
       // 덜 셌던 경우다. 그날은 상한에 닿은 것으로 기록해 이후 요청을 미리 막고, Gemini 에 여유가 있으면 거기서 이어간다.
       if (!gemini && /neuron|daily|quota|limit|4006/i.test(msg)) {
+        // 이 분기는 그날 Workers AI 를 통째로 닫는다. 우리 카운터가 3,547 일 때 여기로 들어와 9,000 으로 고정된 일이 있었는데
+        // (2026-11-12) 어떤 오류였는지 남지 않아 진짜 하루 한도였는지 "limit" 이 들어간 다른 오류였는지 알 수 없었다.
+        console.error(JSON.stringify({ evt: "neuron_cap_pinned", sessionId: sessionId.slice(0, 8), phase, countedBefore: used, detail: msg.slice(0, 300) }));
         await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
         capped = true;
         workersOk = false;
