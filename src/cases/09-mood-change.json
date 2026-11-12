@@ -12,7 +12,7 @@
     {
       "id": "mood-mdd",
       "dx": "주요우울장애 (중등도)",
-      "constraints": { "ageRange": [25, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [25, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["office", "housewife", "market", "selfemp", "teacher"],
       "ice": {
         "ideas": ["요즘 일이 너무 힘들어서 그런 것 같아요", "제가 의지가 약해서 그런가 싶어요"],
@@ -97,7 +97,7 @@
     {
       "id": "mood-bipolar",
       "dx": "제1형 양극성장애 (현재 우울삽화, 과거 조증 삽화 있음)",
-      "constraints": { "ageRange": [22, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [22, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["office", "student", "selfemp", "delivery", "cook"],
       "ice": {
         "ideas": ["요즘 일이 잘 안 풀려서 그런 것 같아요", "날씨 탓인지 몸이 처지는 것 같아요"],
@@ -184,7 +184,7 @@
     {
       "id": "mood-grief",
       "dx": "정상 애도반응 (사별)",
-      "constraints": { "ageRange": [55, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [] },
+      "constraints": { "ageRange": [55, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["housewife", "retired", "market", "farmer", "selfemp"],
       "ice": {
         "ideas": ["그 사람을 떠나보내서 그런 것 같아요", "아직 마음 정리가 안 돼서 그런 것 같아요"],
@@ -260,7 +260,7 @@
     {
       "id": "mood-hypothyroid",
       "dx": "갑상선기능저하증에 의한 기분 변화",
-      "constraints": { "ageRange": [35, 68], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [35, 68], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["housewife", "office", "teacher", "market", "care"],
       "ice": {
         "ideas": ["나이 들어서 그런 것 같아요", "요즘 신경 쓸 일이 많아서 그런가 싶어요"],
@@ -345,7 +345,7 @@
     {
       "id": "mood-alcohol",
       "dx": "알코올사용장애에 동반된 우울 (물질 유발 기분 변화)",
-      "constraints": { "ageRange": [35, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "매일 소주 {{bottles}}병" },
+      "constraints": { "ageRange": [35, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"], "alcoholLabel": "매일 소주 {{bottles}}병" },
       "occupationBias": ["construct", "driver", "selfemp", "market", "cook"],
       "ice": {
         "ideas": ["요즘 일이 안 풀려서 스트레스 때문인 것 같아요", "잠을 못 자서 더 처지는 것 같아요"],
