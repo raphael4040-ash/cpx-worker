@@ -206,3 +206,11 @@ test("턴 리마인더: 과거 병력을 물으면 카드의 과거력까지 말
   }
   assert.match(turnHints("평소 쓰시는 약 있으세요?"), /흡입기/);
 });
+
+test("묶음 질문 항목 나누기: 맨 앞 항목(주소와 같은 증상)도 목록에 들어간다", async () => {
+  const { compoundItems, turnHints } = await import("../src/aiLimits.js");
+  assert.deepEqual(compoundItems("속쓰림, 피를 토하거나 검은 변, 눈이 노래진 적이 있나요?"), ["속쓰림", "피를 토하", "검은 변", "눈이 노래진 적이 있나요"]);
+  assert.deepEqual(compoundItems("두통이나 시야 이상, 젖은요?"), ["두통", "시야 이상", "젖은요"]);
+  assert.deepEqual(compoundItems("열은 나세요?"), []);
+  assert.match(turnHints("속쓰림, 피를 토하거나 검은 변, 눈이 노래진 적이 있나요?"), /「속쓰림」.*맨 앞 항목부터 하나도 빼지 않고/);
+});
