@@ -551,6 +551,7 @@
       "id": "pal-hyperthyroid",
       "dx": "갑상샘기능항진증 (그레이브스병)",
       "constraints": {
+        "alcohol": "notHeavy",
         "ageRange": [
           22,
           48
@@ -729,6 +730,7 @@
       "id": "pal-panic",
       "dx": "공황장애 (공황발작)",
       "constraints": {
+        "alcohol": "notHeavy",
         "ageRange": [
           19,
           45
