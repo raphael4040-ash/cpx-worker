@@ -375,7 +375,7 @@
     {
       "id": "dv-coercive-control",
       "dx": "배우자에 의한 정서적·경제적 통제와 경미한 신체 폭력 (임신 중)",
-      "constraints": { "ageRange": [27, 40], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["고혈압", "dyslip", "gout"], "smoking": "never", "alcohol": "never" },
+      "constraints": { "ageRange": [27, 40], "sex": "female", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["고혈압", "dyslip", "gout"], "smoking": "never", "alcohol": "never", "occupationOnly": ["housewife", "jobless"] },
       "occupationBias": ["housewife", "office", "selfemp", "parttime", "market"],
       "ice": {
         "ideas": ["요즘 신경 쓸 일이 많아서 그런 것 같아요", "임신해서 몸이 예민해진 것 같아요"],

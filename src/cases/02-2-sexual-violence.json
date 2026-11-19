@@ -25,7 +25,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["우울증"]
       },
       "occupationBias": [
         "office",
@@ -229,7 +229,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["우울증"]
       },
       "occupationBias": [
         "office",
@@ -455,7 +455,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": [], "occupationOnly": ["middleschool", "highschool"]
       },
       "occupationBias": [
         "middleschool",
