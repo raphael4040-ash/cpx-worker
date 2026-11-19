@@ -353,6 +353,12 @@ export async function handleAiChat(request, env, cfg, cors) {
         // (2026-11-12) 어떤 오류였는지 남지 않아 진짜 하루 한도였는지 "limit" 이 들어간 다른 오류였는지 알 수 없었다.
         console.error(JSON.stringify({ evt: "neuron_cap_pinned", sessionId: sessionId.slice(0, 8), phase, countedBefore: used, detail: msg.slice(0, 300) }));
         await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
+        // 로그는 대시보드에서만 보여서 확인이 번거로웠다 — 관리자 사용량 화면(/interview/ai/usage)에서 바로 보이게 남긴다.
+        await kv.put(
+          `ai:pin:${day}`,
+          JSON.stringify({ at: new Date().toISOString(), countedBefore: used, phase, detail: msg.slice(0, 500) }),
+          { expirationTtl: 3 * 86400 }
+        );
         capped = true;
         workersOk = false;
         if (pass === 0 && (await gemOk())) {
@@ -563,7 +569,8 @@ export async function handleAiUsage(request, env, cfg, cors) {
     exhausted: (await getInt(kv, `ai:gem:dead:${day}`)) === 1,
     ...geminiLimits(env),
   };
-  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), gemini: gem, probe, geminiReset, sessions }, 200, cors);
+  const capPin = await kv.get(`ai:pin:${day}`, "json"); // 오늘 Cloudflare 오류로 뉴런 한도가 고정됐다면 그 오류 원문
+  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), gemini: gem, probe, geminiReset, sessions, capPin }, 200, cors);
 }
 
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
