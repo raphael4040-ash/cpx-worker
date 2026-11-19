@@ -17,11 +17,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: "24"
 
       # worker.js 를 고치고 test/parse.test.mjs 의 동일 구현을 안 고치면(README 에도 적힌
       # 흔한 실수) 여기서 잡는다. 예전엔 이 테스트가 로컬에서 사람이 돌려야만 의미가 있었다 —
@@ -30,7 +30,7 @@ jobs:
         run: node --test
 
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # [placement] region 힌트(2026-01 추가)는 wrangler 3.x 가 모른다 — "placement.mode is a required field" 로 배포가 실패했다 (2026-11-09).
