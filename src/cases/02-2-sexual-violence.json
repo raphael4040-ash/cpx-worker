@@ -293,6 +293,7 @@
         "마지막 월경일": "{{lmp}}",
         "응급피임약을 복용했나": "{{ecp}}",
         "잠은 잘 자나": "거의 못 자요.",
+        "어디가 아픈가, 다친 곳이 있나": "{{painLine}}",
         "죽고 싶다는 생각이 든 적": "{{suicidal}}",
         "누구에게 이야기한 적 있나": "{{toldSomeone}}",
         "신고할 생각이 있는가": "{{report}}"
@@ -414,9 +415,13 @@
         "bruiseFinding": [
           "특이소견 없음",
           "왼쪽 위팔에 색이 옅어진 멍이 남아 있다"
+        ],
+        "painLine": [
+          "몸이 아픈 데는 없어요. 마음이 힘들어요.",
+          "그날 붙잡힌 팔에 멍이 들었는데 지금은 거의 안 아파요."
         ]
       },
-      "pairedVariations": [["ecp", "ecpMeds"], ["perpetrator", "contact"]],
+      "pairedVariations": [["ecp", "ecpMeds"], ["perpetrator", "contact"], ["bruiseFinding", "painLine"]],
       "disclosure": {
         "spontaneous": [
           "검사를 받고 싶다는 것",
