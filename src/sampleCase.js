@@ -680,7 +680,9 @@ export function buildCase(topicFile, data, personas, scenarioId) {
   const guardian = drawGuardian(scenario, person, personas, slots);
   if (guardian) {
     person.guardian = guardian;
-    person.speaksForSelf = person.age >= 13;
+    // 의식장애처럼 나이와 상관없이 본인이 답할 수 없는 카드는 informant.speaksForSelf: false 로 막는다.
+    // (이게 없어서 GCS 8 환자도 "환자 본인 응답 가능"으로 프롬프트에 실렸다.)
+    person.speaksForSelf = person.age >= 13 && scenario.informant?.speaksForSelf !== false;
   }
   person.iceOwner = guardian && !person.speaksForSelf ? "보호자" : "환자";
 
