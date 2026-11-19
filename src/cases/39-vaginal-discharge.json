@@ -23,7 +23,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": []
+        "forbidden": ["당뇨병"]
       },
       "occupationBias": [
         "office",
