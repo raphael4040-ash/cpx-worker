@@ -226,7 +226,7 @@
       "pmh": "{{pmhx}}",
       "meds": "그 외 복용 약 없음",
       "allergy": "없음",
-      "fh": "특이사항 없음",
+      "fh": "{{fhTrig}}",
       "sh": "인물 카드를 따름",
       "pe": {
         "vitals": { "sbp": [120, 142], "dbp": [72, 86], "hr": [68, 88], "rr": [14, 18], "temp": [36.3, 36.8], "spo2": [95, 98],
@@ -246,6 +246,7 @@
       },
       "variations": {
         "triggerChart": ["건강검진에서 폐 이상 소견을 듣고 겁이 남", "아버지가 폐암 진단을 받음", "식구들이 담배 냄새를 싫어함"],
+        "fhTrig": ["특이사항 없음", "아버지 폐암 진단", "특이사항 없음"],
         "attemptChart": ["3년 전 두 달간 금연", "작년에 일주일 금연"],
         "onsetWeeks": [1, 2, 3], "packs": [1, "1.5"], "years": [{ "text": 10, "minAge": 29 }, { "text": 15, "minAge": 34 }, { "text": 20, "minAge": 39 }, { "text": 25, "minAge": 44 }],
         "firstCig": ["일어나자마자요.", "한 시간쯤 뒤에요."],
@@ -259,7 +260,7 @@
         "pmhx": ["특이 병력 없음", "몇 년 전 검진에서 혈압 경계치"],
         "lungFinding": ["양측 정상", "호기가 약간 길다"]
       },
-      "pairedVariations": [["trigger", "triggerChart"], ["pastAttempt", "attemptChart"]],
+      "pairedVariations": [["trigger", "triggerChart", "fhTrig"], ["pastAttempt", "attemptChart"]],
       "disclosure": {
         "spontaneous": ["끊기로 결심했다는 것"],
         "onlyIfAsked": ["결심 계기", "의존도", "과거 금단 증상", "재흡연 방아쇠", "보조요법 경험", "기분 상태"]
