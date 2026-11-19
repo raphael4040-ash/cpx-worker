@@ -193,7 +193,7 @@
     {
       "id": "sui-social-crisis",
       "dx": "사회적 위기(실직·부채)에 따른 자살사고 (적응장애, 중등도 위험)",
-      "constraints": { "ageRange": [38, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"] },
+      "constraints": { "ageRange": [38, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["우울증"], "alcohol": "notHeavy" },
       "occupationBias": ["selfemp", "jobless", "market", "construct", "office"],
       "ice": {
         "ideas": ["돈 문제로 스트레스를 너무 받아서 그런 것 같아요", "화병이 생긴 것 같아요"],
