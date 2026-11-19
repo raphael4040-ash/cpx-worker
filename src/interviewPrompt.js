@@ -63,6 +63,24 @@ function scenarioBlock(resolved) {
     lines.push("산부인과력(gynHx; 해당 질문을 받으면 아래대로만 답하고, 묻지 않으면 말하지 않음):");
     for (const [q, a] of Object.entries(s.gynHx)) if (a) lines.push(`  Q: ${q} -> A: ${a}`);
   }
+  // 일부 카드에만 있는 질문-답 묶음. 예전에는 여기서 빠져 모델에 전달되지 않았다 —
+  // 산전 진찰에서 마지막 월경일을 물으면 카드에 있는데도 "잘 모르겠어요"라고 답했다.
+  const QA_SECTIONS = [
+    ["obHx", "산과력(obHx)"],
+    ["dischargeHx", "분비물 양상(dischargeHx)"],
+    ["dietActivity", "식사·활동(dietActivity)"],
+    ["peds", "소아 병력(peds — 보호자가 답함)"],
+    ["safetyAssessment", "안전 평가(safetyAssessment)"],
+  ];
+  for (const [key, label] of QA_SECTIONS) {
+    const sec = s[key];
+    if (!sec || typeof sec !== "object") continue;
+    lines.push(`${label}; 해당 질문을 받으면 아래대로만 답하고, 묻지 않으면 말하지 않음:`);
+    // "학생이 안내해야 할 것"처럼 의사가 할 일은 환자가 말할 내용이 아니므로 뺀다.
+    for (const [q, a] of Object.entries(sec)) if (a && !/^학생/.test(q)) lines.push(`  Q: ${q} -> A: ${a}`);
+  }
+  if (s.coverStory) lines.push(`처음 둘러대는 설명(coverStory — 직접적이고 비판 없는 질문을 받기 전까지는 이렇게 말함): ${s.coverStory}`);
+  if (s.stage) lines.push(`변화 단계(stage, 내부 전용 — 이 단계의 태도로 반응하고 단계 이름은 말하지 않음): ${s.stage}`);
   if (s.disclosure) {
     lines.push(`먼저 말해도 되는 것(spontaneous): ${(s.disclosure.spontaneous || []).join(", ")}`);
     lines.push(`반드시 물어야 나오는 것(onlyIfAsked): ${(s.disclosure.onlyIfAsked || []).join(", ")}`);
