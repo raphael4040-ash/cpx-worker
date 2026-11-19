@@ -13,7 +13,7 @@
     {
       "id": "con-colon-cancer",
       "dx": "좌측 결장암 (기질성 변비)",
-      "constraints": { "ageRange": [54, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [54, 78], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "고혈압"] },
       "occupationBias": ["retired", "farmer", "market", "selfemp", "housewife"],
       "ice": {
         "ideas": ["나이 들어서 장이 약해진 것 같아요", "앉아서 지내는 시간이 많아서 그런가 싶어요"],
@@ -89,7 +89,7 @@
     {
       "id": "con-functional",
       "dx": "기능성 변비 (식생활·활동량 관련)",
-      "constraints": { "ageRange": [20, 46], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [20, 46], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "고혈압"] },
       "occupationBias": ["office", "student", "nurse", "teacher", "driver"],
       "ice": {
         "ideas": ["생활이 바뀌어서 장이 예민해진 것 같아요", "체질적으로 장이 약한 것 같아요"],
@@ -231,7 +231,7 @@
     {
       "id": "con-hypothyroid",
       "dx": "갑상선기능저하증에 동반된 변비",
-      "constraints": { "ageRange": [35, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [35, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "고혈압"] },
       "occupationBias": ["housewife", "office", "teacher", "market", "care"],
       "ice": {
         "ideas": ["요즘 무리해서 몸이 지친 것 같아요", "운동을 안 해서 장이 느려진 것 같아요"],
@@ -302,7 +302,7 @@
     {
       "id": "con-parkinson",
       "dx": "파킨슨병에 동반된 변비 (신경성)",
-      "constraints": { "ageRange": [62, 82], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [62, 82], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "고혈압"] },
       "occupationBias": ["retired", "farmer", "housewife", "jobless", "market"],
       "ice": {
         "ideas": ["나이 들어서 장이 느려진 것 같아요", "물을 덜 마셔서 그런가 싶어요"],
