@@ -645,7 +645,22 @@ function fill(text, slots) {
     prev = text;
     text = text.replace(SLOT_RE, one);
   }
-  return text;
+  return naturalDurations(text);
+}
+
+// "18개월 전", "24시간 전" 은 사람이 하는 말이 아니다 — 환자가 그대로 읽어 말투가 딱딱해졌다.
+// 시점을 말하는 "… 전/째" 만 바꾼다. "생후 18개월", "16개월에 걸었다" 같은 나이는 그대로 둔다.
+// cpx-plugin/cpx/tools/sample_case.py 의 natural_durations 와 같은 규칙이다.
+const HOUR_WORDS = { 24: "하루", 36: "하루 반", 48: "이틀", 72: "사흘" };
+export function naturalDurations(text) {
+  return text
+    .replace(/(?<!\d)(\d+)\s*개월(?=\s*(전|째))/g, (m, n) => {
+      const v = Number(n);
+      if (v < 12) return m;
+      const y = Math.floor(v / 12), r = v % 12;
+      return r === 0 ? `${y}년` : r === 6 ? `${y}년 반` : `${y}년 ${r}개월`;
+    })
+    .replace(/(?<!\d)(\d+)\s*시간(?=\s*(전|째))/g, (m, n) => HOUR_WORDS[n] || m);
 }
 
 function fillDeep(node, slots) {
