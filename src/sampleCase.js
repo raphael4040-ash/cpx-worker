@@ -694,6 +694,9 @@ export function buildCase(topicFile, data, personas, scenarioId) {
   // 검증(validate)은 성향 ICE 로 끝낸 뒤에 바꾼다 — 상충 조합 규칙이 성향 id 를 보기 때문.
   const sIce = scenarioIce(scenario, person);
   if (sIce) person.ice = sIce;
+  // "ice": false — 심정지처럼 환자가 말할 수 없는 카드. 성향 ICE("별거 아닐 것 같은데
+  // 주변에서 가보라고 해서 왔다")가 쓰러진 환자에게 붙어 있었다.
+  if (scenario.ice === false) person.ice = { id: "none", idea: "해당 없음 (환자가 의식이 없거나 말할 수 없는 상황이라 생각·걱정·기대를 말하지 않는다)" };
 
   const { findings, rolled } = resolveFindings(scenario, slots);
   return {

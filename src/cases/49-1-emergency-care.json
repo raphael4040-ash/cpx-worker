@@ -30,6 +30,7 @@
         "retired",
         "driver"
       ],
+      "ice": false,
       "iceHint": [
         "denial"
       ],
@@ -192,6 +193,7 @@
         "housewife",
         "farmer"
       ],
+      "ice": false,
       "iceHint": [
         "denial"
       ],
@@ -337,6 +339,7 @@
         "farmer",
         "market"
       ],
+      "ice": false,
       "iceHint": [
         "denial"
       ],

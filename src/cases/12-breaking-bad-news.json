@@ -31,7 +31,8 @@
         ],
         "requiredRiskMin": 1,
         "forbidden": ["고혈압"],
-        "smoking": "heavy"
+        "smoking": "heavy",
+        "smokingLabel": "하루 한 갑, 30년 넘게"
       },
       "occupationBias": [
         "driver",
