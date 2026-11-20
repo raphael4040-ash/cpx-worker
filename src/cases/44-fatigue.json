@@ -306,7 +306,7 @@
       "variations": {
         "onsetWeeks": [3, 4, 6],
         "severity": [4, 5, 6],
-        "drug": ["맥박을 늦추는 혈압약", "부정맥약"]
+        "drug": ["맥박을 늦추는 약", "부정맥약"]
       },
       "disclosure": {
         "spontaneous": ["기운이 없다는 것"],

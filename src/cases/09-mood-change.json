@@ -345,7 +345,7 @@
     {
       "id": "mood-alcohol",
       "dx": "알코올사용장애에 동반된 우울 (물질 유발 기분 변화)",
-      "constraints": { "ageRange": [35, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"], "alcoholLabel": "매일 소주 {{bottles}} 병" },
+      "constraints": { "ageRange": [35, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"], "alcoholLabel": "매일 소주 {{bottles}}" },
       "occupationBias": ["construct", "driver", "selfemp", "market", "cook"],
       "ice": {
         "ideas": ["요즘 일이 안 풀려서 스트레스 때문인 것 같아요", "잠을 못 자서 더 처지는 것 같아요"],
@@ -375,7 +375,7 @@
         "수단을 준비": "준비한 건 없어요.",
         "과거 시도": "{{pastAttempt}}",
         "그런 생각을 붙잡아 주는 게 있나": "{{protective}}",
-        "술을 얼마나 자주 마시나": "거의 매일이요. 소주 {{bottles}} 병쯤 돼요.",
+        "술을 얼마나 자주 마시나": "거의 매일이요. 소주 {{bottles}}쯤 돼요.",
         "아침에 술을 마시나": "속이 안 좋고 손이 떨려서 한 잔 하는 날이 있어요.",
         "끊으려고 해본 적 있나": "며칠 참아봤는데 잠이 안 오고 식은땀이 나서 다시 마셨어요.",
         "술 때문에 문제가 생긴 적": "일을 못 나간 적도 있고 {{spouse}}하고 크게 싸웠어요.",
@@ -415,7 +415,7 @@
       "variations": {
         "onsetMonths": [4, 6, 12],
         "severity": [5, 6, 7],
-        "bottles": ["한", "1.5", "두"],
+        "bottles": ["한 병", "한 병 반", "두 병"],
         "trigger": ["일이 끊긴", {"text": "가게가 어려워진", "occOnly": ["market", "selfemp", "cook"]}, "아버지가 돌아가신"],
         "pastAttempt": ["시도한 적은 없어요.", "술 먹고 한 번 크게 사고를 낼 뻔한 적은 있어요."],
         "protective": ["아직 애가 학생이라 제가 벌어야죠.", "{{spouse}} 생각하면 그럴 수 없죠."],

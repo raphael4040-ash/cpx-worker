@@ -103,7 +103,7 @@
     {
       "id": "sui-alcohol-impulsive",
       "dx": "알코올사용장애를 동반한 충동적 자살시도 직후",
-      "constraints": { "ageRange": [30, 58], "sex": "any", "requiredRisk": ["음주"], "requiredRiskMin": 1, "forbidden": ["우울증"], "alcoholLabel": "매일 소주 {{bottles}} 병" },
+      "constraints": { "ageRange": [30, 58], "sex": "any", "requiredRisk": ["음주"], "requiredRiskMin": 1, "forbidden": ["우울증"], "alcoholLabel": "매일 소주 {{bottles}}" },
       "occupationBias": ["construct", "driver", "selfemp", "cook", "jobless"],
       "ice": {
         "ideas": ["그날 술을 너무 마셔서 그랬던 것 같아요", "요즘 일이 안 풀려서 예민했나 봐요"],
@@ -135,7 +135,7 @@
         "전에도 시도한 적 있나": "{{pastAttempt}}",
         "발견은 누가 했나": "{{spouse}}이 보고 지혈해서 왔어요. 저는 병원에 안 오려고 했어요.",
         "그런 생각을 붙잡아 주는 게 있나": "{{protective}}",
-        "술을 얼마나 자주 마시나": "거의 매일이요. 소주 {{bottles}} 병쯤 돼요.",
+        "술을 얼마나 자주 마시나": "거의 매일이요. 소주 {{bottles}}쯤 돼요.",
         "안 마시면 손이 떨리거나 잠을 못 자나": "아침에 손이 떨리고 술이 없으면 잠이 안 와요.",
         "남을 해치고 싶은 생각": "그런 건 없어요.",
         "총이나 위험한 물건이 집에 있나": "그런 건 없어요.",
@@ -178,7 +178,7 @@
         "daysAgo": [1, 2, 3],
         "severity": [6, 7, 8],
         "attemptCount": ["두", "세"],
-        "bottles": ["한", "1.5", "두"],
+        "bottles": ["한 병", "한 병 반", "두 병"],
         "pastAttempt": ["몇 년 전에도 술 먹고 비슷한 일이 있었어요.", "작년에도 한 번 있었는데 그땐 병원에 안 갔어요."],
         "protective": ["애가 아직 학생이라 제가 벌어야죠.", "{{spouse}} 생각하면 그러면 안 되는데요."],
         "pmhVar": ["특이 병력 없음", "건강검진에서 간수치 상승 지적"],
