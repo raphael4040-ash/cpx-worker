@@ -40,7 +40,9 @@ function personBlock(resolved) {
 function scenarioBlock(resolved) {
   const s = resolved.scenario;
   const lines = [`진단(내부 전용, 절대 비공개): ${resolved.dx}`];
-  if (s.opening) lines.push(`첫 대사 후보: ${JSON.stringify(s.opening)}`);
+  // 학생이 인사만 하면 모델이 후보 둘을 이어 붙여 "끊었다가 다시 피우게 됐어요. 숨이 차서 왔는데
+  // 담배를 다시 피우고 있어요."처럼 같은 말을 두 번 했다. 하나만 고르라고 못 박는다.
+  if (s.opening) lines.push(`첫 대사 후보 (이 중 하나만 골라 쓴다. 둘 이상을 이어 말하지 않는다): ${JSON.stringify(s.opening)}`);
   if (s.hpi) {
     lines.push("현병력(HPI):");
     for (const [k, v] of Object.entries(s.hpi)) if (v) lines.push(`  ${k}: ${v}`);
