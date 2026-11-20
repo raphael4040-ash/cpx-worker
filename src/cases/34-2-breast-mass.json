@@ -329,14 +329,14 @@
         "onsetMonths": [3, 4, 6], "severity": [0, 1], "side": ["오른", "왼"], "massSize": [2.5, 3.0, 3.5],
         "quadrant": ["상외측 사분면", "상내측 사분면"],
         "skinChange": ["팔을 들면 그 자리가 우묵하게 들어가요.", "거울로 보면 한쪽만 좀 이상해 보여요."],
-        "discharge": ["가끔 속옷에 누런 것이 묻어요.", "짜보면 한 방울씩 나올 때가 있어요."],
+        "discharge": ["가끔 속옷에 갈색 얼룩 같은 게 묻어요.", "짜보면 피 섞인 것처럼 불그스름한 게 한 방울씩 나올 때가 있어요."],
         "nippleFinding": ["같은 쪽 유두가 경도로 함몰되어 있다", "같은 쪽 유두가 병변 쪽으로 끌려 있다"],
-        "dischargeFinding": ["같은 쪽 유두의 한 개 유관에서 소량의 혈성 분비물이 나온다", "같은 쪽 유두의 한 개 유관에서 소량의 갈색 분비물이 나온다"],
+        "dischargeFinding": ["같은 쪽 유두의 한 개 유관에서 소량의 갈색 분비물이 나온다", "같은 쪽 유두의 한 개 유관에서 소량의 혈성 분비물이 나온다"],
         "fhx": ["언니가 유방암 수술을 받았어요.", "특별히 없는 것 같아요.", "이모가 난소암이었어요."],
         "reproHx": [{"text": "폐경한 지 몇 년 됐고 아이는 하나 낳았어요.", "minAge": 55}, {"text": "아직 생리는 해요. 아이는 둘 낳고 수유는 잘 못 했어요.", "maxAge": 52}, {"text": "폐경한 지 얼마 안 됐고 출산 경험은 없어요.", "minAge": 51, "maxAge": 58}],
         "mammo": ["10년 넘게 안 받았어요.", "한 번도 안 받아봤어요.", "5년쯤 전에 받고 안 받았어요."]
       },
-      "pairedVariations": [["nippleChart", "nippleFinding"], ["skinChange", "skinChart"], ["fhx", "fhChart"]],
+      "pairedVariations": [["nippleChart", "nippleFinding"], ["skinChange", "skinChart"], ["fhx", "fhChart"], ["discharge", "dischargeFinding"]],
       "disclosure": {
         "spontaneous": ["가슴에 멍울이 만져진다는 것"],
         "onlyIfAsked": ["덩이가 커지는 것", "아프지 않다는 것", "피부가 끌려 들어가는 것", "유두 변화와 분비물", "겨드랑이 멍울", "체중감소", "가족력", "검진을 오래 안 받은 것"]
