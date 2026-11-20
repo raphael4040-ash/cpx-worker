@@ -43,16 +43,27 @@ export function corsFor(request, env) {
 export async function checkRateLimit(kv, ip, { prefix = "iv", max = 20, windowSec = 600 } = {}) {
   if (!kv || !ip) return true;
   const key = `${prefix}:${ip}`;
+  // 값은 "횟수:창이 끝나는 시각(초)". 예전처럼 put 마다 expirationTtl 을 다시 주면 요청이 10분 안쪽
+  // 간격으로 이어지는 동안 창이 끝없이 밀려서, 누적 횟수가 한도에 닿으면 계속 막힌다. 창 끝을 고정한다.
+  const now = Math.floor(Date.now() / 1000);
   let count = 0;
+  let resetAt = now + windowSec;
   try {
     const raw = await kv.get(key);
-    count = raw ? parseInt(raw, 10) || 0 : 0;
+    if (raw) {
+      const [c, r] = String(raw).split(":");
+      const end = parseInt(r, 10);
+      if (!end || end > now) {
+        count = parseInt(c, 10) || 0;
+        if (end) resetAt = end;
+      }
+    }
   } catch {
     return true; // KV 읽기 실패로 정상 사용자를 막지 않는다
   }
   if (count >= max) return false;
   try {
-    await kv.put(key, String(count + 1), { expirationTtl: windowSec });
+    await kv.put(key, `${count + 1}:${resetAt}`, { expiration: Math.max(resetAt, now + 60) });
   } catch {
     /* 카운트 저장에 실패해도 이번 요청은 이미 허용됐다 */
   }

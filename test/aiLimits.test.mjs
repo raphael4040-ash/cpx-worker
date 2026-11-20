@@ -86,7 +86,16 @@ test("평가처럼 생긴 답을 가려낸다 — 환자 대사는 걸리지 않
   assert.match(out[0].text, /^정리하면 …\n\n\(아직 "평가" 신호가 아닙니다/);
 });
 
-import { feedbackOnlyMessages, insertFeedback, isOpeningTurn } from "../src/aiLimits.js";
+import { feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn } from "../src/aiLimits.js";
+
+test("isGreetingTurn: 첫 마디가 인사·자기소개뿐일 때만 true", () => {
+  const one = (text) => [{ role: "user", text }];
+  for (const t of ["안녕하세요.", "안녕하세요, 저는 의사 김민수입니다.", "안녕하십니까. 학생의사 김민수입니다", "반갑습니다! 저는 김민수예요."])
+    assert.equal(isGreetingTurn(one(t)), true, t);
+  for (const t of ["안녕하세요, 어디가 불편해서 오셨어요?", "안녕하세요. 성함이 어떻게 되세요?", "저는 김민수입니다. 무슨 일로 오셨나요?", "어떻게 오셨어요?", "안녕하세요 오늘 많이 아프세요?"])
+    assert.equal(isGreetingTurn(one(t)), false, t);
+  assert.equal(isGreetingTurn([{ role: "user", text: "안녕하세요." }, { role: "assistant", text: "안녕하세요." }, { role: "user", text: "안녕하세요." }]), false);
+});
 
 test("개선점 재요청은 대화와 채점표만 보내고 평가 신호는 뺀다", () => {
   const msgs = [

@@ -212,6 +212,28 @@ export function isOpeningTurn(messages, openings) {
   return !messages.some((m) => m.role === "assistant" && openings.some((o) => m.text.includes(o)));
 }
 
+// 첫 인사·자기소개. "안녕하세요", "저는 의사 김민수입니다" 처럼 묻는 말이 없는 첫 마디.
+const GREETING = /(안녕|반갑|처음\s*뵙|입니다|이에요|예요)/;
+const ASKS_SOMETHING = /[?？]|(세요|까요|나요|가요|어요|죠)\s*[.!]?\s*$|(불편|아프|아파|증상|오셨|일로|성함|이름|생년월일|연세|나이)/;
+export const GREETING_REPLIES = ["안녕하세요.", "네, 안녕하세요.", "아, 네. 안녕하세요."];
+
+/**
+ * 학생의 첫 마디가 인사·자기소개뿐인가. 이때 환자는 인사만 받는다 — 모델은 여기서 내원 이유까지
+ * 먼저 말해 버리는 일이 잦았다(학생이 "어디가 불편해서 오셨어요?"를 물을 기회가 사라진다).
+ */
+export function isGreetingTurn(messages) {
+  if (!Array.isArray(messages) || messages.some((m) => m.role === "assistant")) return false;
+  const users = messages.filter((m) => m.role === "user");
+  if (users.length !== 1) return false;
+  const t = String(users[0].text || "").trim();
+  if (t.length > 60 || !GREETING.test(t)) return false;
+  const rest = t
+    .replace(/안녕하(세요|십니까)|반갑습니다|처음\s*뵙겠습니다/g, " ")
+    .replace(/(입니다|이에요|예요)/g, " ")
+    .trim();
+  return !ASKS_SOMETHING.test(rest);
+}
+
 /**
  * promise 가 ms 안에 끝나지 않으면 Error("ai_timeout") 으로 거절한다. 원래 호출은 취소되지 않는다.
  * Workers AI 호출이 응답 없이 걸리는 일이 있어서(브라우저에 입력 중 표시만 계속 돌았다) 쓴다.

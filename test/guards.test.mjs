@@ -50,6 +50,20 @@ test("레이트리밋: 한도까지는 통과하고 넘으면 막으며, IP 와 
   assert.ok(kv.m.has("aiStart:5.5.5.5") && kv.m.has("iv:5.5.5.5"));
 });
 
+test("레이트리밋: 창 끝은 첫 요청 기준으로 고정되고, 끝난 창은 0부터 다시 센다", async () => {
+  const kv = fakeKv();
+  const opt = { prefix: "aiStart", max: 2, windowSec: 600 };
+  await checkRateLimit(kv, "7.7.7.7", opt);
+  const end1 = kv.m.get("aiStart:7.7.7.7").split(":")[1];
+  await checkRateLimit(kv, "7.7.7.7", opt);
+  assert.equal(kv.m.get("aiStart:7.7.7.7"), `2:${end1}`); // 두 번째 요청이 창을 밀지 않는다
+  assert.equal(await checkRateLimit(kv, "7.7.7.7", opt), false);
+  kv.m.set("aiStart:7.7.7.7", `2:${Math.floor(Date.now() / 1000) - 1}`); // KV 만료가 늦게 반영된 경우
+  assert.equal(await checkRateLimit(kv, "7.7.7.7", opt), true);
+  kv.m.set("aiStart:8.8.8.8", "2"); // 예전 형식 값도 읽는다
+  assert.equal(await checkRateLimit(kv, "8.8.8.8", opt), false);
+});
+
 test("레이트리밋: KV 가 실패해도 정상 사용자는 막지 않는다", async () => {
   const broken = { get: async () => { throw new Error("kv down"); }, put: async () => { throw new Error("kv down"); } };
   assert.equal(await checkRateLimit(broken, "1.1.1.1"), true);
