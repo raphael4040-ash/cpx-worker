@@ -31,6 +31,7 @@
         "construct",
         "parttime"
       ],
+      "ice": {"ideas": ["유리에 깊게 베인 것 같아요", "그냥 살짝 베인 줄 알았어요"], "concerns": ["손을 못 쓰게 될까 봐 걱정돼요", {"text": "일을 며칠 못 하게 될까 봐 걱정이에요", "occOnly": ["사무실", "현장"]}, "흉터가 크게 남을까 봐 걱정돼요"], "expectations": ["잘 꿰매 주세요", "피만 멎게 해주시면 돼요"]},
       "iceHint": [
         "work",
         "medicine",
@@ -82,12 +83,12 @@
         },
         {
           "step": "괴사조직 제거와 상처 가장자리 정리",
-          "correct": "가장자리는 비교적 깨끗해 최소한만 다듬습니다.",
+          "correct": "{{debride}}",
           "missed": ""
         },
         {
           "step": "봉합 — 봉합사 굵기와 방법 선택",
-          "correct": "{{suture}} 봉합사로 단순 단속봉합을 시행합니다. 가장자리가 잘 맞습니다.",
+          "correct": "{{suture}} 봉합사로 단순 단속봉합을 시행합니다. {{sutureNote}}",
           "missed": "봉합사 선택을 말하지 않으면 미수행으로 본다."
         },
         {
@@ -186,6 +187,14 @@
           "상처 안에 유리 조각은 보이지 않습니다.",
           "상처 깊은 곳에서 작은 유리 조각이 반짝입니다."
         ],
+        "debride": [
+          "가장자리는 비교적 깨끗해 최소한만 다듬습니다.",
+          "유리 조각을 집게로 제거하고 더 남은 것이 없는지 확인합니다. 가장자리는 최소한만 다듬습니다."
+        ],
+        "sutureNote": [
+          "가장자리가 잘 맞습니다.",
+          "가장자리가 잘 맞습니다. 손가락 감각 저하가 있어 신경 손상 평가를 위해 수부외과 진료를 연계합니다."
+        ],
         "irrigation": [
           200,
           300,
@@ -217,7 +226,9 @@
       },
       "pairedVariations": [
         ["mechanism", "mechanismDetail"],
-        ["tetanus", "tetanusPlan"]
+        ["tetanus", "tetanusPlan"],
+        ["foreignBody", "debride"],
+        ["neurovascular", "sutureNote"]
       ],
       "disclosure": {
         "spontaneous": [
@@ -255,6 +266,7 @@
         "market",
         "selfemp"
       ],
+      "ice": {"ideas": ["구멍이 작으니 별거 아닐 것 같아요", "녹슨 못이라 찜찜해요"], "concerns": ["파상풍 걸릴까 봐 걱정돼요", "곪을까 봐 걱정이에요"], "expectations": ["주사 맞아야 하는지 알고 싶어요", "약만 좀 지어주시면 될 것 같아요"]},
       "iceHint": [
         "work",
         "denial",
@@ -462,6 +474,7 @@
         "market",
         "parttime"
       ],
+      "ice": {"ideas": ["세게 부딪혀서 멍든 것 같아요", "뼈가 부러진 건 아닌가 싶어요"], "concerns": ["뼈가 부러졌을까 봐 걱정돼요", "점점 부어서 걱정돼요"], "expectations": ["사진 한번 찍어봤으면 해요", "붓기만 좀 가라앉게 해주세요"]},
       "iceHint": [
         "work",
         "internet",
