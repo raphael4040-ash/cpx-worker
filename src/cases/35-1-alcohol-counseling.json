@@ -21,7 +21,7 @@
         "비판단적으로 되짚어주기 — 훈계가 아니라 사실 확인",
         "권고 절주량을 숫자로 제시하고 다음 방문 때 다시 이야기하자고 남기기"
       ],
-      "constraints": { "ageRange": [24, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}}병" },
+      "constraints": { "ageRange": [24, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}} 병" },
       "occupationBias": ["office", "selfemp", "cook", "delivery", "parttime"],
       "ice": {
         "ideas": ["위가 약해서 속이 쓰린 것 같아요", "밥을 불규칙하게 먹어서 그런 것 같아요"],
@@ -47,7 +47,7 @@
       },
       "redFlags": {
         "술은 얼마나 자주": "주 {{days}}번쯤이요.",
-        "한 번에 얼마나": "소주 {{bottles}}병 정도요.",
+        "한 번에 얼마나": "소주 {{bottles}} 병 정도요.",
         "한 자리에서 많이 마시는 편인가": "모임이나 술자리가 있으면 더 마셔요.",
         "필름이 끊긴 적": "{{blackout}}",
         "술 때문에 결근하거나 지각한 적": "{{workProblem}}",
@@ -106,7 +106,7 @@
         "갑작스러운 단주가 위험할 수 있음을 알리고 도움 아래 줄이도록 안내",
         "전문 치료 연계와 다음 방문 약속"
       ],
-      "constraints": { "ageRange": [38, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "거의 매일 소주 {{bottles}}병" },
+      "constraints": { "ageRange": [38, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "거의 매일 소주 {{bottles}} 병" },
       "occupationBias": ["construct", "selfemp", "driver", "market", "jobless"],
       "ice": {
         "ideas": ["나이 들어서 잠이 줄어든 것 같아요", "신경 쓸 일이 많아서 그런 것 같아요"],
@@ -131,7 +131,7 @@
         "negative": ["환시 없음", "경련 없음", "황달 뚜렷하지 않음", "토혈 없음", "복부 팽만 없음"]
       },
       "redFlags": {
-        "하루에 얼마나": "소주 {{bottles}}병쯤이요. 많은 날은 더 마셔요.",
+        "하루에 얼마나": "소주 {{bottles}} 병쯤이요. 많은 날은 더 마셔요.",
         "며칠이나 마시나": "거의 매일이요.",
         "한자리에서 소주 1병 이상 마시는 날이 얼마나 되나(폭음 빈도)": "마시는 날은 거의 다 그 정도는 마셔요. 일주일에 대여섯 번은 될 거예요.",
         "아침에 손이 떨리나": "네, 한 잔 하면 가라앉아요.",
@@ -200,7 +200,7 @@
         "금단 위험을 평가하고 필요하면 도움 아래 줄이도록 안내",
         "추적 검사와 재방문 일정"
       ],
-      "constraints": { "ageRange": [42, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}}병, {{years}}년" },
+      "constraints": { "ageRange": [42, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}} 병, {{years}}년" },
       "occupationBias": ["selfemp", "construct", "driver", "market", "office"],
       "ice": {
         "ideas": ["피곤해서 간수치가 오른 것 같아요", "술 때문이라는 건 어느 정도 알고 있어요"],
@@ -225,7 +225,7 @@
         "negative": ["황달 없음", "복부 팽만 없음", "토혈 없음", "흑색변 없음", "다리 부종 없음", "혼동 없음", "손 떨림 없음"]
       },
       "redFlags": {
-        "술은 얼마나": "주 {{days}}번, 소주 {{bottles}}병 정도요.",
+        "술은 얼마나": "주 {{days}}번, 소주 {{bottles}} 병 정도요.",
         "몇 년째 그렇게 드셨나": "{{years}}년쯤 됐어요.",
         "간염을 앓거나 진단받은 적": "{{hepatitis}}",
         "눈이나 피부가 노래진 적": "없어요.",

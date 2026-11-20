@@ -747,6 +747,13 @@ export function caseToPrompt(kase) {
     else if (kept0.length) parts.push(kept0.join(" "));
   }
   person.pmhResolved = parts.length ? parts.join(". ") : "특이 병력 없음";
+  // 보호자가 말하는 카드는 pmh·meds 가 "환자(어머니)는 …" 처럼 제3자 이야기다. 인물의
+  // 배경질환을 그 앞에 그냥 붙이면 "당뇨병. 환자(어머니)는 위암…" 이 되어 누구 병인지 갈렸다.
+  const aboutOther = /^환자/.test(cardPmh) || /^환자/.test(stripDirectives(fill(s.meds || "", slots)));
+  if (aboutOther && /^환자/.test(cardPmh)) {
+    const own = illnessLabel && illnessLabel !== "없음" ? illnessLabel : "특이 병력 없음";
+    person.pmhResolved = `보호자 본인 ${own}. ${cardPmh}`;
+  }
 
   const medsCard = stripDirectives(fill(s.meds || "", slots));
   let medList = (p.illness.meds || []).slice();
@@ -769,6 +776,10 @@ export function caseToPrompt(kase) {
     person.medsResolved = medList.join(", ") + ". " + kept.join(" ");
   } else {
     person.medsResolved = (medList.join(", ") || medsCard).trim() || "복용 약 없음";
+  }
+  if (aboutOther && /^환자/.test(medsCard)) {
+    const own = (p.illness.meds || []).join(", ") || "복용 약 없음";
+    person.medsResolved = `보호자 본인 ${own}. ${medsCard}`;
   }
 
   const pe = { ...(s.pe || {}) };
