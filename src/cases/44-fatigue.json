@@ -90,7 +90,7 @@
     {
       "id": "fat-depression",
       "dx": "주요우울장애",
-      "constraints": { "ageRange": [25, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"], "alcohol": "drinker" },
+      "constraints": { "ageRange": [25, 62], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"], "alcohol": "drinker" },
       "occupationBias": ["office", "jobless", "housewife", "selfemp", "student"],
       "ice": {
         "ideas": ["요즘 무리해서 몸이 지친 것 같아요", "영양이 부족해서 그런가 싶어요"],

@@ -12,7 +12,7 @@
     {
       "id": "ob-lifestyle",
       "dx": "단순 비만 (에너지 섭취 증가와 활동량 감소) — 대사증후군 동반",
-      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증", "당뇨병", "우울증"] },
       "occupationBias": ["office", "driver", "selfemp", "delivery", "housewife"],
       "ice": {
         "ideas": ["나이 들면서 살이 잘 안 빠지는 체질이 된 것 같아요", "운동을 안 해서 그런 것 같아요"],
@@ -97,7 +97,7 @@
     {
       "id": "ob-hypothyroid",
       "dx": "갑상선기능저하증에 의한 체중 증가",
-      "constraints": { "ageRange": [30, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [30, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "우울증"] },
       "occupationBias": ["office", "housewife", "teacher", "care", "market"],
       "ice": {
         "ideas": ["나이 들어서 살이 찌는 것 같아요", "운동을 안 해서 그런가 싶어요"],
@@ -185,7 +185,7 @@
     {
       "id": "ob-cushing",
       "dx": "쿠싱증후군에 의한 체중 증가",
-      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [35, 55], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증", "당뇨병"] },
       "occupationBias": ["office", "housewife", "teacher", "selfemp", "care"],
       "ice": {
         "ideas": ["나잇살이 붙는 것 같아요", "운동을 못 해서 그런 것 같아요"],
@@ -275,7 +275,7 @@
     {
       "id": "ob-nephrotic",
       "dx": "신증후군에 의한 부종 (비만으로 오인된 체중 증가)",
-      "constraints": { "ageRange": [25, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증"] },
+      "constraints": { "ageRange": [25, 60], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": ["갑상선기능저하증", "당뇨병"] },
       "occupationBias": ["office", "construct", "market", "housewife", "driver"],
       "ice": {
         "ideas": ["짜게 먹어서 부은 것 같아요", "갑자기 살이 찐 건가 싶어요"],
@@ -418,7 +418,7 @@
           "전신 외관": "전신적으로 고르게 살이 쪄 있고 다소 처져 보이나 급성 병색은 없다",
           "신체계측": "{{bodySize}}",
           "체지방 분포": "몸통과 팔다리에 고르게 분포하고 팔다리가 가늘어진 소견은 없다",
-          "얼굴": "만월형 얼굴이나 뺨 붉어짐은 없다",
+          "얼굴": "만월형 얼굴이 아니고 뺨 붉어짐도 없다",
           "목 뒤와 쇄골상부": "물소혹이나 쇄골상 지방패드는 없다. 목 뒤에 흑색가시세포증이 있다",
           "복부 피부": "은백색의 가는 튼살만 있고 폭넓은 자주색 팽창선은 없다",
           "피부 멍": "쉽게 멍든 자국이 없고 피부가 얇지 않다",

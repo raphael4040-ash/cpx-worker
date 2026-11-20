@@ -455,7 +455,7 @@
         "sex": "female",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": [], "occupationOnly": ["middleschool", "highschool"]
+        "forbidden": ["우울증"], "occupationOnly": ["middleschool", "highschool"]
       },
       "occupationBias": [
         "middleschool",

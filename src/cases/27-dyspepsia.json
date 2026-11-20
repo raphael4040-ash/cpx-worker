@@ -680,7 +680,7 @@
           "음주"
         ],
         "requiredRiskMin": 1,
-        "forbidden": [], "alcoholLabel": "이십 년 이상 매일 소주 한 병" },
+        "forbidden": ["당뇨병"], "alcoholLabel": "이십 년 이상 매일 소주 한 병" },
       "occupationBias": [
         "construct",
         "driver",

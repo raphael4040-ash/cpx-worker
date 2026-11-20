@@ -543,7 +543,7 @@
         "sex": "any",
         "requiredRisk": [],
         "requiredRiskMin": 0,
-        "forbidden": ["당뇨병", "갑상선기능저하증"],
+        "forbidden": ["당뇨병", "갑상선기능저하증", "우울증"],
         "alcohol": "drinker"
       },
       "occupationBias": [
