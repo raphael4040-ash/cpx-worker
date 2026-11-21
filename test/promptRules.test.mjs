@@ -33,3 +33,11 @@ test("요약·마무리 확인에서는 증상을 다시 나열하거나 묻지 
   const pe = buildSystemPrompt(caseToPrompt(kase), { noPE: false, procedure: false, phase: "pe" });
   assert.match(pe, /새 걱정·증상·질문을 덧붙이지 않는다/);
 });
+
+test("카드의 짧은 표기를 그대로 읽지 않고, 넓은 진찰에도 소견 하나만 답한다는 규칙이 있다", () => {
+  const kase = buildCase("01-chest-pain", read("01-chest-pain.json"), read("personas.json"));
+  const history = buildSystemPrompt(caseToPrompt(kase), { noPE: false, procedure: false, phase: "history" });
+  assert.match(history, /짧은 표기\("비흡연"/);
+  const pe = buildSystemPrompt(caseToPrompt(kase), { noPE: false, procedure: false, phase: "pe" });
+  assert.match(pe, /넓게 말해도 그 부위의 소견 하나만/);
+});
