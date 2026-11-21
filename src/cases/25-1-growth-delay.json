@@ -477,7 +477,7 @@
       },
       "variations": {
         "onsetYears": [1, 2], "severity": [4, 5, 6],
-        "height": [139, 143, 147], "weight": [30, 33, 36], "weightLoss": [3, 4, 5],
+        "height": [137, 140, 143], "weight": [30, 33, 36], "weightLoss": [3, 4, 5],
         "fatherHeight": [172, 174, 176], "motherHeight": [159, 161, 163],
         "bloodyStool": ["한두 번 화장지에 피가 묻었다고 했어요.", "피는 못 봤대요."],
         "fhx": ["큰아버지 염증성 장질환 치료 중", "장 질환 가족력 없음"]
