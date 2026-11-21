@@ -661,11 +661,7 @@
       "fh": "해당 없음",
       "sh": "보호자는 인물 카드를 따름",
       "variations": {
-        "hoursAgo": [
-          18,
-          26,
-          36
-        ]
+        "hoursAgo": [18, 24, 36]
       },
       "disclosure": {
         "spontaneous": [

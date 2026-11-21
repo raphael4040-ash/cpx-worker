@@ -157,6 +157,32 @@ export function withTurnReminder(messages, systemPrompt) {
 
 
 /** "평가" 전인데 평가문이 나왔을 때 다시 받는 요청 — 마지막 학생 말 뒤에 안내를 붙인다 (기록엔 안 남음). */
+// 진찰 동작을 말한 학생 턴인가 — 소견을 괄호 서술로 받아야 하는 턴. 허락을 구하는 말("눌러봐도 될까요?")은 환자가 답한다.
+const PE_ACTION = /(청진|촉진|타진|시진|눌러|누르|만져|두드|들어\s*볼|볼게|보겠|확인할게|확인하겠|검사할게|검사하겠|움직여|숙여|들어\s*올|재고|잴게)/;
+export function isPeActionTurn(text) {
+  const t = String(text || "").trim();
+  return PE_ACTION.test(t) && !/(될까요|괜찮으세요|괜찮을까요|\?)\s*$/.test(t);
+}
+
+/**
+ * 진찰 동작에 대한 답에 괄호 서술이 하나도 없으면 환자 말투로 소견을 읊은 것이다 (Gemma 가
+ * "양쪽 손허리손가락 관절이 방추형으로 부어 있어요"처럼 환자가 의학 소견을 말했다).
+ */
+export function missingPeNarration(reply) {
+  return !/[(（][^()（）]{2,}[)）]/.test(String(reply || ""));
+}
+
+/** 진찰 답을 서술자 괄호로 다시 받기 위한 짧은 안내. */
+export function withPeNarratorNote(messages) {
+  const out = messages.slice();
+  const last = out[out.length - 1];
+  out[out.length - 1] = {
+    role: last.role,
+    text: `${last.text}\n\n(지금은 진찰 단계입니다. 환자 말이 아니라 서술자로서, 학생이 말한 부위·동작의 객관적 소견만 괄호 안에 쓰세요. 예: "(복부 촉진: 우하복부 압통)". 소견에 없는 부위면 "(특이소견 없음)".)`,
+  };
+  return out;
+}
+
 export function withNotYetEvalNote(messages) {
   const out = messages.slice();
   const last = out[out.length - 1];

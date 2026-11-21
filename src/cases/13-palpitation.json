@@ -142,12 +142,7 @@
         ]
       },
       "variations": {
-        "onsetHours": [
-          8,
-          14,
-          20,
-          30
-        ],
+        "onsetHours": [8, 14, 20, 36],
         "severity": [
           4,
           5,

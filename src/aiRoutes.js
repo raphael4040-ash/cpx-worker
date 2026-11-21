@@ -23,7 +23,7 @@ import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyS
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, isGeminiRegionBlocked, probeGemini } from "./geminiBackend.js";
 import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, GREETING_REPLIES, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, GREETING_REPLIES, isPeActionTurn, missingPeNarration, withPeNarratorNote, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -284,6 +284,14 @@ export async function handleAiChat(request, env, cfg, cors) {
       reply = extractReply(result);
       spent += count(result?.usage, systemPrompt, retry, reply);
       if (looksLikeEvaluation(reply)) reply = "(환자가 고개를 끄덕입니다.)";
+    }
+    // 진찰 동작에 환자 말투로 소견을 읊은 경우 — 한 번 안내를 붙여 서술자 괄호로 다시 받는다.
+    if (phase === "pe" && isPeActionTurn(messages[messages.length - 1].text) && missingPeNarration(reply)) {
+      const retry = withPeNarratorNote(turn);
+      const again = await run(retry);
+      const text = extractReply(again);
+      spent += count(again?.usage, systemPrompt, retry, text);
+      if (text && !missingPeNarration(text)) reply = text;
     }
     // 평가에 개선점이 빠지는 일이 있었다 (Gemma 4 — 채점표와 기록 블록만 내고 잘한 점·개선점을 통째로 생략).
     // 평가 프롬프트 전체를 다시 보내지 않고, 짧은 지시와 대화·채점표만 보내 개선점만 받아 끼운다.

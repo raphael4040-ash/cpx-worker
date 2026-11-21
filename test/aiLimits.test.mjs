@@ -86,7 +86,15 @@ test("평가처럼 생긴 답을 가려낸다 — 환자 대사는 걸리지 않
   assert.match(out[0].text, /^정리하면 …\n\n\(아직 "평가" 신호가 아닙니다/);
 });
 
-import { feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn } from "../src/aiLimits.js";
+import { feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, isPeActionTurn, missingPeNarration } from "../src/aiLimits.js";
+
+test("진찰 답 서술자 확인: 동작 턴과 괄호 서술 유무", () => {
+  for (const t of ["아픈 관절 볼게요.", "관절을 눌러볼게요.", "관절 움직여볼게요.", "폐 청진하겠습니다", "목을 앞으로 숙여볼게요."]) assert.equal(isPeActionTurn(t), true, t);
+  for (const t of ["배를 눌러봐도 될까요?", "불편한 데 있으세요?", "옷 좀 올려주시겠어요?"]) assert.equal(isPeActionTurn(t), false, t);
+  assert.equal(missingPeNarration("양쪽 손가락 관절이 방추형으로 부어 있어요."), true);
+  assert.equal(missingPeNarration("아야! (복부 촉진: 우하복부 압통)"), false);
+  assert.equal(missingPeNarration("(특이소견 없음)"), false);
+});
 
 test("isGreetingTurn: 첫 마디가 인사·자기소개뿐일 때만 true", () => {
   const one = (text) => [{ role: "user", text }];

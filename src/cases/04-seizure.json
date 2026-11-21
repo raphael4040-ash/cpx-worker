@@ -84,7 +84,7 @@
         "negatives": ["국소 신경학적 결손 없음", "경부 강직 없음", "유두부종 없음", "부정맥 없음", "발열 없음"]
       },
       "variations": {
-        "onsetHours": [18, 24, 30], "duration": [2, 3], "postictal": [15, 20, 30],
+        "onsetHours": [18, 24, 36], "duration": [2, 3], "postictal": [15, 20, 30],
         "severity": [4, 5, 6], "sleepHours": [3, 4],
         "place": [{"text": "학교 강의실", "occOnly": ["학생"]}, {"text": "회사 사무실", "occOnly": ["office"]}, "집 거실"],
         "aura": ["아무 느낌 없이 그냥 쓰러졌대요.", "잠깐 이상한 냄새가 났던 것 같기도 해요."],
@@ -181,7 +181,7 @@
         "negatives": ["혀 열상 없음", "국소 신경학적 결손 없음", "심잡음 없음", "기립성 혈압 강하 없음", "발열 없음"]
       },
       "variations": {
-        "onsetHours": [12, 20, 26], "jerkSeconds": [5, 10, 15], "severity": [3, 4], "pastCount": [1, 2, 3],
+        "onsetHours": [12, 20, 24], "jerkSeconds": [5, 10, 15], "severity": [3, 4], "pastCount": [1, 2, 3],
         "trigger": ["아침을 굶고 만원 지하철에 서 있다가", "채혈을 받다가 피를 보고", "더운 강당에서 오래 서 있다가", "화장실에서 볼일을 보고 일어서다가"],
         "lmpAnswer": [{"text": "생리는 규칙적이고 임신 가능성은 없어요.", "sexOnly": "female", "maxAge": 52}, {"text": "폐경한 지 오래됐어요.", "sexOnly": "female", "minAge": 53}, {"text": "저는 남자라서 해당이 없어요.", "sexOnly": "male"}]
       },
