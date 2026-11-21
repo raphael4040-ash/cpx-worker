@@ -1,29 +1,18 @@
-# CPX 업로드 워커
+# CPXpert 면담 워커
 
-Claude Code의 Stop 훅이 보낸 평가 결과를 Firestore에 기록하는 중계 서버입니다.
-Cloudflare Workers 무료 플랜(하루 10만 요청)에서 돕니다.
+cpxpert.web.app 의 웹 면담을 처리하는 서버입니다. Cloudflare Workers 무료 플랜에서 돕니다.
 
-## 왜 서버가 필요한가
+- `/interview/start` — 케이스를 뽑아 본인 키(Gemini)로 면담할 때 쓸 시스템 프롬프트를 내줍니다.
+- `/interview/ai/*` — "키 없이" 면담: Workers AI·운영자 Gemini 로 환자를 연기하고 채점합니다.
 
-훅이 보내는 것과 Firestore가 받는 것 사이에 변환이 필요합니다.
+케이스 카드 원본(`src/cases`), 주제별 채점표(`refs/`), 카드 점검 도구(`tools/cards/`)도 이 저장소에 있습니다.
+카드를 고친 뒤에는 `npm run check-cards`, 카드 파일을 추가·삭제했으면 `npm run manifest`.
 
-1. 페어링 토큰 → Firebase ID token 교환 (`securetoken.googleapis.com`)
-2. 평가 메시지에서 ` ```cpx-record ` 블록 파싱
-3. 전사 `.jsonl` → 사람이 읽는 텍스트 (`/cpx:start` 부터 채점까지의 면담만 남기고 슬래시 명령·SKILL.md 주입·도구 호출·채점 메시지·채점 뒤 대화는 버림)
-4. Firestore REST의 타입 지정 형식(`{"stringValue": ...}`)으로 조립
+예전에는 Claude Code 플러그인의 Stop 훅이 보낸 채점 결과를 기록하는 `/upload` 도 있었지만,
+플러그인을 폐기하면서 2026-11-21 에 없앴습니다. 웹 면담의 기록은 브라우저가 로그인한 계정으로
+Firestore 에 직접 씁니다.
 
-이걸 로컬 스크립트에서 하려면 Node나 jq가 필요한데, 유저 PC에 있으리라는 보장이 없습니다.
-서버로 옮기면 유저 쪽은 `curl` 하나만 있으면 됩니다.
-
-## 보안상 중요한 성질
-
-**이 워커는 자격증명을 하나도 보관하지 않습니다.** 유저가 보낸 페어링 토큰 안의
-refresh token으로 그 유저 본인의 ID token을 받아, **유저 자격으로** Firestore에 씁니다.
-따라서 `firestore.rules` 의 `uid == request.auth.uid` 검사가 그대로 적용되고,
-워커가 뚫려도 관리자 권한이 새지 않습니다.
-
-`FIREBASE_API_KEY` 와 `FIREBASE_PROJECT_ID` 는 웹앱에도 노출되는 공개 식별자라
-평문으로 두어도 됩니다.
+`FIREBASE_PROJECT_ID` 는 웹앱에도 노출되는 공개 식별자라 평문으로 두어도 됩니다.
 
 ---
 
@@ -123,27 +112,23 @@ npx wrangler deploy
 
 ## 배포 후 할 일
 
-나온 주소를 플러그인의 `hooks/upload.sh` 와 `hooks/upload.ps1` 의 `ENDPOINT` 에 넣으세요.
+웹 기록판(`cpx-tracker/docs/app.js`)의 `INTERVIEW_ENDPOINT` 가 이 워커 주소와 같아야 합니다.
 
 ## 테스트
 
-파싱 로직(기록 블록 추출, 전사 렌더링, 페어링 토큰) 테스트가 들어 있습니다.
 **Node가 있어야 실행됩니다.**
 
 ```bash
-node --test
+node --test test/*.test.mjs
 ```
 
-Node 없이 검증하려면 실제 연습을 한 번 돌려보고 기록판에 행이 생기는지 확인하는 수밖에 없습니다.
-그때 워커 로그는 대시보드의 워커 페이지 → **Logs → Begin log stream** 에서 실시간으로 볼 수 있습니다.
-
-`worker.js` 를 고치면 `test/parse.test.mjs` 의 동일 구현도 함께 고쳐야 합니다. `main` 에
-푸시하면 `.github/workflows/deploy.yml` 이 배포 전에 이 테스트를 먼저 돌립니다 — 로컬에
-Node 가 없어도 테스트가 실패하는 채로 배포되는 일은 이제 없습니다.
+워커 로그는 대시보드의 워커 페이지 → **Logs → Begin log stream** 에서 실시간으로 볼 수 있습니다.
+`main` 에 푸시하면 `.github/workflows/deploy.yml` 이 배포 전에 테스트를 먼저 돌립니다 — 로컬에
+Node 가 없어도 테스트가 실패하는 채로 배포되는 일은 없습니다.
 
 ## 레이트리밋 (선택)
 
-`/interview/start` 는 로그인·페어링 토큰이 필요 없습니다 — 학생 브라우저가 세션을 시작하기
+`/interview/start` 는 로그인이 필요 없습니다 — 학생 브라우저가 세션을 시작하기
 전부터 부르는 경로라서요. 그만큼 열려 있어서, 외부에서 스크립트로 반복 호출하면 Cloudflare
 무료 한도(하루 10만 요청)를 실제 학생 몫까지 갉아먹을 수 있습니다.
 
@@ -164,14 +149,12 @@ id 로 배포를 깨뜨리지 않기 위한 안전한 기본값입니다. `deplo
 (기본: `cpx-practice.github.io`, 옛 주소 `raphael4040-ash.github.io`, 로컬 개발 서버 `localhost:8123`).
 목록에 없는 사이트의 스크립트는 응답을 읽지 못합니다. 바꾸려면 `wrangler.toml` 의 `[vars]` 에
 `ALLOWED_ORIGINS`(쉼표 구분)를 적습니다 — **웹 기록판 주소를 옮길 때는 반드시 여기도 함께 고쳐야
-합니다**, 안 그러면 면담이 전부 막힙니다. 플러그인 훅은 `curl` 이라 `Origin` 헤더가 없어 영향이 없습니다.
+합니다**, 안 그러면 면담이 전부 막힙니다.
 
 ## 엔드포인트
 
 | 경로 | 설명 |
 |---|---|
-| `POST /upload` | `Authorization: Bearer <페어링토큰>` + multipart(`hook`, 선택 `transcript`) |
-| `GET /health` | 헬스체크 |
-
-`/upload` 는 실패해도 non-2xx를 돌려줄 뿐이며, Claude Code는 이를 non-blocking error로
-처리하므로 유저의 세션이 끊기지 않습니다.
+| `POST /interview/start` | 본인 키 면담용 시스템 프롬프트 (로그인 불필요, IP 당 요청 제한) |
+| `POST /interview/ai/*` | "키 없이" 면담 — start·chat·handoff·status·usage·keys·limits·scenarios (`src/aiRoutes.js`) |
+| `GET /health` | 헬스체크 (`version` = `src/worker.js` 의 `WORKER_VERSION`) |
