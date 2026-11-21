@@ -18,6 +18,7 @@
  * 상한을 10,000 이 아니라 9,000 으로 잡았다. 무료 플랜 계정이면 10,000 을 넘는 순간
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
+import { addCounter, pendingFor, dropPending, NEURON_FLUSH, GEM_FLUSH, cachedUsage, rememberUsage, shouldFlushUsage } from "./kvBatch.js";
 import { prepareInterview, listScenarios, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, isGeminiRegionBlocked, probeGemini } from "./geminiBackend.js";
@@ -65,7 +66,7 @@ export async function handleAiStart(request, env, cfg, cors) {
 
   const limits = readLimits(env);
   const day = utcDay();
-  const used = await getInt(kv, `ai:neurons:${day}`);
+  const used = (await getInt(kv, `ai:neurons:${day}`)) + pendingFor(`ai:neurons:${day}`);
   // 뉴런이 모자라면 운영자 Gemini 키가 있을 때만 그쪽으로 시작한다. 면담 도중에는 제공자를 바꾸지 않는다.
   let backend = "workers";
   // 관리자 점검용 — 뉴런이 남아 있어도 Gemini 로 시작해 본다 (본인 토큰이 관리자일 때만, 키가 있을 때만).
@@ -195,12 +196,13 @@ export async function handleAiChat(request, env, cfg, cors) {
   const limits = readLimits(env);
   const day = utcDay();
   const neuronKey = `ai:neurons:${day}`;
-  const used = await getInt(kv, neuronKey);
+  const usedStored = await getInt(kv, neuronKey); // KV 에 쓰인 값 (kvBatch 의 쓰지 않은 몫은 따로)
+  const used = usedStored + pendingFor(neuronKey);
   let gemini = session.backend === "gemini";
   let model = gemini ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL;
   const gemReqKey = `ai:gem:req:${day}`;
   const gemDeadKey = `ai:gem:dead:${day}`;
-  const gemOk = async () => geminiConfigured(env) && !(await getInt(kv, gemDeadKey)) && (await getInt(kv, gemReqKey)) < geminiLimits(env).maxRequests;
+  const gemOk = async () => geminiConfigured(env) && !(await getInt(kv, gemDeadKey)) && (await getInt(kv, gemReqKey)) + pendingFor(gemReqKey) < geminiLimits(env).maxRequests;
   let workersOk = used < limits.cap;
   const exhausted = () => json({ error: "daily_budget_exhausted", resetsAt: nextResetIso() }, 429, cors);
   // 진행 중인 면담도 한쪽이 소진되면 다른 쪽으로 넘긴다 (대화 전체를 매번 보내는 구조라 이어서 할 수 있다). 둘 다 소진돼야 막힌다.
@@ -263,8 +265,9 @@ export async function handleAiChat(request, env, cfg, cors) {
     return gemini ? 0 : neuronsFor(model, usage, system, msgs, text); // Gemini 는 뉴런을 쓰지 않는다
   };
   const saveCounters = async () => {
-    if (spent) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
-    if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
+    // 오류로 끝나는 요청 — 모아 둔 몫까지 바로 쓴다.
+    if (spent) await addCounter(kv, neuronKey, usedStored, spent, NEURON_FLUSH, { force: true });
+    if (gemCalls) await addCounter(kv, gemReqKey, await getInt(kv, gemReqKey), gemCalls, GEM_FLUSH, { force: true });
   };
   let reply = "";
   let capped = false; // 이번 요청에서 Workers AI 카운터를 상한으로 못박았는가 (아래 마지막 저장이 덮어쓰지 않게)
@@ -369,6 +372,7 @@ export async function handleAiChat(request, env, cfg, cors) {
         // 이 분기는 그날 Workers AI 를 통째로 닫는다. 우리 카운터가 3,547 일 때 여기로 들어와 9,000 으로 고정된 일이 있었는데
         // (2026-11-12) 어떤 오류였는지 남지 않아 진짜 하루 한도였는지 "limit" 이 들어간 다른 오류였는지 알 수 없었다.
         console.error(JSON.stringify({ evt: "neuron_cap_pinned", sessionId: sessionId.slice(0, 8), phase, countedBefore: used, detail: msg.slice(0, 300) }));
+        dropPending(neuronKey);
         await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
         // 로그는 대시보드에서만 보여서 확인이 번거로웠다 — 관리자 사용량 화면(/interview/ai/usage)에서 바로 보이게 남긴다.
         await kv.put(
@@ -390,8 +394,9 @@ export async function handleAiChat(request, env, cfg, cors) {
       return json({ error: "ai_error", detail: msg.slice(0, 300) }, 502, cors);
     }
   }
-  if (spent && !capped) await kv.put(neuronKey, String(used + spent), { expirationTtl: 2 * 86400 });
-  if (gemCalls) await kv.put(gemReqKey, String((await getInt(kv, gemReqKey)) + gemCalls), { expirationTtl: 2 * 86400 });
+  // 카운터는 몇 턴 분량씩 모아서 쓴다 (kvBatch.js — KV 무료 한도 하루 쓰기 1,000회).
+  if (spent && !capped) await addCounter(kv, neuronKey, usedStored, spent, NEURON_FLUSH);
+  if (gemCalls) await addCounter(kv, gemReqKey, await getInt(kv, gemReqKey), gemCalls, GEM_FLUSH);
 
   const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers", session.uid);
   if (!reply) {
@@ -421,7 +426,7 @@ export async function handleAiHandoff(request, env, cfg, cors) {
   if (!session || session.uid !== user.uid) return json({ error: "session_expired" }, 404, cors);
   const day = utcDay();
   const limits = readLimits(env);
-  const workersDone = (await getInt(kv, `ai:neurons:${day}`)) >= limits.cap;
+  const workersDone = (await getInt(kv, `ai:neurons:${day}`)) + pendingFor(`ai:neurons:${day}`) >= limits.cap;
   const gemDone =
     !geminiConfigured(env) || !!(await getInt(kv, `ai:gem:dead:${day}`)) || (await getInt(kv, `ai:gem:req:${day}`)) >= geminiLimits(env).maxRequests;
   if (!(workersDone && gemDone)) return json({ error: "not_exhausted" }, 409, cors);
@@ -593,11 +598,13 @@ export async function handleAiUsage(request, env, cfg, cors) {
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
 async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens = { tin: 0, tout: 0 }, backend = "workers", uid = "") {
   const key = `ai:usage:${utcDay()}:${sessionId}`;
-  let u = null;
-  try {
-    u = await kv.get(key, "json");
-  } catch {
-    /* 기록 실패는 면담을 막지 않는다 */
+  let u = cachedUsage(key);
+  if (!u) {
+    try {
+      u = await kv.get(key, "json");
+    } catch {
+      /* 기록 실패는 면담을 막지 않는다 */
+    }
   }
   u = u || { sessionId, topic, backend, uid, startedAt: new Date().toISOString(), neurons: 0, modelTurns: 0, localTurns: 0, tokensIn: 0, tokensOut: 0, byPhase: {} };
   u.neurons += neurons;
@@ -611,10 +618,14 @@ async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens =
   p.tokensOut = (p.tokensOut || 0) + tokens.tout;
   p[local ? "local" : "model"] += 1;
   u.updatedAt = new Date().toISOString();
-  try {
-    await kv.put(key, JSON.stringify(u), { expirationTtl: 3 * 86400 });
-  } catch {
-    /* 기록 실패는 면담을 막지 않는다 */
+  rememberUsage(key, u);
+  // 매 턴 쓰지 않고 몇 턴마다 쓴다 (kvBatch.js). 관리자 사용량 화면에 조금 늦게 반영된다.
+  if (shouldFlushUsage(u, phase)) {
+    try {
+      await kv.put(key, JSON.stringify(u), { expirationTtl: 3 * 86400 });
+    } catch {
+      /* 기록 실패는 면담을 막지 않는다 */
+    }
   }
   return { neurons: u.neurons, modelTurns: u.modelTurns, localTurns: u.localTurns, tokensIn: u.tokensIn, tokensOut: u.tokensOut };
 }
@@ -624,7 +635,7 @@ export async function handleAiStatus(env, cors) {
   const kv = env.RATE_LIMIT_KV;
   if (!env.AI || !kv) return json({ enabled: false }, 200, cors);
   const limits = readLimits(env);
-  const used = await getInt(kv, `ai:neurons:${utcDay()}`);
+  const used = (await getInt(kv, `ai:neurons:${utcDay()}`)) + pendingFor(`ai:neurons:${utcDay()}`);
   return json(
     {
       enabled: true,
@@ -706,7 +717,7 @@ async function geminiHasRoom(kv, env, day) {
   const lim = geminiLimits(env);
   if (await getInt(kv, `ai:gem:dead:${day}`)) return false;
   const [sessions, reqs] = await Promise.all([getInt(kv, `ai:gem:sessions:${day}`), getInt(kv, `ai:gem:req:${day}`)]);
-  return sessions < lim.maxSessions && reqs + 25 <= lim.maxRequests; // 면담 한 회 약 25~30회 호출
+  return sessions < lim.maxSessions && reqs + pendingFor(`ai:gem:req:${day}`) + 25 <= lim.maxRequests; // 면담 한 회 약 25~30회 호출
 }
 
 async function getInt(kv, key) {
