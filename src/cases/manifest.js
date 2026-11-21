@@ -1,4 +1,4 @@
-// 자동 생성 파일. 손으로 고치지 말고 `npm run sync-cases` 를 다시 실행할 것.
+// 자동 생성 파일. 손으로 고치지 말고 `npm run manifest` 를 다시 실행할 것.
 import c0 from "./01-chest-pain.json";
 import c1 from "./02-1-domestic-violence.json";
 import c2 from "./02-2-sexual-violence.json";

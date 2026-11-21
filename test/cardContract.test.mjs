@@ -1,8 +1,8 @@
 // 카드 계약 검사 — 카드가 선언한 조건을 JS 샘플러가 실제로 지키는가.  cd cpx-worker && node --test
 //
-// 추첨 규칙은 cpx-marketplace 의 sample_case.py 와 여기 sampleCase.js 두 곳에 따로 있다.
+// 추첨 규칙은 tools/cards/sample_case.py 와 src/sampleCase.js 두 곳에 따로 있다.
 // 카드에 새 조건을 쓰면서 한쪽에만 구현하면 다른 쪽은 조용히 무시한다. 그래서 카드가 선언한
-// 조건을 샘플러와 독립적으로 다시 확인한다. cpx-marketplace/cpx/tools/check_contract.py 가 같은
+// 조건을 샘플러와 독립적으로 다시 확인한다. tools/cards/check_contract.py 가 같은
 // 검사를 Python 샘플러에 한다 — 둘 중 하나를 고치면 다른 쪽도 같이 고칠 것.
 import { test } from "node:test";
 import assert from "node:assert/strict";

@@ -1,7 +1,7 @@
 /**
  * 웹 면담(Gemini)용 시스템 프롬프트 빌더.
  *
- * cpx-plugin 의 SKILL.md + checklist.md 를 Gemini 시스템 인스트럭션으로 옮긴 것.
+ * 예전 cpx-plugin 의 SKILL.md 와 refs/checklist.md 를 Gemini 시스템 인스트럭션으로 옮긴 것.
  * Claude Code 전용 지시(슬래시 명령, sample_case.py 실행 안내, 파일 경로 언급)는
  * 뺐다 — 케이스 조합은 sampleCase.js 가 서버에서 이미 끝냈고, 그 결과를 통째로
  * 프롬프트에 박아 넣는다. 나머지 연기·채점 규칙은 SKILL.md 원문 문구를 최대한

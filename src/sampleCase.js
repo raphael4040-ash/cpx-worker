@@ -1,5 +1,5 @@
 /**
- * cpx-plugin/cpx/tools/sample_case.py 의 JS 포팅.
+ * tools/cards/sample_case.py 의 JS 포팅 (원래 cpx-plugin 에 있던 파이썬 샘플러).
  *
  * 카드(진단 시나리오) + personas.json(인물) + variations(표현 변주)를 조합해
  * 한 세션 분량의 완성된 환자 설정을 만든다. 로직은 파이썬 원본과 최대한 1:1로
@@ -650,7 +650,7 @@ function fill(text, slots) {
 
 // "18개월 전", "24시간 전" 은 사람이 하는 말이 아니다 — 환자가 그대로 읽어 말투가 딱딱해졌다.
 // 시점을 말하는 "… 전/째" 만 바꾼다. "생후 18개월", "16개월에 걸었다" 같은 나이는 그대로 둔다.
-// cpx-plugin/cpx/tools/sample_case.py 의 natural_durations 와 같은 규칙이다.
+// tools/cards/sample_case.py 의 natural_durations 와 같은 규칙이다.
 const HOUR_WORDS = { 24: "하루", 36: "하루 반", 48: "이틀", 72: "사흘" };
 const DAY_WORDS = { 7: "일주일", 14: "2주", 21: "3주", 28: "4주" };
 export function naturalDurations(text) {

@@ -1,0 +1,43 @@
+#!/bin/sh
+# CPX 카드 점검 — 푸시 전에 다섯 검사기를 돌린다.
+#
+# 설치:
+#   cp tools/cards/pre-push.sample .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+# 해제:
+#   rm .git/hooks/pre-push
+# 이번 한 번만 건너뛰기:
+#   git push --no-verify
+#
+# 검사가 잡는 것은 형식·조합 규칙·내부 모순·치환 후 출력이다.
+# 임상 내용이 맞는지는 사람이 봐야 하며 이 훅이 대신해 주지 않는다.
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+script="$root/tools/cards/check_all.py"
+[ -f "$script" ] || exit 0
+
+# 카드나 추첨 규칙이 바뀌지 않았으면 굳이 돌리지 않는다.
+changed=$(git diff --name-only "@{push}" HEAD 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null)
+if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -q "src/cases\|tools/cards\|src/sampleCase\.js"; then
+  exit 0
+fi
+
+# 점검기(tools/cards/sample_case.py)는 src/sampleCase.js 와 같은 추첨 규칙을 파이썬으로 다시 구현한 것이다.
+# 한쪽만 고치면 점검이 실제 면담과 다른 규칙으로 돌게 된다.
+if printf '%s\n' "$changed" | grep -q "tools/cards/sample_case\.py\|src/sampleCase\.js"; then
+  echo "⚠️  추첨 규칙이 바뀌었습니다 — src/sampleCase.js 와 tools/cards/sample_case.py 를 같이 고쳤는지 확인하세요."
+fi
+
+for py in python python3 py; do
+  command -v "$py" >/dev/null 2>&1 && { PY="$py"; break; }
+done
+[ -n "$PY" ] || { echo "python 을 찾지 못해 카드 점검을 건너뜁니다."; exit 0; }
+
+echo "카드 점검 중..."
+"$PY" "$script" 10 --quiet || {
+  echo ""
+  echo "카드 점검에 실패해 푸시를 멈췄습니다."
+  echo "  자세히 보기: $PY tools/cards/check_all.py 10"
+  echo "  그래도 올리려면: git push --no-verify"
+  exit 1
+}
+exit 0

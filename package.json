@@ -3,7 +3,8 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "sync-cases": "node scripts/sync-cases.mjs",
+    "manifest": "node scripts/build-manifest.mjs",
+    "check-cards": "python tools/cards/check_all.py",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },

@@ -9,3 +9,6 @@ dist/
 *.token
 .cloudflare-token
 .live_interview.json
+
+# 카드 점검 도구(파이썬) 캐시
+__pycache__/
