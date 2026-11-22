@@ -58,6 +58,8 @@ const SYNONYMS = [
   // "부속기"만 맞은 채 일부만 답해 자궁 소견이 조용히 사라졌다(2026-11-05). 사전에 두면 못 맞춘 부위로 보아 모델에 넘긴다.
   // 자궁저·자궁경부는 따로 쓰이는 소견 이름이라 뺀다.
   [/자궁(?!저|\s*경부|\s*바닥)|양손|쌍합/, ["자궁", "양손"]],
+  // "자궁 수축 있는지 만져볼게요" — 이 말이 없으면 "자궁 압통"만 맞아 수축 소견이 빠졌다.
+  [/수축(?!기)/, ["수축"]],
   // 진찰 동작
   [/청진|들어\s*보|들어볼|소리/, ["청진"]],
   [/촉진|눌러|만져|눌러보/, ["촉진"]],
@@ -77,6 +79,19 @@ function keyTokens(key) {
 }
 
 const ACTIONS = new Set(["청진", "촉진", "타진", "시진"]);
+
+// 소견 이름의 괄호 안 낱말과 괄호를 뗀 이름. "유방 촉진(환측)" → "환측", "유방 촉진".
+const qualOf = (k) => ((/\((.*?)\)/.exec(k) || [])[1] || "").trim();
+const baseOf = (k) => k.replace(/\(.*?\)/g, "").trim();
+// 쪽만 가리키는 괄호 말 — 이것만으로는 어느 부위인지 모른다.
+const SIDE_WORD = /측|쪽|반대|좌|우|양/;
+// 낱말 중간이 아닌 곳에서 시작하는지("멍울"의 "멍"처럼 다른 낱말 속에 든 것은 버린다).
+function atWordStart(text, word) {
+  for (let i = text.indexOf(word); i !== -1; i = text.indexOf(word, i + 1)) {
+    if (i === 0 || !/[가-힣A-Za-z]/.test(text[i - 1])) return true;
+  }
+  return false;
+}
 // 부위 전체를 한 칸에 적은 소견. 시진·촉진·청진 결과가 한꺼번에 들어 있어서, 학생이 한 동작만
 // 했는데 다른 동작의 결과까지 드러난다. 이런 칸은 모델에 넘겨 해당 동작만 골라 말하게 한다.
 const BROAD = new Set(["복부", "목", "하지", "피부", "손", "얼굴", "눈", "머리", "사지", "흉곽", "척추", "유방", "부종", "림프절", "관절", "흉부"]);
@@ -127,6 +142,13 @@ export function matchFindings(text, findings) {
   });
   if (direct.length && direct.length <= 3) direct.forEach((k) => matched.add(k));
 
+  // 괄호 안 낱말만 말해도 그 칸이다("점상출혈 볼게요" → "피부(점상출혈)", "간질환 징후" → "피부(간질환 징후)").
+  // 한 글자("멍")나 쪽을 가리키는 말("환측", "반대쪽")은 그것만으로 칸을 정하지 않는다.
+  for (const k of keys) {
+    const q = qualOf(k);
+    if (q.length >= 2 && !SIDE_WORD.test(q) && atWordStart(text, q)) matched.add(k);
+  }
+
   const groups = conceptGroups(text);
   const have = new Set(groups.flat());
   for (const key of keys) {
@@ -140,6 +162,30 @@ export function matchFindings(text, findings) {
     if (acts.length && !acts.some((t) => have.has(t))) continue;
     matched.add(key);
   }
+
+  // 괄호를 뗀 이름이 같은 칸들("피부(멍)"/"피부(점상출혈)", "유방 촉진(환측)"/"유방 촉진(반대쪽)") 가운데
+  // 학생이 괄호 안 낱말까지 짚어 말한 칸이 있으면 그 칸만 남긴다 — 묻지 않은 쪽 소견까지 나갔다.
+  const named = [...matched].filter((k) => qualOf(k) && text.includes(qualOf(k)));
+  if (named.length) {
+    const namedBases = new Set(named.map(baseOf));
+    for (const k of [...matched]) if (qualOf(k) && !named.includes(k) && namedBases.has(baseOf(k))) matched.delete(k);
+  }
+
+  // 소견 이름을 그대로 말했으면("자궁 수축 촉진", "공막·피부") 같은 부위라서 덩달아 걸린 칸("자궁 압통",
+  // "피부(간질환 징후)")은 뺀다. 학생이 다른 부위도 말했다면 그 칸은 부위 낱말이 달라 남는다.
+  const exact = [...matched].filter((k) => direct.includes(k) || named.includes(k));
+  if (exact.length) {
+    const said = new Set(exact.flatMap(keyTokens));
+    // 그 부위에 동작을 한 것이면 그 부위의 세부 칸은 함께 나온다 — "심음 청진"에는 "심음(제2심음)"도 들린다.
+    const actedParts = new Set(
+      exact.filter((e) => keyTokens(e).some((t) => ACTIONS.has(t))).flatMap((e) => keyTokens(e).filter((t) => !ACTIONS.has(t)))
+    );
+    for (const k of [...matched]) {
+      if (exact.includes(k) || actedParts.has(baseOf(k))) continue;
+      const parts = keyTokens(k).filter((t) => !ACTIONS.has(t) && t !== "압통");
+      if (parts.length && parts.every((t) => said.has(t))) matched.delete(k);
+    }
+  }
   if (!matched.size || matched.size > 4) return null;
 
   // "유방 촉진(반대쪽)"처럼 정상 쪽만 적은 소견 하나만 맞았으면 일부만 답하는 것이다 — 병변 쪽 소견은 다른 이름
@@ -150,7 +196,8 @@ export function matchFindings(text, findings) {
   if (otherOnly && !OTHER_SIDE.test(text)) return null;
 
   // 학생이 말한 부위마다 맞춘 소견이 하나는 있어야 한다.
-  const covered = new Set([...matched].flatMap(keyTokens));
+  // 괄호 안 낱말("복부 촉진(수축 외)"의 수축)도 학생 말을 덮은 것으로 친다.
+  const covered = new Set([...matched].flatMap((k) => [...keyTokens(k), ...qualOf(k).split(/[\s·]+/).filter(Boolean)]));
   // 반발통은 배에서 보는 소견이다 — "배에서 손을 뗄 때 아픈지"의 "배"를 못 맞춘 부위로 치지 않는다.
   if (covered.has("반발통")) covered.add("복부");
   const isAction = (g) => g.every((w) => ACTIONS.has(w) || w === "압통");

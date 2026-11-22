@@ -164,3 +164,36 @@ test("산전 진찰의 자궁저 높이는 새 사전에 걸리지 않는다", (
     assert.deepEqual(keys(mf("심장 소리를 들어보겠습니다.", fnd("24-prenatal-care", "pre-normal-2nd"))), ["심장 청진"]);
   });
 }
+
+// ---- 2026-11-22 진찰 점검: 묻지 않은 같은 부위 소견이 딸려 나온 것 ----
+{
+  const { readFileSync } = await import("node:fs");
+  const { matchFindings: mf } = await import("../src/peMatch.js");
+  const card = (f) => JSON.parse(readFileSync(new URL(`../src/cases/${f}.json`, import.meta.url), "utf8"));
+  const fnd = (f, id) => card(f).scenarios.find((s) => s.id === id).pe.findings;
+  const keys = (r) => (r ? r.map((x) => x.key) : null);
+
+  test("괄호 안 낱말까지 말하면 그 칸만 — 피부(멍)/피부(점상출혈), 유방 촉진(환측)/(반대쪽)", () => {
+    const itp = fnd("29-easy-bruising", "bru-itp");
+    assert.deepEqual(keys(mf("피부(멍) 확인할게요.", itp)), ["피부(멍)"]);
+    assert.deepEqual(keys(mf("점상출혈 볼게요.", itp)), ["피부(점상출혈)"]);
+    // 피부 전체를 보면 둘 다
+    assert.deepEqual(keys(mf("피부 볼게요.", itp)).sort(), ["피부(멍)", "피부(점상출혈)"].sort());
+    const bc = fnd("34-1-breast-pain", "bp-cancer");
+    assert.deepEqual(keys(mf("반대쪽 유방 만져볼게요.", bc)), ["유방 촉진(반대쪽)"]);
+    assert.deepEqual(keys(mf("유방 촉진(환측) 확인할게요.", bc)), ["유방 촉진(환측)"]);
+  });
+
+  test("소견 이름을 그대로 말하면 같은 부위라서 걸린 칸은 빠진다 — 단, 그 부위를 청진했으면 세부 칸은 함께", () => {
+    const ptl = fnd("24-prenatal-care", "pre-preterm-labor");
+    assert.deepEqual(keys(mf("자궁 수축 촉진 확인할게요.", ptl)), ["자궁 수축 촉진"]);
+    assert.ok(keys(mf("자궁 수축 있는지 만져볼게요.", ptl)).includes("자궁 수축 촉진"));
+    assert.deepEqual(keys(mf("복부 촉진(수축 외) 확인할게요.", ptl)), ["복부 촉진(수축 외)"]);
+    const ugib = fnd("46-hematochezia", "hch-upper-gi-bleed");
+    assert.deepEqual(keys(mf("공막·피부 확인할게요.", ugib)), ["공막·피부"]);
+    assert.deepEqual(keys(mf("간질환 징후 볼게요.", ugib)), ["피부(간질환 징후)"]);
+    // 대동맥판 협착: 심음 청진에는 제2심음 칸도 들린다
+    const as = card("30-syncope").scenarios.find((s) => s.pe && s.pe.findings["심음(제2심음)"]).pe.findings;
+    assert.deepEqual(keys(mf("심음 청진할게요.", as)).sort(), ["심음 청진", "심음(제2심음)"].sort());
+  });
+}
