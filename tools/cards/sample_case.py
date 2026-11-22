@@ -733,7 +733,7 @@ def fill(text, slots):
 
 
 # "18개월 전", "24시간 전" 은 사람이 하는 말이 아니다 — 환자가 그대로 읽어 말투가 딱딱해졌다.
-# 시점을 말하는 "… 전/째" 만 바꾼다. "생후 18개월", "16개월에 걸었다" 같은 나이는 그대로 둔다.
+# 시점·기간을 말하는 "… 전/째/사이" 만 바꾼다. "생후 18개월", "16개월에 걸었다" 같은 나이는 그대로 둔다.
 # src/sampleCase.js 의 naturalDurations 와 같은 규칙이다.
 HOUR_WORDS = {24: "하루", 36: "하루 반", 48: "이틀", 72: "사흘"}
 DAY_WORDS = {7: "일주일", 14: "2주", 21: "3주", 28: "4주"}
@@ -747,7 +747,7 @@ def natural_durations(text):
         y, r = divmod(v, 12)
         return f"{y}년" if r == 0 else f"{y}년 반" if r == 6 else f"{y}년 {r}개월"
 
-    text = re.sub(r"(?<!\d)(\d+)\s*개월(?=\s*(쯤\s*)?(전|째))", months, text)
+    text = re.sub(r"(?<!\d)(\d+)\s*개월(?=\s*(쯤\s*)?(전|째|사이))", months, text)
     text = re.sub(r"(?<!\d)(\d+)\s*시간(?=\s*(쯤\s*)?(전|째))",
                   lambda m: HOUR_WORDS.get(int(m.group(1)), m.group(0)), text)
     return re.sub(r"(?<!\d)(\d+)\s*일(?=\s*(쯤\s*)?(전|째))",

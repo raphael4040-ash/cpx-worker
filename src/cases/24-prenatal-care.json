@@ -809,7 +809,7 @@
         "requiredRisk": [],
         "requiredRiskMin": 0,
         "forbidden": ["htn", "dyslip", "gout", "당뇨병"],
-        "smokingLabel": "임신 확인 후 금연 (그전 하루 반 갑)",
+        "smokingLabel": "임신 확인 후 금연 (그전에는 하루에 반 갑)",
         "alcohol": "never"
       },
       "occupationBias": [

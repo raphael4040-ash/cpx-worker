@@ -691,19 +691,19 @@
     },
     {
       "id": "occasional",
-      "label": "하루 반 갑 정도",
+      "label": "하루에 반 갑 정도",
       "weight": 1,
       "minAge": 19
     },
     {
       "id": "light",
-      "label": "하루 반 갑, 10년",
+      "label": "하루에 반 갑씩, 10년",
       "weight": 2,
       "minAge": 28
     },
     {
       "id": "heavy",
-      "label": "하루 한 갑 이상, 20년 이상",
+      "label": "하루에 한 갑 이상, 20년 이상",
       "weight": 2,
       "minAge": 40
     }

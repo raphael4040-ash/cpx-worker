@@ -17,3 +17,9 @@ test("naturalDurations: 1년 넘는 개월·하루 단위 시간을 말로 바�
 test("naturalDurations: 1년 안쪽, 애매한 시간, 아이 나이는 건드리지 않는다", () => {
   for (const t of ["8개월 전", "30시간 전", "생후 18개월", "걷기 13개월", "16개월에 걸었다", "18개월경부터", "12일째", "주기 28일", "생후 14일"]) assert.equal(n(t), t);
 });
+
+test("naturalDurations: '12개월 사이' 같은 기간도 해로 바꾼다", () => {
+  assert.equal(n("12개월 사이 15kg 증가"), "1년 사이 15kg 증가");
+  assert.equal(n("18개월 사이에 늘었음"), "1년 반 사이에 늘었음");
+  assert.equal(n("6개월 사이 5kg"), "6개월 사이 5kg");
+});
