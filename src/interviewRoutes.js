@@ -13,6 +13,7 @@
  */
 import { buildCase, caseToPrompt } from "./sampleCase.js";
 import { buildSystemPrompt } from "./interviewPrompt.js";
+import { historyFacts } from "./historyMatch.js";
 import indexData from "./cases/index.json";
 import { pickScenarioId, scenarioList } from "./scenarioPick.js";
 import personas from "./cases/personas.json";
@@ -92,6 +93,8 @@ export function prepareInterview(body, { admin = false } = {}) {
     pe: { vitals: (resolvedCase.pe || {}).vitals || null, findings: (resolvedCase.pe || {}).findings || null },
     // 첫 대사 후보 — 내원 이유를 처음 물었을 때 모델 없이 쓴다 (aiLimits.js isOpeningTurn).
     openings: Array.isArray((resolvedCase.scenario || {}).opening) ? resolvedCase.scenario.opening : [],
+    // 정형 문진 질문(이름·나이·직업·술·담배·약 알레르기)을 모델 없이 답할 때 쓴다 (historyMatch.js).
+    hx: historyFacts(kase, resolvedCase, fileKey),
   };
 }
 

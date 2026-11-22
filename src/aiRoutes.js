@@ -18,6 +18,7 @@
  * 상한을 10,000 이 아니라 9,000 으로 잡았다. 무료 플랜 계정이면 10,000 을 넘는 순간
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
+import { historyReply } from "./historyMatch.js";
 import { addCounter, pendingFor, dropPending, NEURON_FLUSH, GEM_FLUSH, cachedUsage, rememberUsage, shouldFlushUsage } from "./kvBatch.js";
 import { prepareInterview, listScenarios, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
@@ -95,7 +96,7 @@ export async function handleAiStart(request, env, cfg, cors) {
   const sessionId = crypto.randomUUID();
   await kv.put(
     `ai:session:${sessionId}`,
-    JSON.stringify({ uid: user.uid, backend, prompts, topic: prepared.topic, pe: prepared.pe, openings: prepared.openings }),
+    JSON.stringify({ uid: user.uid, backend, prompts, topic: prepared.topic, pe: prepared.pe, openings: prepared.openings, hx: prepared.hx || null }),
     { expirationTtl: SESSION_TTL_SEC }
   );
   await kv.put(userKey, String(userSessions + 1), { expirationTtl: 2 * 86400 });
@@ -175,6 +176,15 @@ export async function handleAiChat(request, env, cfg, cors) {
     const reply = GREETING_REPLIES[Math.floor(Math.random() * GREETING_REPLIES.length)];
     const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true, undefined, session.backend, session.uid);
     return json({ reply, neurons: 0, usage }, 200, cors);
+  }
+
+  // 이름·나이 확인, 직업, 술, 담배, 약 알레르기처럼 답이 정해진 문진 질문은 모델 없이 답한다 (historyMatch.js).
+  if (phaseFor(messages) === "history" && session.hx) {
+    const reply = historyReply(messages[messages.length - 1].text, session.hx);
+    if (reply) {
+      const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true, undefined, session.backend, session.uid);
+      return json({ reply, neurons: 0, usage }, 200, cors);
+    }
   }
 
   // 진찰 단계는 소견이 이미 확정돼 있어서, 학생이 한 진찰 동작이 소견 이름과 확실히 맞으면
