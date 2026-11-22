@@ -91,6 +91,14 @@ export function isGeminiRegionBlocked(msg) {
   return /^gemini_400\b.*location is not supported/i.test(String(msg));
 }
 
+/**
+ * 구글 쪽 일시 오류(500 "Internal error encountered", 502·503·504). 같은 요청을 다시 보내면 대개 바로 된다.
+ * 2026-11-22 Gemini 면담 점검에서 천식 케이스가 문진·평가 턴에 이 오류를 연달아 받았고, 재시도 없이 학생에게 502 로 보였다.
+ */
+export function isGeminiServerError(msg) {
+  return /^gemini_5\d\d\b/.test(String(msg));
+}
+
 /** 429 중에서도 "하루 한도"가 다 찬 경우. 분당 한도(잠깐 뒤 재시도로 풀림)와 구분한다. */
 export function isGeminiDayQuota(msg) {
   return /^gemini_429_day/.test(String(msg));

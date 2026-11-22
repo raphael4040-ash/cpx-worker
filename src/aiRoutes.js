@@ -21,7 +21,7 @@
 import { addCounter, pendingFor, dropPending, NEURON_FLUSH, GEM_FLUSH, cachedUsage, rememberUsage, shouldFlushUsage } from "./kvBatch.js";
 import { prepareInterview, listScenarios, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
-import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, isGeminiRegionBlocked, probeGemini } from "./geminiBackend.js";
+import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, isGeminiRegionBlocked, isGeminiServerError, probeGemini } from "./geminiBackend.js";
 import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
 import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, GREETING_REPLIES, isPeActionTurn, missingPeNarration, withPeNarratorNote, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
@@ -353,6 +353,22 @@ export async function handleAiChat(request, env, cfg, cors) {
           continue;
         }
         return exhausted();
+      }
+      // Gemini 쪽 일시 오류(500 Internal error 등)는 잠깐 뒤 두 번까지 다시 부른다. 그래도 안 되면 Workers AI 에 여유가 있을 때
+      // 그쪽으로 이어가고, 아니면 503 ai_busy 로 알려 화면이 보낸 말을 입력창에 돌려주게 한다(502 는 그냥 실패로 보였다).
+      if (gemini && isGeminiServerError(msg)) {
+        console.warn(JSON.stringify({ evt: "gemini_server_error", sessionId: sessionId.slice(0, 8), phase, pass, detail: msg.slice(0, 120) }));
+        if (pass < 2) {
+          await new Promise((r) => setTimeout(r, 800 * (pass + 1)));
+          continue;
+        }
+        await saveCounters();
+        if (pass === 2 && workersOk) {
+          await switchTo(false);
+          gemCalls = 0;
+          continue;
+        }
+        return json({ error: "ai_busy", detail: msg.slice(0, 120) }, 503, cors);
       }
       // Workers AI 가 "3040: Capacity temporarily exceeded" 로 일시적 용량 초과를 알려 올 때가 있다 (2026-11-05 면담 점검 중
       // 진찰 단계에서 실제로 나왔다). 잠깐 뒤 다시 하면 되는 오류라 서버에서 두 번까지 다시 불러 학생에게는 안 보이게 한다.

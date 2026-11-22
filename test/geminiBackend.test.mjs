@@ -60,3 +60,11 @@ test("지역 차단(400 User location is not supported)을 알아본다 — 한�
   await assert.rejects(callGemini(env, arg, fail(400, "API key not valid")), (e) => !isGeminiRegionBlocked(e.message));
   await assert.rejects(callGemini(env, arg, fail(429, "exhausted")), (e) => !isGeminiRegionBlocked(e.message));
 });
+
+test("구글 쪽 일시 오류(5xx)만 재시도 대상으로 본다", async () => {
+  const { isGeminiServerError } = await import("../src/geminiBackend.js");
+  for (const m of ["gemini_500: Internal error encountered.", "gemini_503: The model is overloaded.", "gemini_504: Deadline exceeded"])
+    assert.equal(isGeminiServerError(m), true, m);
+  for (const m of ["gemini_429: quota", "gemini_429_day: quota", "gemini_400: User location is not supported", "ai_timeout", "3040: Capacity", "", null])
+    assert.equal(isGeminiServerError(m), false, String(m));
+});
