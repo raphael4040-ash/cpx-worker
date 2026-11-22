@@ -21,7 +21,7 @@
         "비판단적으로 되짚어주기 — 훈계가 아니라 사실 확인",
         "권고 절주량을 숫자로 제시하고 다음 방문 때 다시 이야기하자고 남기기"
       ],
-      "constraints": { "ageRange": [24, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}}" },
+      "constraints": { "ageRange": [24, 45], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "일주일에 {{days}}번, 한 번에 소주 {{bottles}}" },
       "occupationBias": ["office", "selfemp", "cook", "delivery", "parttime"],
       "ice": {
         "ideas": ["위가 약해서 속이 쓰린 것 같아요", "밥을 불규칙하게 먹어서 그런 것 같아요"],
@@ -200,7 +200,7 @@
         "금단 위험을 평가하고 필요하면 도움 아래 줄이도록 안내",
         "추적 검사와 재방문 일정"
       ],
-      "constraints": { "ageRange": [42, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "주 {{days}}회, 회당 소주 {{bottles}}, {{years}}년" },
+      "constraints": { "ageRange": [42, 66], "sex": "any", "requiredRisk": [], "requiredRiskMin": 0, "forbidden": [], "alcoholLabel": "일주일에 {{days}}번, 한 번에 소주 {{bottles}}, {{years}}년" },
       "occupationBias": ["selfemp", "construct", "driver", "market", "office"],
       "ice": {
         "ideas": ["피곤해서 간수치가 오른 것 같아요", "술 때문이라는 건 어느 정도 알고 있어요"],

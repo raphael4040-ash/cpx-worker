@@ -717,13 +717,13 @@
     },
     {
       "id": "social",
-      "label": "주 1회 소주 반 병",
+      "label": "일주일에 한 번, 소주 반 병",
       "weight": 4,
       "minAge": 20
     },
     {
       "id": "heavy",
-      "label": "주 3~4회 소주 1병 이상",
+      "label": "일주일에 서너 번, 소주 한 병 이상",
       "weight": 2,
       "minAge": 20
     }

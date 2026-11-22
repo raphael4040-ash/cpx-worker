@@ -73,7 +73,7 @@ test("짜증형·의심형 등은 술·담배를 모델에 넘기고, 이름·�
   const kase = (pid) => ({
     person: { name: "배미숙", age: 36, occupation: { label: "식당 주방" }, personality: { id: pid }, smoking: { id: "never" }, alcohol: { id: "social" } },
   });
-  const rc = { scenario: { sh: "직업 식당 주방 · 흡연 비흡연 · 음주 주 1회 소주 반 병", allergy: "없음" }, person: {} };
+  const rc = { scenario: { sh: "직업 식당 주방 · 흡연 비흡연 · 음주 일주일에 한 번, 소주 반 병", allergy: "없음" }, person: {} };
   for (const pid of ["irritable", "suspicious", "minimizer", "guilty"]) {
     const fx = historyFacts(kase(pid), rc, "11-cough");
     assert.equal(fx.smoke, null, pid);

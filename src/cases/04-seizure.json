@@ -280,7 +280,7 @@
     {
       "id": "sz-alcohol-withdrawal",
       "dx": "알코올 금단 경련",
-      "constraints": { "ageRange": [38, 66], "sex": "any", "requiredRisk": ["과음"], "requiredRiskMin": 1, "forbidden": ["당뇨병"], "alcoholLabel": "매일 소주 1병 이상" },
+      "constraints": { "ageRange": [38, 66], "sex": "any", "requiredRisk": ["과음"], "requiredRiskMin": 1, "forbidden": ["당뇨병"], "alcoholLabel": "매일 소주 한 병 이상" },
       "occupationBias": ["construct", "driver", "market", "cook", "selfemp"],
       "ice": {
         "ideas": ["요즘 일이 많고 피곤해서 그런 것 같아요", "잠을 못 자서 몸이 상한 건가 싶어요"],

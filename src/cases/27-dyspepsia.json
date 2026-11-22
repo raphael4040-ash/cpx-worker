@@ -186,7 +186,7 @@
         "requiredRiskMin": 1,
         "forbidden": [],
         "smoking": "current",
-        "alcoholLabel": "주 2회 이상 소주 반 병"
+        "alcoholLabel": "일주일에 두 번 이상, 소주 반 병"
       },
       "occupationBias": [
         "construct",

@@ -662,7 +662,7 @@
           "음주"
         ],
         "requiredRiskMin": 1,
-        "forbidden": ["갑상선기능저하증"], "alcoholLabel": "거의 매일 소주 1병 이상" },
+        "forbidden": ["갑상선기능저하증"], "alcoholLabel": "거의 매일 소주 한 병 이상" },
       "occupationBias": [
         "construct",
         "driver",

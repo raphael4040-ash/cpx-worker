@@ -272,7 +272,7 @@
         "당장 바꿀 것 한두 가지를 구체적으로 합의",
         "복통이 생기면 즉시 오라는 안전 안내"
       ],
-      "constraints": { "ageRange": [35, 58], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증", "이상지질혈증"], "alcoholLabel": "주 {{drinkDays}}회 이상" },
+      "constraints": { "ageRange": [35, 58], "sex": "any", "requiredRisk": ["당뇨병"], "requiredRiskMin": 1, "forbidden": ["갑상선기능저하증", "이상지질혈증"], "alcoholLabel": "일주일에 {{drinkDays}}번 이상" },
       "occupationBias": ["selfemp", "driver", "construct", "cook", "market"],
       "ice": {
         "ideas": ["요즘 기름진 걸 많이 먹어서 그런 것 같아요", "살이 쪄서 그런가 싶어요"],

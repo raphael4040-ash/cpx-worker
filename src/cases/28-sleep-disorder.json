@@ -99,7 +99,7 @@
     {
       "id": "slp-osa",
       "dx": "폐쇄성 수면무호흡",
-      "constraints": { "ageRange": [40, 66], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["우울증"], "alcoholLabel": "주 {{drinkPerWeek}}회" },
+      "constraints": { "ageRange": [40, 66], "sex": "any", "requiredRisk": ["고혈압"], "requiredRiskMin": 1, "forbidden": ["우울증"], "alcoholLabel": "일주일에 {{drinkPerWeek}}번" },
       "occupationBias": ["driver", "selfemp", "office", "construct", "market"],
       "ice": {
         "ideas": ["일이 고돼서 피곤한 것 같아요", "나이 들어서 체력이 떨어진 것 같아요"],
