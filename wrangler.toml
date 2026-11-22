@@ -15,10 +15,10 @@ FIREBASE_API_KEY = "AIzaSyD1rN6_CvmmjvV40kRGD37f7TZ2ZwNZpqA"
 # 상대적으로 여유 있는 Flash-Lite 로 바꿨다. 이것도 결국 언젠가 후속 버전에 밀려날 수
 # 있으니, 배포 실패나 404 가 나면 https://ai.google.dev/gemini-api/docs/models 에서
 # 현재 stable 로 표시된 flash-lite 모델명으로 갈아끼울 것.
-# 2026-11-22: Workers AI 와 같은 Gemma 4 26B 로 바꿨다 — 어느 경로로 가도 환자 말투가 같고, Gemini API 의
-# Gemma 4 무료 한도(측정값 하루 14,400회·분당 30회)가 flash-lite(하루 약 500회)보다 훨씬 크다.
-# 정확한 한도는 Google AI Studio 의 Rate limit 화면에서 본다. 문제가 있으면 위의 flash-lite 로 되돌린다.
-GEMINI_MODEL = "gemma-4-26b-a4b-it"
+# 2026-11-22: gemma-4-26b-a4b-it 로 바꿔 봤다가 되돌렸다. 하루 요청 수는 넉넉하다지만 분당 한도가 빡빡해서,
+# 혼자 면담하는데도 문진 턴이 429(분당 한도)로 막히고 평가(대화 전체+채점표를 한 번에 보내는 큰 요청)는 끝내 통과하지 못했다.
+# 다시 시도하려면 먼저 Google AI Studio 의 Rate limit 화면에서 이 프로젝트의 Gemma 4 분당 토큰 한도를 확인할 것.
+GEMINI_MODEL = "gemini-3.5-flash-lite"
 AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
 AI_DAILY_NEURON_CAP = "9000"      # 무료 10,000 중 이만큼만 쓴다 (KV 동시성 오차 여유)
 AI_USER_DAILY_SESSIONS = "5"      # 1인당 하루 면담 수 (관리자는 무제한)
