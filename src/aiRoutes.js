@@ -395,7 +395,7 @@ export async function handleAiChat(request, env, cfg, cors) {
     }
   }
   // 카운터는 몇 턴 분량씩 모아서 쓴다 (kvBatch.js — KV 무료 한도 하루 쓰기 1,000회).
-  if (spent && !capped) await addCounter(kv, neuronKey, usedStored, spent, NEURON_FLUSH);
+  if (spent && !capped) await addCounter(kv, neuronKey, usedStored, spent, NEURON_FLUSH, { force: phase === "eval" }); // 평가 턴(면담 끝)에는 모은 몫을 바로 쓴다
   if (gemCalls) await addCounter(kv, gemReqKey, await getInt(kv, gemReqKey), gemCalls, GEM_FLUSH);
 
   const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers", session.uid);

@@ -9,7 +9,7 @@
  * 면담 대화와 케이스(세션)는 여기와 무관하다.
  */
 
-export const NEURON_FLUSH = 300; // 모인 뉴런이 이만큼 되면 쓴다 (모델 턴 몇 번 분량)
+export const NEURON_FLUSH = 100; // 모인 뉴런이 이만큼 되면 쓴다 (모델 턴 한두 번 분량). 인스턴스가 여러 개라 크게 잡으면 몫이 사라진다
 export const GEM_FLUSH = 5; // Gemini 요청이 이만큼 모이면 쓴다
 export const USAGE_FLUSH_TURNS = 5; // 면담별 사용량은 몇 턴마다 쓴다 (첫 턴·평가 턴은 바로)
 

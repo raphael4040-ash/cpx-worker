@@ -12,13 +12,14 @@ const fakeKv = () => {
 test("addCounter: 한도 전에는 모으기만 하고, 차면 KV 값 + 모은 몫을 한 번에 쓴다", async () => {
   _resetBatch();
   const kv = fakeKv();
-  await addCounter(kv, "n", 1000, 100, NEURON_FLUSH);
-  await addCounter(kv, "n", 1000, 100, NEURON_FLUSH);
+  const step = Math.floor(NEURON_FLUSH / 3);
+  await addCounter(kv, "n", 1000, step, NEURON_FLUSH);
+  await addCounter(kv, "n", 1000, step, NEURON_FLUSH);
   assert.equal(kv.puts(), 0);
-  assert.equal(pendingFor("n"), 200);
-  await addCounter(kv, "n", 1000, 150, NEURON_FLUSH);
+  assert.equal(pendingFor("n"), 2 * step);
+  await addCounter(kv, "n", 1000, NEURON_FLUSH, NEURON_FLUSH);
   assert.equal(kv.puts(), 1);
-  assert.equal(kv.m.get("n"), "1350");
+  assert.equal(kv.m.get("n"), String(1000 + 2 * step + NEURON_FLUSH));
   assert.equal(pendingFor("n"), 0);
 });
 
@@ -32,6 +33,19 @@ test("addCounter: force 면 바로 쓰고, 쓰기 실패하면 모은 몫을 남
   assert.equal(pendingFor("g"), 7);
   dropPending("g");
   assert.equal(pendingFor("g"), 0);
+});
+
+test("NEURON_FLUSH 는 모델 턴 한두 번 분량으로 작게 — 여러 인스턴스에서 사라지는 몫을 줄인다", () => {
+  assert.ok(NEURON_FLUSH <= 100);
+});
+
+test("addCounter: 평가 턴처럼 force 면 기준 미만이어도 모은 몫까지 쓴다", async () => {
+  _resetBatch();
+  const kv = fakeKv();
+  await addCounter(kv, "n", 500, 30, NEURON_FLUSH);
+  await addCounter(kv, "n", 500, 20, NEURON_FLUSH, { force: true });
+  assert.equal(kv.m.get("n"), "550");
+  assert.equal(pendingFor("n"), 0);
 });
 
 test("shouldFlushUsage: 첫 턴·평가·몇 턴마다만", () => {
