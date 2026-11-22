@@ -411,10 +411,11 @@ export async function handleAiChat(request, env, cfg, cors) {
     }
   }
   // 카운터는 몇 턴 분량씩 모아서 쓴다 (kvBatch.js — KV 무료 한도 하루 쓰기 1,000회).
-  if (spent && !capped) await addCounter(kv, neuronKey, usedStored, spent, NEURON_FLUSH, { force: phase === "eval" }); // 평가 턴(면담 끝)에는 모은 몫을 바로 쓴다
-  if (gemCalls) await addCounter(kv, gemReqKey, await getInt(kv, gemReqKey), gemCalls, GEM_FLUSH);
-
   const usage = await recordUsage(kv, sessionId, session.topic, phase, spent, false, { tin: tokIn, tout: tokOut }, gemini ? "gemini" : "workers", session.uid);
+  // 모은 뉴런은 면담별 사용량을 쓰는 때(첫 턴·5턴마다·평가 턴)에 함께 쓴다. 평가 없이 중간에 끝난 면담의 몫이
+  // 인스턴스에 남았다가 사라져, 평가 없는 점검 면담 34번이 전체 카운터에 거의 잡히지 않았다 (2026-11-22).
+  if (spent && !capped) await addCounter(kv, neuronKey, usedStored, spent, NEURON_FLUSH, { force: shouldFlushUsage(usage, phase) });
+  if (gemCalls) await addCounter(kv, gemReqKey, await getInt(kv, gemReqKey), gemCalls, GEM_FLUSH);
   if (!reply) {
     console.warn(JSON.stringify({ evt: "empty_response", sessionId: sessionId.slice(0, 8), phase, backend: gemini ? "gemini" : "workers" }));
     return json({ error: "empty_response" }, 502, cors);
