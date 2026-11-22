@@ -68,3 +68,19 @@ test("모든 카드: 보호자 케이스는 값을 두지 않고, 정형 답은 
     }
   }
 });
+
+test("짜증형·의심형 등은 술·담배를 모델에 넘기고, 이름·직업은 그대로 답한다", () => {
+  const kase = (pid) => ({
+    person: { name: "배미숙", age: 36, occupation: { label: "식당 주방" }, personality: { id: pid }, smoking: { id: "never" }, alcohol: { id: "social" } },
+  });
+  const rc = { scenario: { sh: "직업 식당 주방 · 흡연 비흡연 · 음주 주 1회 소주 반 병", allergy: "없음" }, person: {} };
+  for (const pid of ["irritable", "suspicious", "minimizer", "guilty"]) {
+    const fx = historyFacts(kase(pid), rc, "11-cough");
+    assert.equal(fx.smoke, null, pid);
+    assert.equal(fx.alcohol, null, pid);
+    assert.equal(historyReply("하시는 일이 뭐예요?", fx), "식당 주방에서 일해요.", pid);
+  }
+  const ok = historyFacts(kase("cooperative"), rc, "11-cough");
+  assert.equal(ok.smoke, "never");
+  assert.equal(ok.alcohol, "social");
+});
