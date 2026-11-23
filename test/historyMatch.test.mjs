@@ -84,3 +84,11 @@ test("짜증형·의심형 등은 술·담배를 모델에 넘기고, 이름·�
   assert.equal(ok.smoke, "never");
   assert.equal(ok.alcohol, "social");
 });
+
+test("약·병원 이름을 물으면 환자 이름으로 답하지 않는다", () => {
+  assert.equal(historyReply("약 이름 아나요?", F), null);
+  assert.equal(historyReply("드시는 약 이름이 뭐예요?", F), null);
+  assert.equal(historyReply("다니시던 병원 이름은요?", F), null);
+  assert.equal(historyReply("이름이 뭐였는지 기억나세요?", F), null);
+  assert.equal(historyReply("이름이 어떻게 되세요?", F), "황상철이에요.");
+});

@@ -135,6 +135,8 @@ export function historyReply(text, facts) {
   if (!asked.length) return null;
   // 직업 질문의 "일"과 겹치는 내원 이유("무슨 일로 오셨어요") 등은 OTHER 가 막는다.
   if (OTHER.test(probe)) return null;
+  // "약 이름 아세요?"의 "이름"은 환자 이름이 아니다 (2026-11-24 Gemma 점검에서 "손영희예요."로 답했다).
+  if (/(약|약물|병|병원|검사|진단|회사|학교|동네|아이|애)\s*(?:의\s*)?이름|이름이\s*(?:뭐였|기억)/.test(probe)) return null;
 
   const parts = [];
   const nameQ = asked.includes("name"), ageQ = asked.includes("age");
