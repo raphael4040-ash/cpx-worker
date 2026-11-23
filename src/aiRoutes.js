@@ -67,7 +67,7 @@ export async function handleAiStart(request, env, cfg, cors) {
 
   const limits = readLimits(env);
   const day = utcDay();
-  const used = (await getInt(kv, `ai:neurons:${day}`)) + pendingFor(`ai:neurons:${day}`);
+  const used = await neuronsUsed(kv, day, limits.cap);
   // 뉴런이 모자라면 운영자 Gemini 키가 있을 때만 그쪽으로 시작한다. 면담 도중에는 제공자를 바꾸지 않는다.
   let backend = "workers";
   // 관리자 점검용 — 뉴런이 남아 있어도 Gemini 로 시작해 본다 (본인 토큰이 관리자일 때만, 키가 있을 때만).
@@ -117,6 +117,27 @@ export async function handleAiStart(request, env, cfg, cors) {
     200,
     cors
   );
+}
+
+// Cloudflare 가 하루 한도(4006)를 알려 오면 이만큼만 Workers AI 를 쉬고 다시 시도한다.
+const NEURON_HOLD_SEC = 30 * 60;
+const neuronHoldKey = (day) => `ai:neurons:hold:${day}`;
+
+/**
+ * 오늘 쓴 뉴런 (KV 값 + 이 인스턴스에 모아 둔 몫). 4006 으로 잠시 멈춘 동안에는 상한으로 본다.
+ * 예전 방식(카운터를 상한으로 덮어씀)으로 고정된 날은, 고정 기록(ai:pin)의 고정 직전 집계를 쓴다.
+ */
+async function storedNeurons(kv, day, cap) {
+  let stored = await getInt(kv, `ai:neurons:${day}`);
+  if (stored === cap) {
+    const pin = await kv.get(`ai:pin:${day}`, "json").catch(() => null);
+    if (pin && Number.isFinite(pin.countedBefore) && pin.countedBefore < cap) stored = pin.countedBefore;
+  }
+  return stored;
+}
+async function neuronsUsed(kv, day, cap, stored) {
+  if (await kv.get(neuronHoldKey(day))) return cap;
+  return (stored ?? (await storedNeurons(kv, day, cap))) + pendingFor(`ai:neurons:${day}`);
 }
 
 /** POST /interview/ai/chat — {sessionId, messages:[{role:"user"|"assistant", text}]} */
@@ -206,8 +227,8 @@ export async function handleAiChat(request, env, cfg, cors) {
   const limits = readLimits(env);
   const day = utcDay();
   const neuronKey = `ai:neurons:${day}`;
-  const usedStored = await getInt(kv, neuronKey); // KV 에 쓰인 값 (kvBatch 의 쓰지 않은 몫은 따로)
-  const used = usedStored + pendingFor(neuronKey);
+  const usedStored = await storedNeurons(kv, day, limits.cap); // KV 에 쓰인 값 (kvBatch 의 쓰지 않은 몫은 따로)
+  const used = await neuronsUsed(kv, day, limits.cap, usedStored);
   let gemini = session.backend === "gemini";
   let model = gemini ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL;
   const gemReqKey = `ai:gem:req:${day}`;
@@ -398,8 +419,10 @@ export async function handleAiChat(request, env, cfg, cors) {
         // 이 분기는 그날 Workers AI 를 통째로 닫는다. 우리 카운터가 3,547 일 때 여기로 들어와 9,000 으로 고정된 일이 있었는데
         // (2026-11-12) 어떤 오류였는지 남지 않아 진짜 하루 한도였는지 "limit" 이 들어간 다른 오류였는지 알 수 없었다.
         console.error(JSON.stringify({ evt: "neuron_cap_pinned", sessionId: sessionId.slice(0, 8), phase, countedBefore: used, detail: msg.slice(0, 300) }));
-        dropPending(neuronKey);
-        await kv.put(neuronKey, String(limits.cap), { expirationTtl: 2 * 86400 });
+        // 예전에는 그날 카운터를 상한으로 덮어써 하루 내내 Workers AI 를 닫았다. 그런데 2026-11-23 오전 9시 2분(UTC 00:02),
+        // 우리 집계 0 에서 이 오류가 왔다 — Cloudflare 의 하루 사용량이 자정에 바로 풀리지 않은 것으로 보인다. 그 한 번으로
+        // 하루 종일 무료 면담이 Gemini 로만 갔다. 이제는 잠시(NEURON_HOLD_SEC) 멈춤만 표시하고, 그 뒤 다시 시도한다.
+        await kv.put(neuronHoldKey(day), "1", { expirationTtl: NEURON_HOLD_SEC });
         // 로그는 대시보드에서만 보여서 확인이 번거로웠다 — 관리자 사용량 화면(/interview/ai/usage)에서 바로 보이게 남긴다.
         await kv.put(
           `ai:pin:${day}`,
@@ -453,7 +476,7 @@ export async function handleAiHandoff(request, env, cfg, cors) {
   if (!session || session.uid !== user.uid) return json({ error: "session_expired" }, 404, cors);
   const day = utcDay();
   const limits = readLimits(env);
-  const workersDone = (await getInt(kv, `ai:neurons:${day}`)) + pendingFor(`ai:neurons:${day}`) >= limits.cap;
+  const workersDone = (await neuronsUsed(kv, day, limits.cap)) >= limits.cap;
   const gemDone =
     !geminiConfigured(env) || !!(await getInt(kv, `ai:gem:dead:${day}`)) || (await getInt(kv, `ai:gem:req:${day}`)) >= geminiLimits(env).maxRequests;
   if (!(workersDone && gemDone)) return json({ error: "not_exhausted" }, 409, cors);
@@ -619,7 +642,7 @@ export async function handleAiUsage(request, env, cfg, cors) {
     ...geminiLimits(env),
   };
   const capPin = await kv.get(`ai:pin:${day}`, "json"); // 오늘 Cloudflare 오류로 뉴런 한도가 고정됐다면 그 오류 원문
-  return json({ day, usedNeurons: await getInt(kv, `ai:neurons:${day}`), gemini: gem, probe, geminiReset, sessions, capPin }, 200, cors);
+  return json({ day, usedNeurons: await neuronsUsed(kv, day, readLimits(env).cap), neuronHold: !!(await kv.get(neuronHoldKey(day))), gemini: gem, probe, geminiReset, sessions, capPin }, 200, cors);
 }
 
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
@@ -662,7 +685,7 @@ export async function handleAiStatus(env, cors) {
   const kv = env.RATE_LIMIT_KV;
   if (!env.AI || !kv) return json({ enabled: false }, 200, cors);
   const limits = readLimits(env);
-  const used = (await getInt(kv, `ai:neurons:${utcDay()}`)) + pendingFor(`ai:neurons:${utcDay()}`);
+  const used = await neuronsUsed(kv, utcDay(), limits.cap);
   return json(
     {
       enabled: true,
