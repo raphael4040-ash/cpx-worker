@@ -14,7 +14,7 @@
   "scenarios": [
     {
       "id": "pre-normal-2nd",
-      "dx": "정상 임신 (임신 20주, 정기 산전 진찰)",
+      "dx": "정상 임신 (임신 19~22주, 정기 산전 진찰)",
       "constraints": {
         "ageRange": [
           24,
@@ -214,7 +214,7 @@
     },
     {
       "id": "pre-threatened-abortion",
-      "dx": "절박유산 (임신 9주)",
+      "dx": "절박유산 (임신 8~10주)",
       "constraints": {
         "ageRange": [
           24,
@@ -410,7 +410,7 @@
     },
     {
       "id": "pre-preeclampsia",
-      "dx": "전자간증 (임신 33주, 고령 산모)",
+      "dx": "전자간증 (임신 32~34주, 고령 산모)",
       "constraints": {
         "ageRange": [
           38,
@@ -606,7 +606,7 @@
     },
     {
       "id": "pre-gdm",
-      "dx": "임신성 당뇨병 (임신 26주)",
+      "dx": "임신성 당뇨병 (임신 25~27주)",
       "constraints": {
         "ageRange": [
           32,
@@ -799,7 +799,7 @@
     },
     {
       "id": "pre-preterm-labor",
-      "dx": "조기진통 (임신 31주)",
+      "dx": "조기진통 (임신 30~32주)",
       "constraints": {
         "ageRange": [
           22,
