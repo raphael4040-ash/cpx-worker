@@ -28,3 +28,15 @@ test("보호자 동반이라도 표시가 없으면 13세 이상은 본인이 �
   const kase = buildCase("10-memory-loss", data, personas, sc.id);
   assert.equal(kase.person.speaksForSelf, true);
 });
+
+// 읽어 주기 목소리 — 대신 답하는 보호자가 있으면 보호자의 성별·나이를 쓴다.
+test("speakerOf: 본인이 답하면 환자, 못 하면 보호자", async () => {
+  const { speakerOf } = await import("../src/sampleCase.js");
+  assert.deepEqual(speakerOf({ sex: "남", age: 54 }), { sex: "male", age: 54 });
+  const g = { sex: "여", age: 33 };
+  assert.deepEqual(speakerOf({ sex: "남", age: 4, guardian: g, speaksForSelf: false }), { sex: "female", age: 33 });
+  assert.deepEqual(speakerOf({ sex: "여", age: 70, guardian: g, speaksForSelf: true }), { sex: "female", age: 70 });
+  const data = read("36-altered-consciousness.json");
+  const p = caseToPrompt(buildCase("36-altered-consciousness", data, personas, data.scenarios[0].id)).person;
+  assert.equal(speakerOf(p).age, p.guardian.age);
+});

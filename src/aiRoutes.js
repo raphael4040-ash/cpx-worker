@@ -111,6 +111,7 @@ export async function handleAiStart(request, env, cfg, cors) {
       model: backend === "gemini" ? geminiModel(env) : env.AI_MODEL || DEFAULT_AI_MODEL,
       // 채점이 끝난 뒤 카드에 케이스 이름을 보여줄 때만 쓴다. 시스템 프롬프트는 내려주지 않는다.
       remainingToday: Math.max(0, userLimit - userSessions - 1),
+      speaker: prepared.speaker, // 읽어 주기 목소리 성별·나이 (환자 또는 대신 답하는 보호자)
       // 운영자 점검용 — 이번에 뽑힌 인물·병력을 보고 환자 답과 대조한다. 화면에는 쓰지 않고 학생에게는 주지 않는다.
       ...(user.uid === cfg.ownerUid ? { adminPrompt: prompts.history } : {}),
     },

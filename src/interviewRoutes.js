@@ -11,7 +11,7 @@
  * (cpx-worker) 자체가 이미 공개 GitHub 레포라 케이스 JSON은 어차피 공개돼
  * 있었다 — UI에 안 보이게 하는 것 이상의 은닉은 애초에 없었다.
  */
-import { buildCase, caseToPrompt } from "./sampleCase.js";
+import { buildCase, caseToPrompt, speakerOf } from "./sampleCase.js";
 import { buildSystemPrompt } from "./interviewPrompt.js";
 import { historyFacts } from "./historyMatch.js";
 import indexData from "./cases/index.json";
@@ -48,6 +48,7 @@ export async function handleInterviewStart(request, env, cors) {
       systemPrompt: prepared.prompt("all"),
       model: env.GEMINI_MODEL || DEFAULT_MODEL,
       safetySettings: SAFETY_SETTINGS,
+      speaker: prepared.speaker,
     },
     200,
     cors
@@ -95,6 +96,8 @@ export function prepareInterview(body, { admin = false } = {}) {
     openings: Array.isArray((resolvedCase.scenario || {}).opening) ? resolvedCase.scenario.opening : [],
     // 정형 문진 질문(이름·나이·직업·술·담배·약 알레르기)을 모델 없이 답할 때 쓴다 (historyMatch.js).
     hx: historyFacts(kase, resolvedCase, fileKey),
+    // 환자 답을 소리로 읽을 때 목소리 성별·나이를 맞추는 데만 쓴다 (cpx-tracker docs/voice.js).
+    speaker: speakerOf(resolvedCase.person),
   };
 }
 

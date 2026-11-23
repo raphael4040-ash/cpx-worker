@@ -825,3 +825,10 @@ export function caseToPrompt(kase) {
     problems: kase.problems,
   };
 }
+
+/** 주로 말하는 사람 — 환자가 답할 수 없으면 보호자. { sex: "male"|"female", age } */
+export function speakerOf(p) {
+  if (!p) return null;
+  const who = p.guardian && p.speaksForSelf === false ? p.guardian : p;
+  return { sex: who.sex === "남" ? "male" : "female", age: who.age };
+}
