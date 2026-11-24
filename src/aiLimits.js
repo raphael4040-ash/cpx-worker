@@ -181,6 +181,9 @@ export function wrapExamGuide(reply) {
   const s = String(reply || "");
   const m = s.match(EXAM_GUIDE);
   if (!m || (/^[(（]/.test(m[0].trim()) && /[)）]$/.test(m[0].trim()))) return s;
+  // 이미 다른 괄호 서술 안에 들어 있으면("(혈압 …, 검사 결과는 … 않습니다.)") 그대로 둔다 — 감싸면 괄호가 겹쳐 짝이 깨진다.
+  const before = s.slice(0, m.index);
+  if ((before.match(/[(（]/g) || []).length > (before.match(/[)）]/g) || []).length) return s;
   return (s.slice(0, m.index) + " (검사 결과는 이 자리에서 제공되지 않습니다.) " + s.slice(m.index + m[0].length))
     .replace(/\s{2,}/g, " ")
     .trim();
