@@ -267,4 +267,10 @@ test("진찰 단계라도 진찰이 아닌 말에는 문진 지시문을 쓴다"
 test("관절을 움직여 보는 말은 운동범위 소견이다", () => {
   const f = { "무릎 시진": "O자", "관절 운동범위": "굴곡 제한", "손 관절": "결절" };
   assert.deepEqual(matchFindings("관절 움직여볼게요.", f), [{ key: "관절 운동범위", text: "굴곡 제한" }]);
+  assert.deepEqual(matchFindings("관절 운동범위 확인할게요.", f), [{ key: "관절 운동범위", text: "굴곡 제한" }]);
+  // 다른 부위 말이 있으면 무릎 소견을 주지 않고 모델에 넘긴다
+  assert.equal(matchFindings("손가락 관절 움직여 볼게요.", f), null);
+  assert.equal(matchFindings("다른 관절도 움직여 볼게요.", f), null);
+  assert.equal(matchFindings("무릎 구부려 볼게요.", f), null);
+  assert.equal(matchFindings("팔 움직여 보세요.", f), null);
 });
