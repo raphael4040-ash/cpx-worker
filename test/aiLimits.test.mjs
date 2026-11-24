@@ -231,3 +231,11 @@ test("묶음 질문 항목 나누기: 맨 앞 항목(주소와 같은 증상)도
   assert.deepEqual(compoundItems("열은 나세요?"), []);
   assert.match(turnHints("속쓰림, 피를 토하거나 검은 변, 눈이 노래진 적이 있나요?"), /「속쓰림」.*맨 앞 항목부터 하나도 빼지 않고/);
 });
+
+import { wrapExamGuide } from "../src/aiLimits.js";
+test("검사 안내 문구는 괄호로 감싸 환자 대사가 아니게 한다", () => {
+  assert.equal(wrapExamGuide("검사 결과는 이 자리에서 제공되지 않습니다."), "(검사 결과는 이 자리에서 제공되지 않습니다.)");
+  assert.equal(wrapExamGuide("네, 알겠습니다. 검사 결과는 이 자리에서 제공되지 않습니다."), "네, 알겠습니다. (검사 결과는 이 자리에서 제공되지 않습니다.)");
+  assert.equal(wrapExamGuide("(검사 결과는 이 자리에서 제공되지 않습니다.)"), "(검사 결과는 이 자리에서 제공되지 않습니다.)");
+  assert.equal(wrapExamGuide("네, 알겠습니다."), "네, 알겠습니다.");
+});

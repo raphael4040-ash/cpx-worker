@@ -172,6 +172,20 @@ export function missingPeNarration(reply) {
   return !/[(（][^()（）]{2,}[)）]/.test(String(reply || ""));
 }
 
+/**
+ * 카드의 "검사 결과는 이 자리에서 제공되지 않습니다" 안내를 모델이 괄호 없이 환자 대사처럼 낼 때가 있다
+ * (2026-11-24 관절통 면담). 그러면 화면에서 환자 말로 보이고 음성으로도 읽힌다 — 괄호로 감싸 서술자 안내로 바꾼다.
+ */
+const EXAM_GUIDE = /[(（]?\s*검사\s*결과는\s*이\s*자리에서\s*제공되지\s*않습니다\.?\s*[)）]?/;
+export function wrapExamGuide(reply) {
+  const s = String(reply || "");
+  const m = s.match(EXAM_GUIDE);
+  if (!m || (/^[(（]/.test(m[0].trim()) && /[)）]$/.test(m[0].trim()))) return s;
+  return (s.slice(0, m.index) + " (검사 결과는 이 자리에서 제공되지 않습니다.) " + s.slice(m.index + m[0].length))
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 /** 진찰 답을 서술자 괄호로 다시 받기 위한 짧은 안내. */
 export function withPeNarratorNote(messages) {
   const out = messages.slice();

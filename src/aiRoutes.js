@@ -25,7 +25,7 @@ import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyS
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, isGeminiRegionBlocked, isGeminiServerError, probeGemini } from "./geminiBackend.js";
 import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, GREETING_REPLIES, isPeActionTurn, missingPeNarration, withPeNarratorNote, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, GREETING_REPLIES, isPeActionTurn, missingPeNarration, withPeNarratorNote, wrapExamGuide, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -454,7 +454,7 @@ export async function handleAiChat(request, env, cfg, cors) {
     console.warn(JSON.stringify({ evt: "empty_response", sessionId: sessionId.slice(0, 8), phase, backend: gemini ? "gemini" : "workers" }));
     return json({ error: "empty_response" }, 502, cors);
   }
-  return json({ reply, neurons: spent, usage }, 200, cors);
+  return json({ reply: phase === "eval" ? reply : wrapExamGuide(reply), neurons: spent, usage }, 200, cors);
 }
 
 /**
