@@ -260,6 +260,32 @@ const GREETING = /(안녕|반갑|처음\s*뵙|입니다|이에요|예요)/;
 const ASKS_SOMETHING = /[?？]|(세요|까요|나요|가요|어요|죠)\s*[.!]?\s*$|(불편|아프|아파|증상|오셨|일로|성함|이름|생년월일|연세|나이)/;
 export const GREETING_REPLIES = ["안녕하세요.", "네, 안녕하세요.", "아, 네. 안녕하세요."];
 
+// 마지막 인사만 하는 말 — "수고하셨습니다", "안녕히 가세요", "감사합니다"를 한두 개 이어 말한 것뿐.
+// 환자는 인사만 받으면 된다 — 모델을 부르면 진찰 소견표까지 든 긴 지시문을 한 번 더 읽힌다.
+const CLOSING_PART = /^(?:네|자|그럼|오늘)?[,\s]*(?:수고\s*(?:하셨습니다|하셨어요|하세요)|안녕히\s*(?:가|계)\s*세요|감사합니다|고맙습니다|조심히\s*가세요|들어가세요)[.!~\s]*$/;
+export const CLOSING_REPLIES = ["네, 감사합니다.", "네, 수고하셨습니다.", "감사합니다. 안녕히 계세요."];
+export function isClosingTurn(messages) {
+  if (!Array.isArray(messages) || !messages.some((m) => m.role === "assistant")) return false; // 첫 마디는 아니다
+  const last = messages[messages.length - 1];
+  if (!last || last.role !== "user") return false;
+  const parts = String(last.text || "").trim().split(/(?<=[.!~])\s+/).filter(Boolean);
+  return parts.length > 0 && parts.length <= 3 && parts.every((p) => CLOSING_PART.test(p.trim()));
+}
+
+// 진찰 동작으로 보일 수 있는 말 (넓게 잡는다 — 애매하면 진찰 지시문을 그대로 쓴다).
+const EXAMISH = /청진|촉진|타진|시진|눌러|누르|만져|두드|들어\s*볼|들어\s*보|볼게|보겠|봐도|살펴|진찰|측정|재\s*보|잴게|재겠|재고|움직|굽혀|굽히|펴\s*(?:보|봐)|들어\s*올|숙여|돌려|걸어|따라\s*(?:해|하)|감아|벌려|동공|반사|근력|감각|(?:확인|검사)\s*(?:하겠|할게|해\s*볼|해볼|합니다)|\(/;
+/**
+ * 이번 턴에 보낼 지시문 단계. 진찰 단계에 들어가도 진찰 동작이 아닌 말(설명·검사 계획·안전망 안내 같은
+ * 마무리 말)에는 진찰 소견표가 필요 없다 — 문진 지시문을 쓴다. 대화 전체는 그대로 보내므로 앞 내용을 잊지 않는다.
+ * 2026-11-24 관절통 면담: 진찰 단계 모델 호출 9번 중 5번이 이런 말이었고, 한 번에 약 5,700토큰을 읽었다.
+ */
+export function promptPhaseFor(messages) {
+  const phase = phaseFor(messages);
+  if (phase !== "pe") return phase;
+  const last = messages[messages.length - 1];
+  return last && last.role === "user" && !EXAMISH.test(last.text) ? "history" : "pe";
+}
+
 /**
  * 학생의 첫 마디가 인사·자기소개뿐인가. 이때 환자는 인사만 받는다 — 모델은 여기서 내원 이유까지
  * 먼저 말해 버리는 일이 잦았다(학생이 "어디가 불편해서 오셨어요?"를 물을 기회가 사라진다).

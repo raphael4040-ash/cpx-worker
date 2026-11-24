@@ -26,7 +26,7 @@ import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyS
 import { geminiConfigured, geminiModel, callGemini, isGeminiQuotaError, isGeminiDayQuota, isGeminiRegionBlocked, isGeminiServerError, probeGemini } from "./geminiBackend.js";
 import { misconductReply, sanitizeForEval, rudeNote, evalNote, withNote, nextMisconductState } from "./misconduct.js";
 import { matchFindings, vitalsReply, findingsReply } from "./peMatch.js";
-import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, GREETING_REPLIES, isPeActionTurn, missingPeNarration, withPeNarratorNote, wrapExamGuide, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
+import { sanitizeMessages, neuronsFor, tokenCounts, extractReply, withTurnReminder, phaseFor, looksLikeEvaluation, withNotYetEvalNote, FEEDBACK_SYSTEM, feedbackOnlyMessages, insertFeedback, isOpeningTurn, isGreetingTurn, GREETING_REPLIES, isPeActionTurn, missingPeNarration, withPeNarratorNote, wrapExamGuide, isClosingTurn, CLOSING_REPLIES, promptPhaseFor, withTimeout, isCapacityError, parseUserLimit, validUid, MAX_USER_LIMIT } from "./aiLimits.js";
 
 // 한국어 환자 연기 품질·뉴런 단가를 같이 보고 고른 기본값. wrangler.toml 의 AI_MODEL 로 바꾼다.
 const DEFAULT_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it";
@@ -160,7 +160,7 @@ export async function handleAiChat(request, env, cfg, cors) {
     return json({ error: "session_expired" }, 404, cors);
   }
   // 배포 직후 남아 있던 예전 세션(통짜 systemPrompt)도 그대로 돌게 한다.
-  const systemPrompt = session.prompts ? session.prompts[phaseFor(messages)] : session.systemPrompt;
+  const systemPrompt = session.prompts ? session.prompts[promptPhaseFor(messages)] : session.systemPrompt;
 
   const sessionId = String(body.sessionId);
   // 부정행위·무례가 쌓이면 환자가 진료실을 나간다 (모델 호출 없이, 뉴런 0). 첫 턴의 "평가"도 여기서 안내한다.
@@ -202,6 +202,13 @@ export async function handleAiChat(request, env, cfg, cors) {
       const usage = await recordUsage(kv, sessionId, session.topic, "history", 0, true, undefined, session.backend, session.uid);
       return json({ reply, neurons: 0, usage }, 200, cors);
     }
+  }
+
+  // 끝인사만 하면 환자도 인사만 받는다 (모델 없이, 뉴런 0).
+  if (phaseFor(messages) !== "eval" && isClosingTurn(messages)) {
+    const reply = CLOSING_REPLIES[Math.floor(Math.random() * CLOSING_REPLIES.length)];
+    const usage = await recordUsage(kv, sessionId, session.topic, phaseFor(messages), 0, true, undefined, session.backend, session.uid);
+    return json({ reply, neurons: 0, usage }, 200, cors);
   }
 
   // 진찰 단계는 소견이 이미 확정돼 있어서, 학생이 한 진찰 동작이 소견 이름과 확실히 맞으면

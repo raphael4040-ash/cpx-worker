@@ -243,3 +243,28 @@ test("검사 안내 문구는 괄호로 감싸 환자 대사가 아니게 한다
   // 여는 괄호만 있고 닫는 괄호가 빠진 경우 — 짝을 맞춘다
   assert.equal(wrapExamGuide("(검사 결과는 이 자리에서 제공되지 않습니다."), "(검사 결과는 이 자리에서 제공되지 않습니다.)");
 });
+
+import { isClosingTurn, promptPhaseFor } from "../src/aiLimits.js";
+import { matchFindings } from "../src/peMatch.js";
+test("끝인사만 하면 모델 없이 인사로 받는다", () => {
+  const conv = (t) => [{ role: "user", text: "안녕하세요" }, { role: "assistant", text: "안녕하세요." }, { role: "user", text: t }];
+  assert.equal(isClosingTurn(conv("수고하셨습니다. 안녕히 가세요.")), true);
+  assert.equal(isClosingTurn(conv("감사합니다!")), true);
+  assert.equal(isClosingTurn(conv("수고하셨습니다. 검사 결과 나오면 다시 오세요.")), false);
+  assert.equal(isClosingTurn(conv("궁금하신 점 있으세요?")), false);
+  assert.equal(isClosingTurn([{ role: "user", text: "안녕하세요" }]), false);
+});
+test("진찰 단계라도 진찰이 아닌 말에는 문진 지시문을 쓴다", () => {
+  const pe = (t) => [{ role: "user", text: "진찰" }, { role: "assistant", text: "(혈압 120/80)" }, { role: "user", text: t }];
+  assert.equal(promptPhaseFor(pe("통증이 갑자기 심해지거나 숨이 차면 바로 응급실로 오세요.")), "history");
+  assert.equal(promptPhaseFor(pe("궁금하신 점 있으세요?")), "history");
+  assert.equal(promptPhaseFor(pe("배를 눌러볼게요.")), "pe");
+  assert.equal(promptPhaseFor(pe("관절 움직여볼게요.")), "pe");
+  assert.equal(promptPhaseFor(pe("피검사와 영상 검사를 해서 원인을 확인하겠습니다.")), "pe"); // 애매하면 진찰 지시문
+  assert.equal(promptPhaseFor([{ role: "user", text: "어디가 불편하세요?" }]), "history");
+  assert.equal(promptPhaseFor([...pe("x"), { role: "assistant", text: "y" }, { role: "user", text: "평가" }]), "eval");
+});
+test("관절을 움직여 보는 말은 운동범위 소견이다", () => {
+  const f = { "무릎 시진": "O자", "관절 운동범위": "굴곡 제한", "손 관절": "결절" };
+  assert.deepEqual(matchFindings("관절 움직여볼게요.", f), [{ key: "관절 운동범위", text: "굴곡 제한" }]);
+});
