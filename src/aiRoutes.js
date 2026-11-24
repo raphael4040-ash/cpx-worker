@@ -19,7 +19,7 @@
  * Cloudflare 가 알아서 에러를 내므로 과금은 생기지 않는다(그때도 아래에서 같은 안내로 바꿔 보여준다).
  */
 import { historyReply } from "./historyMatch.js";
-import { neuronsUsed, addNeurons, currentBase, windowValues, freeAt, HOLD_KEY } from "./neuronWindow.js";
+import { neuronsUsed, addNeurons, currentBase, windowValues, windowKeys, freeAt, HOLD_KEY } from "./neuronWindow.js";
 import { addCounter, pendingFor, GEM_FLUSH, cachedUsage, rememberUsage, shouldFlushUsage } from "./kvBatch.js";
 import { prepareInterview, listScenarios, SAFETY_SETTINGS } from "./interviewRoutes.js";
 import { normalizePut, seal, open as openStored, MAX_BODY_CHARS } from "./aiKeyStore.js";
@@ -638,7 +638,13 @@ export async function handleAiUsage(request, env, cfg, cors) {
     ...geminiLimits(env),
   };
   const capPin = await kv.get(`ai:pin:${day}`, "json"); // 오늘 Cloudflare 오류로 뉴런 한도가 고정됐다면 그 오류 원문
-  return json({ day, usedNeurons: await neuronsUsed(kv, readLimits(env).cap), neuronHold: !!(await kv.get(HOLD_KEY)), gemini: gem, probe, geminiReset, sessions, capPin }, 200, cors);
+  // 최근 24시간 창의 시간대별 사용량(UTC 시각 → 뉴런)과 새 면담이 다시 열리는 때 — 관리자 화면의 막대 그래프용.
+  const now = Date.now();
+  const vals = await windowValues(kv, now);
+  const hours = windowKeys(now).map((k, i) => ({ hour: k.slice(-13), neurons: vals[i] }));
+  const lim = readLimits(env);
+  const window = { hours, cap: lim.cap, reopenAt: freeAt(vals, lim.cap, lim.reserve, now) };
+  return json({ day, usedNeurons: await neuronsUsed(kv, lim.cap), neuronHold: !!(await kv.get(HOLD_KEY)), gemini: gem, probe, geminiReset, sessions, capPin, window }, 200, cors);
 }
 
 /** 면담 한 회의 사용량을 누적한다. 키에 날짜를 넣어 그날 것만 접두사로 나열할 수 있게 한다. */
