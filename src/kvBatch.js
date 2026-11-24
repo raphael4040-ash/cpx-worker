@@ -39,6 +39,11 @@ export async function addCounter(kv, key, base, delta, flushAt, { force = false,
   }
 }
 
+/** 접두사로 시작하는, 아직 쓰지 않은 몫이 있는 키들. */
+export function pendingKeys(prefix) {
+  return [...pending.keys()].filter((k) => k.startsWith(prefix));
+}
+
 /** 카운터 키의 쓰지 않은 몫을 버린다 (상한으로 못박을 때). */
 export function dropPending(key) {
   pending.delete(key);

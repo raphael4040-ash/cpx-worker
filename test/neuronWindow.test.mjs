@@ -41,3 +41,16 @@ test("쌓을 때 보정 계수를 곱하고 지금 시간 칸에 쓴다", async 
   assert.equal(kv.m.get(hourKey(T)), "600");
   assert.equal(await neuronsUsed(kv, 9000, T), 625);
 });
+
+test("시간이 바뀌면 지난 칸에 모아 둔 몫도 쓴다", async () => {
+  _resetWindow(); _resetBatch();
+  const kv = fakeKv();
+  const h0 = Date.parse("2026-11-24T05:59:00Z");
+  const h1 = Date.parse("2026-11-24T06:01:00Z");
+  await addNeurons(kv, 0, 40, { now: h0 }); // 50 — 모아 두기만
+  assert.equal(kv.m.get(hourKey(h0)), undefined);
+  await addNeurons(kv, 0, 40, { now: h1 }); // 다음 시간 첫 요청 — 지난 칸 50 을 쓴다
+  assert.equal(kv.m.get(hourKey(h0)), "50");
+  assert.equal(kv.m.get(hourKey(h1)), undefined);
+  assert.equal(await neuronsUsed(kv, 9000, h1), 100);
+});

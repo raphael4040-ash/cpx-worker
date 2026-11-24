@@ -9,7 +9,7 @@
  * KV 쓰기는 예전과 같다 (모아 두었다가 한 번에 — kvBatch.js). 읽기는 지금 시간 칸만 매번 읽고, 지난 칸은
  * 인스턴스 메모리에 몇 분 동안 둔다 (지난 칸은 거의 바뀌지 않는다).
  */
-import { addCounter, pendingFor, NEURON_FLUSH } from "./kvBatch.js";
+import { addCounter, pendingFor, pendingKeys, NEURON_FLUSH } from "./kvBatch.js";
 
 export const WINDOW_HOURS = 25; // 지금 시간 칸 + 앞 24칸
 // 우리가 세는 뉴런(응답 usage 로 계산)이 Cloudflare 집계보다 13~29% 적었다 (2026-11-23·24). 카운터에는 이만큼 늘려 쌓는다.
@@ -90,7 +90,26 @@ export async function neuronsUsed(kv, cap, now = Date.now()) {
 
 /** 이 요청에서 쓴 뉴런을 지금 시간 칸에 쌓는다. base = 이번 요청이 읽은 지금 칸 KV 값. */
 export async function addNeurons(kv, base, neurons, { force = false, now = Date.now() } = {}) {
+  await flushOldHours(kv, hourKey(now));
   return addCounter(kv, hourKey(now), base, corrected(neurons), NEURON_FLUSH, { force, ttl: BUCKET_TTL });
+}
+
+/**
+ * 지난 시간 칸에 모아 두고 아직 쓰지 않은 몫을 쓴다. 모은 몫은 같은 칸에 다시 쌓을 때만 쓰이므로,
+ * 시간이 바뀌면 지난 칸의 몫이 쓰이지 않고 인스턴스와 함께 사라졌다 (집계가 실제보다 적던 원인 중 하나).
+ */
+async function flushOldHours(kv, currentKey) {
+  for (const k of pendingKeys("ai:neurons:h:")) {
+    if (k === currentKey) continue;
+    let base = 0;
+    try {
+      base = parseInt((await kv.get(k)) || "0", 10) || 0;
+    } catch {
+      continue; // 읽기 실패 — 다음 요청에서 다시
+    }
+    await addCounter(kv, k, base, 0, NEURON_FLUSH, { force: true, ttl: BUCKET_TTL });
+    pastCache.delete(k); // 방금 쓴 값을 다시 읽게
+  }
 }
 
 /** 지금 시간 칸의 KV 값 (addNeurons 의 base). */
