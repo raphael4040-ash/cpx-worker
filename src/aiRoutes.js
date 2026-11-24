@@ -75,7 +75,7 @@ export async function handleAiStart(request, env, cfg, cors) {
   if (body?.forceGemini === true && user.uid === cfg.ownerUid && geminiConfigured(env)) backend = "gemini";
   else if (used + limits.reserve > limits.cap) {
     if (!(await geminiHasRoom(kv, env, day))) {
-      return json({ error: "daily_budget_exhausted", resetsAt: await neuronFreeAt(kv, limits) }, 429, cors);
+      return json({ error: "daily_budget_exhausted", resetsAt: await reopenAt(kv, env, limits) }, 429, cors);
     }
     backend = "gemini";
   }
@@ -128,6 +128,12 @@ const NEURON_HOLD_SEC = 30 * 60;
 async function neuronFreeAt(kv, limits) {
   if (await kv.get(HOLD_KEY)) return new Date(Date.now() + NEURON_HOLD_SEC * 1000).toISOString();
   return freeAt(await windowValues(kv), limits.cap, limits.reserve) || new Date().toISOString();
+}
+
+/** 무료 면담이 다시 열리는 때 — Workers AI 창이 비는 때와 Gemini 하루 카운터가 풀리는 UTC 자정 중 이른 쪽. */
+async function reopenAt(kv, env, limits) {
+  const w = await neuronFreeAt(kv, limits);
+  return geminiConfigured(env) && w > nextResetIso() ? nextResetIso() : w;
 }
 
 /** POST /interview/ai/chat — {sessionId, messages:[{role:"user"|"assistant", text}]} */
@@ -225,7 +231,7 @@ export async function handleAiChat(request, env, cfg, cors) {
   const gemDeadKey = `ai:gem:dead:${day}`;
   const gemOk = async () => geminiConfigured(env) && !(await getInt(kv, gemDeadKey)) && (await getInt(kv, gemReqKey)) + pendingFor(gemReqKey) < geminiLimits(env).maxRequests;
   let workersOk = used < limits.cap;
-  const exhausted = async () => json({ error: "daily_budget_exhausted", resetsAt: await neuronFreeAt(kv, limits) }, 429, cors);
+  const exhausted = async () => json({ error: "daily_budget_exhausted", resetsAt: await reopenAt(kv, env, limits) }, 429, cors);
   // 진행 중인 면담도 한쪽이 소진되면 다른 쪽으로 넘긴다 (대화 전체를 매번 보내는 구조라 이어서 할 수 있다). 둘 다 소진돼야 막힌다.
   const switchTo = async (toGemini) => {
     gemini = toGemini;
@@ -684,7 +690,7 @@ export async function handleAiStatus(env, cors) {
       capNeurons: limits.cap,
       canStart: used + limits.reserve <= limits.cap || (await geminiHasRoom(kv, env, utcDay())),
       perUserDaily: limits.perUser,
-      resetsAt: used + limits.reserve <= limits.cap ? nextResetIso() : await neuronFreeAt(kv, limits),
+      resetsAt: used + limits.reserve <= limits.cap ? nextResetIso() : await reopenAt(kv, env, limits),
     },
     200,
     cors
