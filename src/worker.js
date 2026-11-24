@@ -71,7 +71,7 @@ async function handle(request, env, CORS) {
         projectId: env.FIREBASE_PROJECT_ID || DEFAULT_PROJECT_ID,
         ownerUid: env.OWNER_UID || DEFAULT_OWNER_UID,
       };
-      if (url.pathname === "/interview/ai/status") return await handleAiStatus(env, CORS);
+      if (url.pathname === "/interview/ai/status") return await handleAiStatus(env, CORS, request, cfg);
       if (url.pathname === "/interview/ai/start") {
         const ip = request.headers.get("CF-Connecting-IP") || "";
         if (!(await checkRateLimit(env.RATE_LIMIT_KV, ip, AI_START_LIMIT))) {

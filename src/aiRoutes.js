@@ -677,11 +677,25 @@ async function recordUsage(kv, sessionId, topic, phase, neurons, local, tokens =
 }
 
 /** GET 대신 POST /interview/ai/status — 오늘 남은 양 (설정 화면 안내용, 인증 불필요). */
-export async function handleAiStatus(env, cors) {
+export async function handleAiStatus(env, cors, request = null, cfg = null) {
   const kv = env.RATE_LIMIT_KV;
   if (!env.AI || !kv) return json({ enabled: false }, 200, cors);
   const limits = readLimits(env);
   const used = await neuronsUsed(kv, limits.cap);
+  // 로그인한 학생이면 오늘 몇 번 썼는지도 알려 준다 — 화면에 "오늘 3/5회 남음"을 보여 주려고.
+  // 토큰이 없거나 확인이 안 되면 빠뜨린다(공용 한도 정보는 그대로). 관리자는 횟수 제한이 없어 null.
+  let mine = null;
+  if (request && cfg && (request.headers.get("Authorization") || "").startsWith("Bearer ")) {
+    try {
+      const user = await authenticate(request, cfg);
+      if (!user.error) {
+        const limit = user.uid === cfg.ownerUid ? null : (await getUserLimit(kv, user.uid)) ?? limits.perUser;
+        mine = { usedToday: await getInt(kv, `ai:user:${utcDay()}:${user.uid}`), limit };
+      }
+    } catch {
+      /* 횟수 표시는 부가 정보 — 실패해도 상태 응답은 돌려준다 */
+    }
+  }
   return json(
     {
       enabled: true,
@@ -690,6 +704,7 @@ export async function handleAiStatus(env, cors) {
       capNeurons: limits.cap,
       canStart: used + limits.reserve <= limits.cap || (await geminiHasRoom(kv, env, utcDay())),
       perUserDaily: limits.perUser,
+      mine,
       resetsAt: used + limits.reserve <= limits.cap ? nextResetIso() : await reopenAt(kv, env, limits),
     },
     200,
