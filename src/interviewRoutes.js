@@ -78,7 +78,7 @@ export function prepareInterview(body, { admin = false } = {}) {
   if (!data) return { error: { error: "case_not_bundled", file: resolved.file }, status: 500 };
 
   // 시나리오 지정은 관리자 점검용이다. 관리자가 아니면 값이 와도 무시하고 무작위로 뽑는다(정답을 골라 연습하는 것을 막는다).
-  const pick = pickScenarioId(body, admin, data.scenarios);
+  const pick = pickScenarioId(body, admin, data.scenarios, fileKey);
   if (pick.error) return { error: pick.error, status: 400 };
   const scenarioId = pick.scenarioId;
   const kase = buildCase(fileKey, data, personas, scenarioId);
